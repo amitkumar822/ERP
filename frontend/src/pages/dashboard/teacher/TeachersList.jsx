@@ -1,17 +1,54 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pencil, Trash2, Eye, CalendarDays } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
 const teachersData = [
-  { id: 1, img: "https://via.placeholder.com/50", name: "John Doe", department: "Mathematics", gender: "Male", education: "M.Sc", mobile: "9876543210", email: "john@example.com", joiningDate: new Date(2020, 4, 12) },
-  { id: 2, img: "https://via.placeholder.com/50", name: "Sarah Smith", department: "Science", gender: "Female", education: "Ph.D", mobile: "9876543220", email: "sarah@example.com", joiningDate: new Date(2019, 2, 10) },
+  {
+    id: 1,
+    img: "https://via.placeholder.com/50",
+    name: "John Doe",
+    department: "Mathematics",
+    gender: "Male",
+    education: "M.Sc",
+    mobile: "9876543210",
+    email: "john@example.com",
+    joiningDate: new Date(2020, 4, 12),
+  },
+  {
+    id: 2,
+    img: "https://via.placeholder.com/50",
+    name: "Sarah Smith",
+    department: "Science",
+    gender: "Female",
+    education: "Ph.D",
+    mobile: "9876543220",
+    email: "sarah@example.com",
+    joiningDate: new Date(2019, 2, 10),
+  },
 ];
 
 const TeachersList = () => {
@@ -28,7 +65,9 @@ const TeachersList = () => {
         teacher.mobile.includes(searchQuery)) &&
       (filterDepartment === "All" || teacher.department === filterDepartment) &&
       (filterGender === "All" || teacher.gender === filterGender) &&
-      (!filterDate || format(teacher.joiningDate, "yyyy-MM-dd") === format(filterDate, "yyyy-MM-dd"))
+      (!filterDate ||
+        format(teacher.joiningDate, "yyyy-MM-dd") ===
+          format(filterDate, "yyyy-MM-dd"))
     );
   });
 
@@ -53,7 +92,10 @@ const TeachersList = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 min-w-[180px]"
             />
-            <Select value={filterDepartment} onValueChange={setFilterDepartment}>
+            <Select
+              value={filterDepartment}
+              onValueChange={setFilterDepartment}
+            >
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="All Departments" />
               </SelectTrigger>
@@ -77,13 +119,22 @@ const TeachersList = () => {
             {/* 📅 Calendar Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-[200px] flex justify-between">
-                  {filterDate ? format(filterDate, "dd/MM/yyyy") : "Select Joining Date"}
+                <Button
+                  variant="outline"
+                  className="w-[200px] flex justify-between"
+                >
+                  {filterDate
+                    ? format(filterDate, "dd/MM/yyyy")
+                    : "Select Joining Date"}
                   <CalendarDays className="w-5 h-5" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto">
-                <Calendar mode="single" selected={filterDate} onSelect={setFilterDate} />
+                <Calendar
+                  mode="single"
+                  selected={filterDate}
+                  onSelect={setFilterDate}
+                />
               </PopoverContent>
             </Popover>
 
@@ -117,14 +168,22 @@ const TeachersList = () => {
                 {filteredTeachers.length > 0 ? (
                   filteredTeachers.map((teacher) => (
                     <TableRow key={teacher.id}>
-                      <TableCell><img src={teacher.img} alt="Teacher" className="w-10 h-10 rounded-full" /></TableCell>
+                      <TableCell>
+                        <img
+                          src={teacher.img}
+                          alt="Teacher"
+                          className="w-10 h-10 rounded-full"
+                        />
+                      </TableCell>
                       <TableCell>{teacher.name}</TableCell>
                       <TableCell>{teacher.department}</TableCell>
                       <TableCell>{teacher.gender}</TableCell>
                       <TableCell>{teacher.education}</TableCell>
                       <TableCell>{teacher.mobile}</TableCell>
                       <TableCell>{teacher.email}</TableCell>
-                      <TableCell>{format(teacher.joiningDate, "dd/MM/yyyy")}</TableCell>
+                      <TableCell>
+                        {format(teacher.joiningDate, "dd/MM/yyyy")}
+                      </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button variant="outline" size="icon">
@@ -133,7 +192,11 @@ const TeachersList = () => {
                           <Button variant="outline" size="icon">
                             <Pencil className="w-5 h-5 text-blue-600" />
                           </Button>
-                          <Button variant="outline" size="icon" onClick={() => handleDelete(teacher.id)}>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDelete(teacher.id)}
+                          >
                             <Trash2 className="w-5 h-5 text-red-600" />
                           </Button>
                         </div>

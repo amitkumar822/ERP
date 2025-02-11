@@ -125,7 +125,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-screen transition-all duration-300 shadow-md shadow-gray-800 ${
+      className={`h-screen transition-all duration-300 border-r-2 shadow-md shadow-gray-800 dark:bg-gray-900 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
@@ -148,13 +148,13 @@ const Sidebar = () => {
       <div className="p-4">
         {sidebarData.map((item, index) => (
           <div key={index}>
-            <div
+            <Link to={item?.subItems ? "#" : item.link}
               onClick={() => toggleSubMenu(index)}
               className="flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200"
             >
               {item.icon}
               {!isCollapsed && <span className="ml-3">{item.title}</span>}
-            </div>
+            </Link>
             {!isCollapsed && activeMenu === index && item.subItems && (
               <div className="pl-8 mt-2 space-y-1">
                 {item.subItems.map((subItem, subIndex) => (
@@ -177,3 +177,5 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+
+

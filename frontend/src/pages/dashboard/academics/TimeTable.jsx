@@ -12,7 +12,7 @@ const classNames = ["Class 1", "Class 2", "Class 3", "Class 4"];
 const sections = ["A", "B", "C", "D"];
 const periodsList = ["Period 1", "Period 2", "Period 3", "Period 4", "Period 5"];
 
-export default function TimeTableManagement() {
+export default function TimeTable() {
   const [periods, setPeriods] = useState([]);
   const [form, setForm] = useState({ className: "", section: "", day: "", period: "", periodTime: "", subject: "", teacher: "" });
   const [editIndex, setEditIndex] = useState(null);

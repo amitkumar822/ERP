@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 
-export default function AddTeacherPage() {
+export default function AddTeacher() {
   const [teacherData, setTeacherData] = useState({
     firstName: "",
     lastName: "",

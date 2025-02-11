@@ -12,7 +12,7 @@ const classes = ["Class 1", "Class 2", "Class 3", "Class 4"];
 const sections = ["A", "B", "C", "D"];
 const subjects = ["Math", "Science", "English", "History"];
 
-export default function SyllabusManagement() {
+export default function Syllabus() {
   const [syllabusList, setSyllabusList] = useState([]);
   const [form, setForm] = useState({ course: "", className: "", section: "", subject: "", teacher: "", description: "", file: null });
   const [editIndex, setEditIndex] = useState(null);
