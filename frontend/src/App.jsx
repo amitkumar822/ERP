@@ -1,12 +1,15 @@
-import React from 'react'
-import MainDashboard from './pages/dashboard/MainDashboard'
+import React from "react";
+import MainDashboard from "./pages/dashboard/MainDashboard";
+import { BrowserRouter } from "react-router";
 
 const App = () => {
   return (
     <div>
-      <MainDashboard />
+      <BrowserRouter>
+        <MainDashboard />
+      </BrowserRouter>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

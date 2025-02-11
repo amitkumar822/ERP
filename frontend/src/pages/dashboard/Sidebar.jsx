@@ -17,6 +17,7 @@ import {
   Clock,
   FileText,
 } from "lucide-react";
+import { Link } from "react-router";
 
 // Sidebar data in JSON format for easy management
 const sidebarData = [
@@ -30,9 +31,21 @@ const sidebarData = [
     icon: <Users className="w-5 h-5" />,
     link: "/students",
     subItems: [
-      { title: "Student List", icon: <User className="w-4 h-4" />, link: "/students/list" },
-      { title: "Add Student", icon: <UserPlus className="w-4 h-4" />, link: "/students/add" },
-      { title: "Attendance", icon: <ClipboardList className="w-4 h-4" />, link: "/students/attendance" },
+      {
+        title: "Student List",
+        icon: <User className="w-4 h-4" />,
+        link: "/students/list",
+      },
+      {
+        title: "Add Student",
+        icon: <UserPlus className="w-4 h-4" />,
+        link: "/students/add",
+      },
+      {
+        title: "Attendance",
+        icon: <ClipboardList className="w-4 h-4" />,
+        link: "/students/attendance",
+      },
     ],
   },
   {
@@ -40,8 +53,16 @@ const sidebarData = [
     icon: <Users className="w-5 h-5" />,
     link: "/teachers",
     subItems: [
-      { title: "Teacher List", icon: <User className="w-4 h-4" />, link: "/teachers/list" },
-      { title: "Add Teacher", icon: <UserPlus className="w-4 h-4" />, link: "/teachers/add" },
+      {
+        title: "Teacher List",
+        icon: <User className="w-4 h-4" />,
+        link: "/teachers/list",
+      },
+      {
+        title: "Add Teacher",
+        icon: <UserPlus className="w-4 h-4" />,
+        link: "/teachers/add",
+      },
     ],
   },
   {
@@ -49,9 +70,21 @@ const sidebarData = [
     icon: <BookOpen className="w-5 h-5" />,
     link: "/academics",
     subItems: [
-      { title: "Class Management", icon: <Book className="w-4 h-4" />, link: "/academics/classes" },
-      { title: "Timetable", icon: <Clock className="w-4 h-4" />, link: "/academics/timetable" },
-      { title: "Syllabus", icon: <FileText className="w-4 h-4" />, link: "/academics/syllabus" },
+      {
+        title: "Class Management",
+        icon: <Book className="w-4 h-4" />,
+        link: "/academics/classes",
+      },
+      {
+        title: "Timetable",
+        icon: <Clock className="w-4 h-4" />,
+        link: "/academics/timetable",
+      },
+      {
+        title: "Syllabus",
+        icon: <FileText className="w-4 h-4" />,
+        link: "/academics/syllabus",
+      },
     ],
   },
   {
@@ -92,7 +125,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-screen bg-gray-800 text-white transition-all duration-300 ${
+      className={`h-screen transition-all duration-300 shadow-md shadow-gray-800 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
@@ -103,7 +136,11 @@ const Sidebar = () => {
           onClick={toggleSidebar}
           className="p-2 hover:bg-gray-700 rounded transition-all duration-200"
         >
-          {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+          {isCollapsed ? (
+            <ChevronRight className="w-5 h-5" />
+          ) : (
+            <ChevronLeft className="w-5 h-5" />
+          )}
         </button>
       </div>
 
@@ -113,23 +150,22 @@ const Sidebar = () => {
           <div key={index}>
             <div
               onClick={() => toggleSubMenu(index)}
-              className="flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer transition-all duration-200"
+              className="flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200"
             >
               {item.icon}
-              {!isCollapsed && (
-                <span className="ml-3">{item.title}</span>
-              )}
+              {!isCollapsed && <span className="ml-3">{item.title}</span>}
             </div>
             {!isCollapsed && activeMenu === index && item.subItems && (
               <div className="pl-8 mt-2 space-y-1">
                 {item.subItems.map((subItem, subIndex) => (
-                  <div
+                  <Link
+                    to={subItem.link}
                     key={subIndex}
-                    className="flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer transition-all duration-200"
+                    className="flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200"
                   >
                     {subItem.icon}
                     <span className="ml-3">{subItem.title}</span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
