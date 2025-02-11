@@ -23,7 +23,7 @@ const themes = [
   { name: "Crimson", color: "#dc143c" },
   { name: "Plum", color: "#dda0dd" },
   { name: "Gold", color: "#ffd700" },
-  { name: "Slate Gray", color: "#708090" },
+  { name: "White", color: "#ffff" },
 ];
 
 const Settings = () => {
@@ -39,6 +39,7 @@ const Settings = () => {
   const handleThemeChange = (color) => {
     localStorage.setItem("themeColor", color);
     setThemeColorProvider(color);
+    setThemeColor(color);
     document.documentElement.style.setProperty("--theme-color", color);
   };
 
@@ -82,7 +83,6 @@ const Settings = () => {
                 key={theme.name}
                 className="w-10 h-10 rounded-full border-2"
                 style={{ backgroundColor: theme.color }}
-                // onClick={() => setThemeColor(theme.color)}
                 onClick={() => handleThemeChange(theme.color)}
               ></button>
             ))}
@@ -126,7 +126,12 @@ const Settings = () => {
           <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
             Update your profile, email, and password.
           </p>
-          <button className="mt-4 px-4 py-2 bg-[var(--theme-color)] text-white rounded-lg hover:opacity-80 transition">
+          <button
+            className={`mt-4 px-4 py-2 text-white rounded-lg hover:opacity-80 transition`}
+            style={{
+              backgroundColor: themeColor === "#ffff" ? "blue" : themeColor,
+            }}
+          >
             Edit Profile
           </button>
         </motion.div>
@@ -145,7 +150,12 @@ const Settings = () => {
           <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
             Manage email and app notifications.
           </p>
-          <button className="mt-4 px-4 py-2 bg-[var(--theme-color)] text-white rounded-lg hover:opacity-80 transition">
+          <button
+            className={`mt-4 px-4 py-2 text-white rounded-lg hover:opacity-80 transition`}
+            style={{
+              backgroundColor: themeColor === "#ffff" ? "blue" : themeColor,
+            }}
+          >
             Manage Notifications
           </button>
         </motion.div>
@@ -164,7 +174,12 @@ const Settings = () => {
           <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
             Enable two-factor authentication & reset password.
           </p>
-          <button className="mt-4 px-4 py-2 bg-[var(--theme-color)] text-white rounded-lg hover:opacity-80 transition">
+          <button
+            className={`mt-4 px-4 py-2 text-white rounded-lg hover:opacity-80 transition`}
+            style={{
+              backgroundColor: themeColor === "#ffff" ? "blue" : themeColor,
+            }}
+          >
             Security Settings
           </button>
         </motion.div>
