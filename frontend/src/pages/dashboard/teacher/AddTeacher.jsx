@@ -46,11 +46,11 @@ export default function AddTeacher() {
         <Input placeholder="Mobile Number" type="tel" name="mobile" value={teacherData.mobile} onChange={handleChange} required />
         <Calendar name="joiningDate" selected={teacherData.joiningDate} onChange={(date) => setTeacherData({ ...teacherData, joiningDate: date })} />
         <Calendar name="dob" selected={teacherData.dob} onChange={(date) => setTeacherData({ ...teacherData, dob: date })} />
-        <Select name="gender" value={teacherData.gender} onValueChange={(value) => setTeacherData({ ...teacherData, gender: value })}>
+        {/* <Select name="gender" value={teacherData.gender} onValueChange={(value) => setTeacherData({ ...teacherData, gender: value })}>
           <SelectItem value="male">Male</SelectItem>
           <SelectItem value="female">Female</SelectItem>
           <SelectItem value="other">Other</SelectItem>
-        </Select>
+        </Select> */}
         <Input placeholder="Designation" name="designation" value={teacherData.designation} onChange={handleChange} required />
         <Input placeholder="Class" name="class" value={teacherData.class} onChange={handleChange} required />
         <Input placeholder="Qualification" name="qualification" value={teacherData.qualification} onChange={handleChange} required />

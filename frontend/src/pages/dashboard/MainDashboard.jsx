@@ -6,6 +6,8 @@ import AddStudentForm from "./student/AddStudentForm";
 import AttendancePage from "./student/AttendancePage";
 import TeachersList from "./teacher/TeachersList";
 import ClassManagement from "./academics/ClassManagement";
+import AddTeacherPage from "./teacher/AddTeacherPage";
+import AddTeacher from "./teacher/AddTeacher";
 
 const MainDashboard = () => {
   return (
@@ -25,11 +27,15 @@ const MainDashboard = () => {
         {/* Dashboard (Scrollable) */}
         <div className="flex-1 overflow-y-auto h-screen px- pb-10">
           {/* <Dashboard /> */}
+
           {/* <StudentsList /> */}
-          <AddStudentForm />
+          {/* <AddStudentForm /> */}
           {/* <AttendancePage /> */}
+
           {/* <TeachersList /> */}
-          {/* <ClassManagement /> */}
+          {/* <AddTeacherPage /> */}
+
+          <ClassManagement />
         </div>
       </div>
     </div>
