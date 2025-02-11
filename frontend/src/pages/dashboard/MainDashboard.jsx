@@ -8,6 +8,8 @@ import TeachersList from "./teacher/TeachersList";
 import ClassManagement from "./academics/ClassManagement";
 import AddTeacherPage from "./teacher/AddTeacherPage";
 import AddTeacher from "./teacher/AddTeacher";
+import TimetableManagement from "./academics/TimetableManagement";
+import SyllabusManagement from "./academics/SyllabusManagement";
 
 const MainDashboard = () => {
   return (
@@ -35,7 +37,9 @@ const MainDashboard = () => {
           {/* <TeachersList /> */}
           {/* <AddTeacherPage /> */}
 
-          <ClassManagement />
+          {/* <ClassManagement /> */}
+          {/* <TimetableManagement /> */}
+          <SyllabusManagement />
         </div>
       </div>
     </div>
