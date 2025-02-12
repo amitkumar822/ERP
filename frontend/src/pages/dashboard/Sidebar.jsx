@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +18,7 @@ import {
   FileText,
 } from "lucide-react";
 import { Link } from "react-router";
+import ThemeContext from "@/context/Theme/ThemeContext";
 
 // Sidebar data in JSON format for easy management
 const sidebarData = [
@@ -110,6 +111,8 @@ const sidebarData = [
 ];
 
 const Sidebar = () => {
+  const { themeColorProvider } = useContext(ThemeContext);
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
 
@@ -148,9 +151,15 @@ const Sidebar = () => {
       <div className="p-4">
         {sidebarData.map((item, index) => (
           <div key={index}>
-            <Link to={item?.subItems ? "#" : item.link}
+            <Link
+              to={item?.subItems ? "#" : item.link}
               onClick={() => toggleSubMenu(index)}
-              className="flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200"
+              className={`${
+                themeColorProvider === "#ffff"
+                  ? "dark:text-black"
+                  : "dark:text-white"
+              } flex items-center p-2 hover:bg-gray-200 my-1 rounded cursor-pointer transition-all duration-200`}
+              style={{ backgroundColor: themeColorProvider }}
             >
               {item.icon}
               {!isCollapsed && <span className="ml-3">{item.title}</span>}
@@ -161,7 +170,12 @@ const Sidebar = () => {
                   <Link
                     to={subItem.link}
                     key={subIndex}
-                    className="flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200"
+                    className={`${
+                      themeColorProvider === "#ffff"
+                        ? "dark:text-black"
+                        : "dark:text-white"
+                    } flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200`}
+                    style={{ backgroundColor: themeColorProvider }}
                   >
                     {subItem.icon}
                     <span className="ml-3">{subItem.title}</span>
@@ -177,5 +191,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
-

@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className=" shadow-md px-6 py-3 fixed top-0 left-0 w-full z-50 text-gray-800 dark:bg-gray-900 dark:text-white"
+      className={`${themeColorProvider === "#ffff" ? "dark:text-black" : "dark:text-white"} shadow-md px-6 py-3 fixed top-0 left-0 w-full z-50 text-gray-800 dark:bg-gray-900 `}
       style={{ backgroundColor: themeColorProvider }}
     >
       <div className="flex justify-between items-center max-w-7xl mx-auto">
