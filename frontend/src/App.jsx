@@ -4,7 +4,7 @@ import { BrowserRouter, Outlet } from "react-router";
 
 const App = () => {
   return (
-    <div>
+    <div className=" container">
       <Outlet/>
     </div>
   );

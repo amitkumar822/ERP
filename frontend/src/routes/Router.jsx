@@ -4,6 +4,11 @@ import TimeTable from "@/pages/dashboard/academics/TimeTable";
 import Dashboard from "@/pages/dashboard/Dashboard";
 import Library from "@/pages/dashboard/library/Library";
 import MainDashboard from "@/pages/dashboard/MainDashboard";
+import DriverSalaryPayment from "@/pages/dashboard/payments/DriverSalaryPayment";
+import FeeStructure from "@/pages/dashboard/payments/FeeStructure";
+import StaffSalary from "@/pages/dashboard/payments/StaffSalary";
+import StudentFeeStructure from "@/pages/dashboard/payments/StudentFeeStructure";
+import TeacherSalaries from "@/pages/dashboard/payments/TeacherSalaries";
 import Settings from "@/pages/dashboard/settings/Settings";
 import AddStudentForm from "@/pages/dashboard/student/AddStudentForm";
 import AttendancePage from "@/pages/dashboard/student/AttendancePage";
@@ -30,21 +35,29 @@ const router = createBrowserRouter(
       <Route path="students/attendance" element={<AttendancePage />} />
 
       {/* Teachers Routes */}
-        <Route path="teachers/list" element={<TeachersList />} />
-        <Route path="teachers/add" element={<AddTeacher />} />
+      <Route path="teachers/list" element={<TeachersList />} />
+      <Route path="teachers/add" element={<AddTeacher />} />
 
       {/* Academics Routes */}
-        <Route path="academics/classes" element={<ClassManagement />} />
-        <Route path="academics/timetable" element={<TimeTable />} />
-        <Route path="academics/syllabus" element={<Syllabus />} />
+      <Route path="academics/classes" element={<ClassManagement />} />
+      <Route path="academics/timetable" element={<TimeTable />} />
+      <Route path="academics/syllabus" element={<Syllabus />} />
 
       {/* Other Routes */}
       <Route path="transport" element={<Transport />} />
       <Route path="library" element={<Library />} />
+
+      {/* Payments */}
+      <Route path="payments/students" element={<StudentFeeStructure />} />
+      <Route path="payments/teachers" element={<TeacherSalaries />} />
+      <Route path="payments/staff" element={<StaffSalary />} />
+      <Route path="payments/drivers" element={<DriverSalaryPayment />} />
+      <Route path="payments/fee-structure" element={<FeeStructure />} />
+
       <Route path="settings" element={<Settings />} />
       {/* <Route path="help" element={<Help />} /> */}
 
-      
+
       {/* Error Page */}
       <Route path="*" element={<NotFound />} />
     </Route>

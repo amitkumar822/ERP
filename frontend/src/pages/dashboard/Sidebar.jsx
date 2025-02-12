@@ -16,9 +16,95 @@ import {
   Book,
   Clock,
   FileText,
+  CreditCard,
+  UserCheck,
+  Briefcase,
+  Truck,
 } from "lucide-react";
 import { Link } from "react-router";
 import ThemeContext from "@/context/Theme/ThemeContext";
+
+const Sidebar = () => {
+  const { themeColorProvider } = useContext(ThemeContext);
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
+
+  // Toggle sidebar collapse
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // Toggle submenu
+  const toggleSubMenu = (index) => {
+    setActiveMenu(activeMenu === index ? null : index);
+  };
+
+  return (
+    <div
+      className={`h-screen overflow-auto pb-5 transition-all duration-300 border-r-2 shadow-md shadow-gray-800 dark:bg-gray-900 ${
+        isCollapsed ? "w-20" : "w-64"
+      }`}
+    >
+      {/* Sidebar Header */}
+      <div className="p-4 flex items-center justify-between border-b border-gray-700">
+        {!isCollapsed && <h1 className="text-xl font-bold">School Admin</h1>}
+        <button
+          onClick={toggleSidebar}
+          className="p-2 hover:bg-gray-700 rounded transition-all duration-200"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="w-5 h-5" />
+          ) : (
+            <ChevronLeft className="w-5 h-5" />
+          )}
+        </button>
+      </div>
+
+      {/* Sidebar Menu */}
+      <div className="p-4">
+        {sidebarData.map((item, index) => (
+          <div key={index}>
+            <Link
+              to={item?.subItems ? "#" : item.link}
+              onClick={() => toggleSubMenu(index)}
+              className={`${
+                themeColorProvider === "#ffff"
+                  ? "dark:text-black"
+                  : "dark:text-white"
+              } flex items-center p-2 hover:bg-gray-200 my-1 rounded cursor-pointer transition-all duration-200`}
+              style={{ backgroundColor: themeColorProvider }}
+            >
+              {item.icon}
+              {!isCollapsed && <span className="ml-3">{item.title}</span>}
+            </Link>
+            {!isCollapsed && activeMenu === index && item.subItems && (
+              <div className="pl-8 mt-2 space-y-1">
+                {item.subItems.map((subItem, subIndex) => (
+                  <Link
+                    to={subItem.link}
+                    key={subIndex}
+                    className={`${
+                      themeColorProvider === "#ffff"
+                        ? "dark:text-black"
+                        : "dark:text-white"
+                    } flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200`}
+                    style={{ backgroundColor: themeColorProvider }}
+                  >
+                    {subItem.icon}
+                    <span className="ml-3">{subItem.title}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
 
 // Sidebar data in JSON format for easy management
 const sidebarData = [
@@ -99,6 +185,38 @@ const sidebarData = [
     link: "/library",
   },
   {
+    title: "Payments",
+    icon: <CreditCard className="w-5 h-5" />,
+    link: "/payments",
+    subItems: [
+      {
+        title: "Student Fees",
+        icon: <User className="w-4 h-4" />,
+        link: "/payments/students",
+      },
+      {
+        title: "Teacher Salaries",
+        icon: <UserCheck className="w-4 h-4" />,
+        link: "/payments/teachers",
+      },
+      {
+        title: "Staff Salaries",
+        icon: <Briefcase className="w-4 h-4" />,
+        link: "/payments/staff",
+      },
+      {
+        title: "Driver Payments",
+        icon: <Truck className="w-4 h-4" />,
+        link: "/payments/drivers",
+      },
+      {
+        title: "Fee Structure",
+        icon: <FileText className="w-4 h-4" />,
+        link: "/payments/fee-structure",
+      },
+    ],
+  },
+  {
     title: "Settings",
     icon: <Settings className="w-5 h-5" />,
     link: "/settings",
@@ -109,85 +227,3 @@ const sidebarData = [
     link: "/help",
   },
 ];
-
-const Sidebar = () => {
-  const { themeColorProvider } = useContext(ThemeContext);
-
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(null);
-
-  // Toggle sidebar collapse
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  // Toggle submenu
-  const toggleSubMenu = (index) => {
-    setActiveMenu(activeMenu === index ? null : index);
-  };
-
-  return (
-    <div
-      className={`h-screen transition-all duration-300 border-r-2 shadow-md shadow-gray-800 dark:bg-gray-900 ${
-        isCollapsed ? "w-20" : "w-64"
-      }`}
-    >
-      {/* Sidebar Header */}
-      <div className="p-4 flex items-center justify-between border-b border-gray-700">
-        {!isCollapsed && <h1 className="text-xl font-bold">School Admin</h1>}
-        <button
-          onClick={toggleSidebar}
-          className="p-2 hover:bg-gray-700 rounded transition-all duration-200"
-        >
-          {isCollapsed ? (
-            <ChevronRight className="w-5 h-5" />
-          ) : (
-            <ChevronLeft className="w-5 h-5" />
-          )}
-        </button>
-      </div>
-
-      {/* Sidebar Menu */}
-      <div className="p-4">
-        {sidebarData.map((item, index) => (
-          <div key={index}>
-            <Link
-              to={item?.subItems ? "#" : item.link}
-              onClick={() => toggleSubMenu(index)}
-              className={`${
-                themeColorProvider === "#ffff"
-                  ? "dark:text-black"
-                  : "dark:text-white"
-              } flex items-center p-2 hover:bg-gray-200 my-1 rounded cursor-pointer transition-all duration-200`}
-              style={{ backgroundColor: themeColorProvider }}
-            >
-              {item.icon}
-              {!isCollapsed && <span className="ml-3">{item.title}</span>}
-            </Link>
-            {!isCollapsed && activeMenu === index && item.subItems && (
-              <div className="pl-8 mt-2 space-y-1">
-                {item.subItems.map((subItem, subIndex) => (
-                  <Link
-                    to={subItem.link}
-                    key={subIndex}
-                    className={`${
-                      themeColorProvider === "#ffff"
-                        ? "dark:text-black"
-                        : "dark:text-white"
-                    } flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200`}
-                    style={{ backgroundColor: themeColorProvider }}
-                  >
-                    {subItem.icon}
-                    <span className="ml-3">{subItem.title}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default Sidebar;
