@@ -1,4 +1,4 @@
-export const classValidate = [
+export const classNames = [
   "Nursery",
   "LKG",
   "UKG",

@@ -6,11 +6,12 @@ import { classValidate } from "../helpers/classValidate.js";
 import Class from "../models/class.model.js";
 import { validDays } from "../helpers/validDays.js";
 
+//^ Create a new class used to create a new class in the database
 export const createClass = asyncHandler(async (req, res) => {
-  const { className } = req.body;
+  const { className, academicYear, section, capacity } = req.body;
 
-  if (!className) {
-    throw new ApiError(400, "Class name is required");
+  if (!className || !academicYear || !section || !capacity) {
+    throw new ApiError(400, "Please provide all required fields");
   }
 
   if (!classValidate.includes(className)) {
@@ -22,15 +23,27 @@ export const createClass = asyncHandler(async (req, res) => {
     );
   }
 
-  const existingClass = await Class.findOne({ className });
+  const existingClass = await Class.findOne({
+    className,
+    academicYear,
+    sections: section,
+  }).lean();
+
   if (existingClass) {
     throw new ApiError(
       409,
-      `Class with the same name ${className} already exists`
+      `Class with the same name ${
+        (className, academicYear, section)
+      } already exists`
     );
   }
 
-  const newClass = new Class({ className });
+  const newClass = new Class({
+    className,
+    academicYear,
+    sections: section,
+    capacity,
+  });
   await newClass.save();
 
   return res
