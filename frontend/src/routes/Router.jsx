@@ -16,6 +16,7 @@ import StudentList from "@/pages/dashboard/student/StudentsList";
 import AddTeacher from "@/pages/dashboard/teacher/AddTeacherPage";
 import TeachersList from "@/pages/dashboard/teacher/TeachersList";
 import Transport from "@/pages/dashboard/transport/Transport";
+import HelpAndSupport from "@/pages/helpAndSupport/HelpAndSupport";
 import NotFound from "@/pages/NotFound";
 import {
   createBrowserRouter,
@@ -55,7 +56,7 @@ const router = createBrowserRouter(
       <Route path="payments/fee-structure" element={<FeeStructure />} />
 
       <Route path="settings" element={<Settings />} />
-      {/* <Route path="help" element={<Help />} /> */}
+      <Route path="help" element={<HelpAndSupport />} />
 
 
       {/* Error Page */}

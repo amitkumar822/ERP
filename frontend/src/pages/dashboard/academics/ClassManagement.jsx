@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,10 +22,12 @@ import { Label } from "@/components/ui/label";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 
 export default function ClassManagement() {
-  const [classes, setClasses] = useState([]);
+
+  // ****************👇Start Class Create and Edit or Update Section👇***********************
   const [form, setForm] = useState({
     className: "",
     section: "",
@@ -33,6 +35,7 @@ export default function ClassManagement() {
     academicYear: "",
   });
   const [isPendingAddClass, startTransitionAddClass] = useTransition();
+  const [editClassId, setEditClassId] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,53 +44,105 @@ export default function ClassManagement() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    let apiEndpoint = "";
+    let apiMethod = "";
+
+    if (editClassId) {
+      apiEndpoint = `/api/class/update/${editClassId}`;
+      apiMethod = "put";
+    } else {
+      apiEndpoint = "/api/class/create";
+      apiMethod = "post";
+    }
+
     startTransitionAddClass(async () => {
       try {
-        const { data } = await axios.post("/api/class/create", form);
+        const { data } = await axios[apiMethod](apiEndpoint, form);
         console.log("Class Created Time: \n", data);
-        console.log("Message: ", data?.message);
         toast.success(data?.message || "Successfully Class Created!");
-
+        fetchAllClasses();
         setForm({
           className: "",
           section: "",
           capacity: "",
           academicYear: "",
         });
+        setEditClassId("");
       } catch (error) {
         toast.error(error?.response?.data.message || "faild to created class");
         console.error("Error Class Created Time: \n", error);
       }
     });
-
-    // if (editingIndex !== null) {
-    //   const updatedClasses = [...classes];
-    //   updatedClasses[editingIndex] = form;
-    //   setClasses(updatedClasses);
-    //   setEditingIndex(null);
-    // } else {
-    //   setClasses([...classes, { ...form, teacherSubjects: [], students: [] }]);
-    // }
-    // setForm({ className: "", section: "", capacity: "" });
   };
 
+  // Fetch All Classes👇
+  const [updatedClasses, setUpdatedClasses] = useState([]);
+
+  const fetchAllClasses = async () => {
+    try {
+      const { data } = await axios.get("/api/class/get-all-class", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("All Classes Fetch: \n", data);
+      setUpdatedClasses(data?.data);
+    } catch (error) {
+      console.error("Error Fetch All Classes Time: \n", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllClasses();
+  }, []);
+  // ******************👆End Class Create and Edit or Update Section👆********************
+
+  // ********************👇Start Class Edit and Delete Section👇**********************
+  const handleEdit = (classId) => {
+    const filterClass = updatedClasses.filter((cls) => cls._id === classId);
+    setEditClassId(classId);
+    setForm({
+      className: filterClass[0]?.className,
+      section: filterClass[0]?.sections,
+      capacity: filterClass[0]?.capacity,
+      academicYear: filterClass[0]?.academicYear,
+    });
+  };
+
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteClassId, setDeleteClassId] = useState("");
+  const [isPendingDeleteClass, setIsPendingDeleteClass] = useTransition();
+
+  const handleDelete = () => {
+    alert(deleteClassId);
+    setIsPendingDeleteClass(async () => {
+      try {
+        const { data } = await axios.delete(
+          `/api/class/delete/${deleteClassId}`
+        );
+        console.log("Class Deleted Time: \n", data);
+        toast.success(data?.message || "Successfully Class Deleted!");
+        fetchAllClasses();
+
+        setEditClassId("");
+
+        setDeleteModalOpen(false);
+      } catch (error) {
+        toast.error(error?.response?.data.message || "faild to delete class");
+        console.error("Error Class Deleted Time: \n", error);
+      }
+    });
+  };
+  // ******************👆End Class Edit and Delete Section👆********************
+
   //^ Below all remaining work.
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [classes, setClasses] = useState([]);
   const [popup, setPopup] = useState({
     type: "",
     index: null,
     teacher: "",
     subject: "",
   });
-
-  const handleEdit = (index) => {
-    setForm(classes[index]);
-    setEditingIndex(index);
-  };
-
-  const handleDelete = (index) => {
-    setClasses(classes.filter((_, i) => i !== index));
-  };
 
   const handlePopupOpen = (type, index) => {
     setPopup({ type, index, teacher: "", subject: "" });
@@ -200,7 +255,7 @@ export default function ClassManagement() {
               ) : (
                 <span className="flex items-center justify-center gap-1">
                   <PlusCircle size={18} />
-                  {editingIndex !== null ? "Update" : "Add"} Class
+                  {editClassId ? "Update" : "Add"} Class
                 </span>
               )}
             </Button>
@@ -209,7 +264,7 @@ export default function ClassManagement() {
       </Card>
 
       {/* Manage Classes */}
-      <Card className=" dark:text-white dark:bg-gray-800">  
+      <Card className=" dark:text-white dark:bg-gray-800">
         <CardContent className="p-4">
           <h2 className="text-xl font-bold">Manage Classes</h2>
           <Table className="mt-4">
@@ -217,6 +272,7 @@ export default function ClassManagement() {
               <TableRow>
                 <TableHead>Class</TableHead>
                 <TableHead>Section</TableHead>
+                <TableHead>Academic Year</TableHead>
                 <TableHead>Capacity</TableHead>
                 <TableHead>Teachers & Subjects</TableHead>
                 <TableHead>Students</TableHead>
@@ -224,15 +280,16 @@ export default function ClassManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {classes.map((cls, index) => (
+              {updatedClasses?.map((cls, index) => (
                 <TableRow key={index}>
                   <TableCell>{cls.className}</TableCell>
-                  <TableCell>{cls.section}</TableCell>
+                  <TableCell>{cls.sections}</TableCell>
+                  <TableCell>{cls.academicYear}</TableCell>
                   <TableCell>{cls.capacity}</TableCell>
                   <TableCell>
                     <Table>
                       <TableBody>
-                        {cls.teacherSubjects.map((ts, idx) => (
+                        {cls?.teacherSubjects?.map((ts, idx) => (
                           <TableRow key={idx}>
                             <TableCell>{ts.teacher}</TableCell>
                             <TableCell>{ts.subject}</TableCell>
@@ -241,27 +298,37 @@ export default function ClassManagement() {
                       </TableBody>
                     </Table>
                   </TableCell>
-                  <TableCell>{cls.students.join(", ")}</TableCell>
+                  <TableCell>{cls?.students?.join(", ")}</TableCell>
                   <TableCell className="flex gap-2">
-                    <Button size="sm" onClick={() => handleEdit(index)}>
+                    <Button
+                      size="sm"
+                      className="cursor-pointer"
+                      onClick={() => handleEdit(cls?._id)}
+                    >
                       <Edit size={14} />
                     </Button>
                     <Button
                       size="sm"
+                      className="cursor-pointer"
                       variant="destructive"
-                      onClick={() => handleDelete(index)}
+                      onClick={() => {
+                        setDeleteModalOpen(true), setDeleteClassId(cls?._id);
+                      }}
                     >
                       <Trash2 size={14} />
                     </Button>
+
                     <Button
                       size="sm"
                       variant="outline"
+                      className="cursor-pointer"
                       onClick={() => handlePopupOpen("teacherSubjects", index)}
                     >
                       <Users size={14} /> Manage Teachers & Subjects
                     </Button>
                     <Button
                       size="sm"
+                      className="cursor-pointer"
                       variant="outline"
                       onClick={() => handlePopupOpen("students", index)}
                     >
@@ -300,6 +367,15 @@ export default function ClassManagement() {
           </div>
         </div>
       )}
+
+      {/* Class Delete Model */}
+      <DeleteClassModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        message={"class"}
+        isPending={isPendingDeleteClass}
+      />
     </div>
   );
 }

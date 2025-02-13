@@ -51,6 +51,78 @@ export const createClass = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, newClass, "Class created successfully"));
 });
 
+//^ Update a class used to update an existing class in the database
+export const updateClass = asyncHandler(async (req, res) => {
+  const { classId } = req.params;
+  const { className, academicYear, section, capacity } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new ApiError(400, "Invalid class ID");
+  }
+
+  // Validate className if provided
+  if (className && !classValidate.includes(className)) {
+    throw new ApiError(
+      400,
+      `Invalid className. Please enter a valid className: ${classValidate.join(
+        ", "
+      )}`
+    );
+  }
+
+  // Check for duplicate class directly in the update operation
+  const existingClass = await Class.findOne({
+    className,
+    academicYear,
+    sections: section,
+    _id: { $ne: classId }, // Exclude current class from duplicate check
+  }).lean();
+
+  if (existingClass) {
+    throw new ApiError(409, "Class with the same details already exists.");
+  }
+
+  // Use findOneAndUpdate to combine checking and updating in a single query
+  const updateFields = {};
+  if (className) updateFields.className = className;
+  if (academicYear) updateFields.academicYear = academicYear;
+  if (section) updateFields.sections = section;
+  if (capacity) updateFields.capacity = capacity;
+
+  const updatedClass = await Class.findOneAndUpdate(
+    { _id: classId },
+    { $set: updateFields },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedClass) {
+    throw new ApiError(404, "Class not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedClass, "Class updated successfully"));
+});
+
+//^ Delete a class used to delete an existing class from the database
+export const deleteClass = asyncHandler(async (req, res) => {
+  const { classId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new ApiError(400, "Invalid class ID");
+  }
+
+  const deletedClass = await Class.findByIdAndDelete(classId);
+
+  if (!deletedClass) {
+    throw new ApiError(404, "Class not found");
+  }
+
+  return res.json(
+    new ApiResponse(200, deletedClass, "Class deleted successfully")
+  );
+});
+
+//^ Get all classes used to fetch all classes from the database
 export const getAllClasses = asyncHandler(async (_, res) => {
   const classes = await Class.find()
     .sort({ createdAt: -1 })
