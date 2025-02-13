@@ -9,7 +9,7 @@
     "dev": "nodemon src/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Amit Kumar Singh",
   "license": "ISC",
   "description": "",
   "dependencies": {
