@@ -21,9 +21,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
-import axios from "axios";
 import { toast } from "react-toastify";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
+import API from "@/api/axiosInstance";
 
 export default function ClassManagement() {
 
@@ -48,16 +48,16 @@ export default function ClassManagement() {
     let apiMethod = "";
 
     if (editClassId) {
-      apiEndpoint = `/api/class/update/${editClassId}`;
+      apiEndpoint = `/class/update/${editClassId}`;
       apiMethod = "put";
     } else {
-      apiEndpoint = "/api/class/create";
+      apiEndpoint = "/class/create";
       apiMethod = "post";
     }
 
     startTransitionAddClass(async () => {
       try {
-        const { data } = await axios[apiMethod](apiEndpoint, form);
+        const { data } = await API[apiMethod](apiEndpoint, form);
         console.log("Class Created Time: \n", data);
         toast.success(data?.message || "Successfully Class Created!");
         fetchAllClasses();
@@ -80,7 +80,7 @@ export default function ClassManagement() {
 
   const fetchAllClasses = async () => {
     try {
-      const { data } = await axios.get("/api/class/get-all-class", {
+      const { data } = await API.get("/class/get-all-class", {
         headers: {
           "Content-Type": "application/json",
         },

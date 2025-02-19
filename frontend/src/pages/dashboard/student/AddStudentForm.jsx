@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useEffectEvent, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,14 +10,8 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { UserPlusIcon } from "lucide-react";
+import API from "../../../api/axiosInstance";
 
 const AddStudentForm = () => {
   const [studentData, setStudentData] = useState({
@@ -48,9 +42,35 @@ const AddStudentForm = () => {
     profileImage: null,
   });
 
+  const [fetchClassDetail, setFetchClassDetail] = useState([]);
+  const [className, setClassName] = useState([]);
+  const [academicYear, setAcademicYear] = useState([]);
+
+   // Use `useCallback` to memoize the fetch function
+   const fetchAllClasses = useCallback(async () => {
+    try {
+      const { data } = await API.get("/class/get-all-class");
+      setFetchClassDetail(data?.data || []);
+      setClassName(data?.data?.map((item) => item.className) || []);
+      setAcademicYear(data?.data?.map((item) => item.academicYear) || []);
+    } catch (error) {
+      console.error("Error Fetching All Classes: \n", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAllClasses();
+  }, [fetchAllClasses]);
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-6">Add Student</h1>
+      <div className="flex items-center justify-center mb-6">
+        {" "}
+        {/* Center the icon and text */}
+        <UserPlusIcon className="h-8 w-8 mr-2 text-blue-500" />{" "}
+        {/* Add icon, adjust size and color */}
+        <h1 className="text-2xl font-bold">Admission Form</h1>
+      </div>
 
       {/* 🟢 Personal Information */}
       <Card className="mb-6">
@@ -59,8 +79,9 @@ const AddStudentForm = () => {
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <Label>Academic Year</Label>
+            <Label htmlFor="academicYear">Academic Year</Label>
             <Select
+              id="academicYear"
               onValueChange={(val) =>
                 setStudentData({ ...studentData, academicYear: val })
               }
@@ -69,15 +90,23 @@ const AddStudentForm = () => {
                 <SelectValue placeholder="Select Academic Year" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
+                {
+                  academicYear?.map((item, index) => (
+                    <SelectItem key={index} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))
+                }
+                {/* <SelectItem value="2024">2024</SelectItem> */}
+                {/* <SelectItem value="2025">2025</SelectItem> */}
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label>Admission Number</Label>
+            <Label htmlFor="admissionNumber">Admission Number</Label>
             <Input
+              id="admissionNumber"
               placeholder="Enter Admission Number"
               value={studentData.admissionNumber}
               onChange={(e) =>
@@ -90,34 +119,32 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Admission Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full flex justify-between"
-                >
-                  {studentData.admissionDate
-                    ? format(new Date(studentData.admissionDate), "dd-MM-yyyy")
-                    : "Select Date"}
-                  <CalendarIcon className="h-5 w-5" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <Calendar
-                  mode="single"
-                  selected={studentData.admissionDate}
-                  onSelect={(date) =>
-                    setStudentData({ ...studentData, admissionDate: date })
-                  }
-                />
-              </PopoverContent>
-            </Popover>
+            <Label htmlFor="admissionDate">Admission Date</Label>
+            <Input
+              id="admissionDate"
+              placeholder="Enter Admission Date"
+              type="date"
+              value={
+                studentData.admissionDate
+                  ? new Date(studentData.admissionDate)
+                      .toISOString()
+                      .split("T")[0]
+                  : ""
+              }
+              onFocus={(e) => e.target.showPicker()}
+              onChange={(e) =>
+                setStudentData({
+                  ...studentData,
+                  admissionDate: e.target.value,
+                })
+              }
+            />
           </div>
 
           <div>
-            <Label>Roll Number</Label>
+            <Label htmlFor="rollNumber">Roll Number</Label>
             <Input
+              id="rollNumber"
               placeholder="Enter Roll Number"
               value={studentData.rollNumber}
               onChange={(e) =>
@@ -127,8 +154,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>First Name</Label>
+            <Label htmlFor="firstName">First Name</Label>
             <Input
+              id="firstName"
               placeholder="Enter First Name"
               value={studentData.firstName}
               onChange={(e) =>
@@ -138,8 +166,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Last Name</Label>
+            <Label htmlFor="lastName">Last Name</Label>
             <Input
+              id="lastName"
               placeholder="Enter Last Name"
               value={studentData.lastName}
               onChange={(e) =>
@@ -149,8 +178,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Select Class</Label>
+            <Label htmlFor="selectClass">Select Class</Label>
             <Select
+              id="selectClass"
               onValueChange={(val) =>
                 setStudentData({ ...studentData, studentClass: val })
               }
@@ -159,14 +189,20 @@ const AddStudentForm = () => {
                 <SelectValue placeholder="Select Class" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Six">Class Six</SelectItem>
+                {className.map((item, index) => (
+                  <SelectItem key={index} value={item}>
+                    {item}
+                  </SelectItem>
+                ))}
+                {/* <SelectItem value="Six">Class Six</SelectItem> */}
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label>Religion</Label>
+            <Label htmlFor="religion">Religion</Label>
             <Input
+              id="religion"
               placeholder="Enter Religion"
               value={studentData.religion}
               onChange={(e) =>
@@ -176,8 +212,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Category</Label>
+            <Label htmlFor="category">Category</Label>
             <Input
+              id="category"
               placeholder="Enter Category"
               value={studentData.category}
               onChange={(e) =>
@@ -187,8 +224,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Primary Contact Number</Label>
+            <Label htmlFor="contactNumber">Primary Contact Number</Label>
             <Input
+              id="contactNumber"
               placeholder="Enter Contact Number"
               value={studentData.primaryContact}
               onChange={(e) =>
@@ -201,34 +239,27 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Date of Birth</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full flex justify-between"
-                >
-                  {studentData.dob
-                    ? format(new Date(studentData.dob), "dd-MM-yyyy")
-                    : "Select Date"}
-                  <CalendarIcon className="h-5 w-5" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <Calendar
-                  mode="single"
-                  selected={studentData.dob}
-                  onSelect={(date) =>
-                    setStudentData({ ...studentData, dob: date })
-                  }
-                />
-              </PopoverContent>
-            </Popover>
+            <Label htmlFor="dob">Date of Birth</Label>
+            <Input
+              id="dob"
+              placeholder="Enter DOB"
+              type="date"
+              value={
+                studentData.dob
+                  ? new Date(studentData.dob).toISOString().split("T")[0]
+                  : ""
+              }
+              onFocus={(e) => e.target.showPicker()}
+              onChange={(e) =>
+                setStudentData({ ...studentData, dob: e.target.value })
+              }
+            />
           </div>
 
           <div>
-            <Label>Gender</Label>
+            <Label htmlFor="gender">Gender</Label>
             <Select
+              id="gender"
               onValueChange={(val) =>
                 setStudentData({ ...studentData, gender: val })
               }
@@ -244,8 +275,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Upload Profile Image</Label>
+            <Label htmlFor="profileImage">Upload Profile Image</Label>
             <Input
+              id="profileImage"
               placeholder="Slecte Profile Image"
               type="file"
               value={studentData.profileImage}
@@ -259,8 +291,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Blood Group</Label>
+            <Label htmlFor="bloodGroup">Blood Group</Label>
             <Select
+              id="bloodGroup"
               onValueChange={(val) =>
                 setStudentData({ ...studentData, bloodGroup: val })
               }
@@ -276,8 +309,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Mother Tongue</Label>
+            <Label htmlFor="motherTong">Mother Tongue</Label>
             <Input
+              id="motherTong"
               placeholder="Enter Mother Tongue"
               value={studentData.motherTongue}
               onChange={(e) =>
@@ -295,8 +329,9 @@ const AddStudentForm = () => {
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <Label>Father's Name</Label>
+            <Label htmlFor="father">Father's Name</Label>
             <Input
+              id="father"
               placeholder="Enter Father's Name"
               value={studentData.fatherName}
               onChange={(e) =>
@@ -306,8 +341,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Father's Email</Label>
+            <Label htmlFor="fatherEmail">Father's Email</Label>
             <Input
+              id="fatherEmail"
               placeholder="Enter Email"
               value={studentData.fatherEmail}
               onChange={(e) =>
@@ -317,8 +353,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Father's Mobile Number</Label>
+            <Label htmlFor="fatherMobileNumber">Father's Mobile Number</Label>
             <Input
+              id="fatherMobileNumber"
               placeholder="Enter Mobile Number"
               value={studentData.fatherMobile}
               onChange={(e) =>
@@ -328,8 +365,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Mother's Name</Label>
+            <Label htmlFor="mother">Mother's Name</Label>
             <Input
+              id="mother"
               placeholder="Enter Mother's Name"
               value={studentData.motherName}
               onChange={(e) =>
@@ -339,8 +377,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Mother's Email</Label>
+            <Label htmlFor="motherEmail">Mother's Email</Label>
             <Input
+              id="motherEmail"
               placeholder="Enter Email"
               value={studentData.motherEmail}
               onChange={(e) =>
@@ -350,8 +389,9 @@ const AddStudentForm = () => {
           </div>
 
           <div>
-            <Label>Mother's Mobile Number</Label>
+            <Label htmlFor="motherMobile">Mother's Mobile Number</Label>
             <Input
+              id="motherMobile"
               placeholder="Enter Mobile Number"
               value={studentData.motherMobile}
               onChange={(e) =>
