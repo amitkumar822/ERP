@@ -1,4 +1,4 @@
-import { useEffect, useState, useEffectEvent, useCallback } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,13 +8,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Toggle } from "@/components/ui/toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { UserPlusIcon } from "lucide-react";
+import {
+  Loader2,
+  PlusCircle,
+  SquareDashedBottomIcon,
+  UserPlusIcon,
+} from "lucide-react";
 import API from "../../../api/axiosInstance";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import { bloodGroups } from "@/helpers/bloodGroup";
+import { toast } from "react-toastify";
 
 const AddStudentForm = () => {
   const [studentData, setStudentData] = useState({
@@ -23,9 +30,10 @@ const AddStudentForm = () => {
     fullName: "",
     studentClass: "",
     studentSection: "",
+    academicYear: "",
     religion: "",
     category: "",
-    primaryContact: "",
+    studentNumber: "",
     caste: "",
     motherTongue: "",
     studentEmail: "",
@@ -38,15 +46,90 @@ const AddStudentForm = () => {
     motherName: "",
     motherMobile: "",
     motherOccupation: "",
-    permanentAddress: "",
-    currentAddress: "",
-    profileImage: null,
+    profileImage: "",
   });
+  const [sameAddressChecked, setSameAddressChecked] = useState(false);
+  const [permanentAddress, setPermanentAddress] = useState({
+    permanentAddress: "",
+    city: "",
+    state: "",
+    zipCode: "",
+  });
+
+  const [currAddress, setCurrAddress] = useState({
+    currentAddress: "",
+    city: "",
+    state: "",
+    zipCode: "",
+  });
+
+  const handleSameAddressChecked = () => {
+    setSameAddressChecked((prevChecked) => !prevChecked);
+  };
+
+  // When sameAddressChecked is true, sync the Current Address with Permanent Address
+  useEffect(() => {
+    if (sameAddressChecked) {
+      setCurrAddress({
+        currentAddress: permanentAddress.permanentAddress,
+        city: permanentAddress.city,
+        state: permanentAddress.state,
+        zipCode: permanentAddress.zipCode,
+      });
+    } else {
+      setCurrAddress({
+        currentAddress: "",
+        city: "",
+        state: "",
+        zipCode: "",
+      });
+    }
+  }, [permanentAddress, sameAddressChecked]);
+
+  const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Click");
-    console.log("studentData: ", studentData);
+
+    const formData = {
+      admissionDate: studentData.admissionDate,
+      rollNumber: studentData.rollNumber,
+      fullName: studentData.fullName,
+      className: studentData.studentClass,
+      section: studentData.studentSection,
+      academicYear: studentData.academicYear,
+      religion: studentData.religion,
+      category: studentData.category,
+      studentNumber: studentData.studentNumber,
+      caste: studentData.caste,
+      motherTongue: studentData.motherTongue,
+      studentEmail: studentData.studentEmail,
+      dob: studentData.dob,
+      gender: studentData.gender,
+      bloodGroup: studentData.bloodGroup,
+      fatherName: studentData.fatherName,
+      fatherNumber: studentData.fatherMobile,
+      fatherOccupation: studentData.fatherOccupation,
+      motherName: studentData.motherName,
+      motherNumber: studentData.motherMobile,
+
+      permanentAddress: permanentAddress,
+      currentAddress: currAddress,
+    };
+
+    startTransition(async () => {
+      try {
+        await API.post("/students/add", formData);
+
+        toast.success("Student added successfully!");
+      } catch (error) {
+        console.error("Error while student form fill time: \n", error);
+        toast.error(
+          error?.response?.data.message ||
+            "Failed to add student. Please try again."
+        );
+      }
+    });
   };
 
   return (
@@ -95,7 +178,6 @@ const AddStudentForm = () => {
                       {item}
                     </SelectItem>
                   ))}
-                  {/* <SelectItem value="Six">Class Six</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -117,7 +199,6 @@ const AddStudentForm = () => {
                       {item}
                     </SelectItem>
                   ))}
-                  {/* <SelectItem value="Six">Class Six</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -135,20 +216,6 @@ const AddStudentForm = () => {
                   })
                 }
               />
-              {/* <Select
-              id="academicYear"
-              onValueChange={(val) =>
-                setStudentData({ ...studentData, academicYear: val })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Academic Year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2025">2025</SelectItem>
-              </SelectContent>
-            </Select> */}
             </div>
 
             <div>
@@ -230,11 +297,11 @@ const AddStudentForm = () => {
               <Input
                 id="contactNumber"
                 placeholder="Ex. 1234569870"
-                value={studentData.primaryContact}
+                value={studentData.studentNumber}
                 onChange={(e) =>
                   setStudentData({
                     ...studentData,
-                    primaryContact: e.target.value,
+                    studentNumber: e.target.value,
                   })
                 }
               />
@@ -452,59 +519,74 @@ const AddStudentForm = () => {
               <Input
                 id="permanentAddress"
                 placeholder="Enter Permanent Address"
-                value={studentData.permanentAddress}
+                value={permanentAddress.permanentAddress}
                 onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
+                  setPermanentAddress({
+                    ...permanentAddress,
                     permanentAddress: e.target.value,
                   })
                 }
               />
             </div>
 
-            <div>
-              <Label htmlFor="permanentCity">City</Label>
-              <Input
-                id="permanentCity"
-                placeholder="Enter City"
-                value={studentData.permanentCity}
-                onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
-                    permanentCity: e.target.value,
-                  })
-                }
-              />
+            <div className="col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="permanentCity">City</Label>
+                <Input
+                  id="permanentCity"
+                  placeholder="Enter City"
+                  value={permanentAddress.city}
+                  onChange={(e) =>
+                    setPermanentAddress({
+                      ...permanentAddress,
+                      city: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="permanentState">State</Label>
+                <Input
+                  id="permanentState"
+                  placeholder="Enter State"
+                  value={permanentAddress.state}
+                  onChange={(e) =>
+                    setPermanentAddress({
+                      ...permanentAddress,
+                      state: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="permanentPincode">Pincode</Label>
+                <Input
+                  id="permanentPincode"
+                  placeholder="Enter Pincode"
+                  value={permanentAddress.zipCode}
+                  onChange={(e) =>
+                    setPermanentAddress({
+                      ...permanentAddress,
+                      zipCode: e.target.value,
+                    })
+                  }
+                />
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="permanentState">State</Label>
-              <Input
-                id="permanentState"
-                placeholder="Enter State"
-                value={studentData.permanentState}
-                onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
-                    permanentState: e.target.value,
-                  })
-                }
+            {/* Toggle Same Address */}
+            <div className="col-span-3 flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="sameAddress"
+                checked={sameAddressChecked}
+                onChange={handleSameAddressChecked}
               />
-            </div>
-
-            <div>
-              <Label htmlFor="permanentPincode">Pincode</Label>
-              <Input
-                id="permanentPincode"
-                placeholder="Enter Pincode"
-                value={studentData.permanentPincode}
-                onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
-                    permanentPincode: e.target.value,
-                  })
-                }
-              />
+              <label htmlFor="sameAddress" className="cursor-pointer">
+                Same as Permanent Address
+              </label>
             </div>
 
             {/* Current Address */}
@@ -513,59 +595,60 @@ const AddStudentForm = () => {
               <Input
                 id="currentAddress"
                 placeholder="Enter Current Address"
-                value={studentData.currentAddress}
+                value={currAddress.currentAddress}
                 onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
+                  setCurrAddress({
+                    ...currAddress,
                     currentAddress: e.target.value,
                   })
                 }
               />
             </div>
+            <div className="col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="currentCity">City</Label>
+                <Input
+                  id="currentCity"
+                  placeholder="Enter City"
+                  value={currAddress.city}
+                  onChange={(e) =>
+                    setCurrAddress({
+                      ...currAddress,
+                      city: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="currentCity">City</Label>
-              <Input
-                id="currentCity"
-                placeholder="Enter City"
-                value={studentData.currentCity}
-                onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
-                    currentCity: e.target.value,
-                  })
-                }
-              />
-            </div>
+              <div>
+                <Label htmlFor="currentState">State</Label>
+                <Input
+                  id="currentState"
+                  placeholder="Enter State"
+                  value={currAddress.state}
+                  onChange={(e) =>
+                    setCurrAddress({
+                      ...currAddress,
+                      state: e.target.value,
+                    })
+                  }
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="currentState">State</Label>
-              <Input
-                id="currentState"
-                placeholder="Enter State"
-                value={studentData.currentState}
-                onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
-                    currentState: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="currentPincode">Pincode</Label>
-              <Input
-                id="currentPincode"
-                placeholder="Enter Pincode"
-                value={studentData.currentPincode}
-                onChange={(e) =>
-                  setStudentData({
-                    ...studentData,
-                    currentPincode: e.target.value,
-                  })
-                }
-              />
+              <div>
+                <Label htmlFor="currentPincode">Pincode</Label>
+                <Input
+                  id="currentPincode"
+                  placeholder="Enter Pincode"
+                  value={currAddress.zipCode}
+                  onChange={(e) =>
+                    setCurrAddress({
+                      ...currAddress,
+                      zipCode: e.target.value,
+                    })
+                  }
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -573,10 +656,20 @@ const AddStudentForm = () => {
         {/* 📌 Submit Button */}
         <div className="text-center">
           <Button
+            disabled={isPending}
             type="submit"
             className="bg-blue-500 w-full md:w-1/4 cursor-pointer"
           >
-            Submit
+            {isPending ? (
+              <span className="flex items-center gap-2">
+                <Loader2 size={18} className="animate-spin" />
+                Please Wait...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-1">
+                Submit
+              </span>
+            )}
           </Button>
         </div>
       </form>

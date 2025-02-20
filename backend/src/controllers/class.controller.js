@@ -128,7 +128,7 @@ export const getAllClasses = asyncHandler(async (_, res) => {
     .sort({ createdAt: -1 })
     .populate({
       path: "studentsId",
-      select: "fullName fatherName motherName email",
+      select: "fullName fatherName motherName rollNumber dob",
     })
     .lean();
 
@@ -149,7 +149,7 @@ export const getClassById = asyncHandler(async (req, res) => {
   const classObj = await Class.findById(classId)
     .populate({
       path: "studentsId",
-      select: "fullName fatherName motherName email",
+      select: "fullName fatherName motherName rollNumber dob",
     })
     .lean();
   if (!classObj) {

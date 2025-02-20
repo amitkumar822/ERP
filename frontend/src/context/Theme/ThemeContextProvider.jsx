@@ -14,7 +14,6 @@ export const ThemeProvider = ({ children }) => {
       "--theme-color",
       themeColorProvider
     );
-    console.log("themeColorProvider", themeColorProvider);
     localStorage.getItem("themeColor");
   }, [themeColorProvider]);
 

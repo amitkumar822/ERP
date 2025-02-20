@@ -90,7 +90,6 @@ const studentSchema = new mongoose.Schema(
     },
     studentEmail: {
       type: String,
-      unique: true,
       trim: true,
       match: [
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,

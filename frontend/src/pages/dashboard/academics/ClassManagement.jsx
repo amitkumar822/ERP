@@ -24,9 +24,9 @@ import { sections } from "@/helpers/sections";
 import { toast } from "react-toastify";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import API from "@/api/axiosInstance";
+import { Link } from "react-router";
 
 export default function ClassManagement() {
-
   // ****************👇Start Class Create and Edit or Update Section👇***********************
   const [form, setForm] = useState({
     className: "",
@@ -95,6 +95,7 @@ export default function ClassManagement() {
   useEffect(() => {
     fetchAllClasses();
   }, []);
+
   // ******************👆End Class Create and Edit or Update Section👆********************
 
   // ********************👇Start Class Edit and Delete Section👇**********************
@@ -275,7 +276,7 @@ export default function ClassManagement() {
                 <TableHead>Academic Year</TableHead>
                 <TableHead>Capacity</TableHead>
                 <TableHead>Teachers & Subjects</TableHead>
-                <TableHead>Students</TableHead>
+                <TableHead>Roll & Students</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -298,7 +299,20 @@ export default function ClassManagement() {
                       </TableBody>
                     </Table>
                   </TableCell>
-                  <TableCell>{cls?.students?.join(", ")}</TableCell>
+                  <TableCell>
+                    <div className="max-h-40 overflow-auto border rounded-md">
+                      <Table>
+                        <TableBody>
+                          {cls?.studentsId?.map((stn, idx) => (
+                            <TableRow key={idx}>
+                              <TableCell>{stn?.rollNumber}</TableCell>
+                              <TableCell>{stn?.fullName}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </TableCell>
                   <TableCell className="flex gap-2">
                     <Button
                       size="sm"
