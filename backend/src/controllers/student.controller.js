@@ -30,8 +30,6 @@ export const addStudent = asyncHandler(async (req, res) => {
     permanentAddress,
     currentAddress,
   } = req.body;
-  console.log("BODY: ", req.body);
-  
 
   // Validate required fields in one check
   const requiredFields = [
@@ -58,7 +56,13 @@ export const addStudent = asyncHandler(async (req, res) => {
   // Run two database queries in parallel
   const [findClass, existingStudent] = await Promise.all([
     Class.findOne({ className, sections: section, academicYear }).lean(),
-    Student.findOne({ rollNumber }).lean(),
+    // Student.findOne({ rollNumber }).lean(),
+    Student.findOne({
+      rollNumber,
+      className,
+      section,
+      academicYear,
+    }).lean(),
   ]);
 
   if (!findClass) {
@@ -71,7 +75,7 @@ export const addStudent = asyncHandler(async (req, res) => {
   if (existingStudent) {
     throw new ApiError(
       409,
-      `Student with roll number ${rollNumber} already exists`
+      `Student with roll number ${rollNumber}, ${className}, section ${section}, and academic year ${academicYear} already exists`
     );
   }
 
@@ -79,6 +83,7 @@ export const addStudent = asyncHandler(async (req, res) => {
   const student = new Student({
     fullName,
     classId: findClass._id,
+    className,
     section,
     academicYear,
     caste,
@@ -115,122 +120,30 @@ export const addStudent = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, student, "Student admission successful"));
 });
 
-// export const addStudent = asyncHandler(async (req, res) => {
-//   const {
-//     fullName,
-//     className,
-//     section,
-//     academicYear,
-//     caste,
-//     admissionDate,
-//     rollNumber,
-//     religion,
-//     category,
-//     studentNumber,
-//     dob,
-//     gender,
-//     bloodGroup,
-//     motherTongue,
-//     studentEmail,
-//     fatherName,
-//     fatherOccupation,
-//     fatherNumber,
-//     motherName,
-//     motherOccupation,
-//     motherNumber,
-//     permanentAddress,
-//     currentAddress,
-//   } = req.body;
-
-//   if (
-//     !fullName ||
-//     !className ||
-//     !caste ||
-//     !admissionDate ||
-//     !rollNumber ||
-//     !religion ||
-//     !category ||
-//     !dob ||
-//     !gender ||
-//     !fatherName ||
-//     !fatherNumber ||
-//     !motherName ||
-//     !permanentAddress ||
-//     !section ||
-//     !academicYear
-//   ) {
-//     throw new ApiError(400, "All Field Must be required");
-//   }
-
-//   const findClass = await Class.findOne({
-//     className,
-//     sections: section,
-//     academicYear,
-//   });
-
-//   if (!findClass || findClass?.length === 0) {
-//     throw new ApiError(
-//       404,
-//       `Class not found with ${className} or ${section} or ${academicYear}`
-//     );
-//   }
-
-//   const existingStudent = await Student.findOne({ rollNumber }).lean();
-//   if (existingStudent) {
-//     throw new ApiError(
-//       409,
-//       `Student with the same roll number ${rollNumber} already exists`
-//     );
-//   }
-
-//   const student = await Student.create({
-//     fullName,
-//     classId: findClass?._id,
-//     section,
-//     academicYear,
-//     caste,
-//     admissionDate,
-//     rollNumber,
-//     religion,
-//     category,
-//     studentNumber,
-//     dob,
-//     gender,
-//     bloodGroup,
-//     motherTongue,
-//     studentEmail,
-//     fatherName,
-//     fatherOccupation,
-//     fatherNumber,
-//     motherName,
-//     motherOccupation,
-//     motherNumber,
-//     address: {
-//       permanentAddress,
-//       currentAddress,
-//     },
-//   });
-
-//   findClass.studentsId.push(student._id);
-//   await findClass.save();
-
-//   res
-//     .status(201)
-//     .json(new ApiResponse(201, student, "Student admission successfully"));
-// });
-
 export const getAllStudents = asyncHandler(async (_, res) => {
-  const students = await Student.find()
-    .sort({
-      createdAt: -1,
-    })
-    .lean();
+  const groupedStudents = await Student.aggregate([
+    {
+      $group: {
+        _id: {
+          className: "$className",
+          section: "$section",
+          academicYear: "$academicYear",
+        },
+        students: { $push: "$$ROOT" },
+      },
+    },
+    {
+      $sort: { "_id.academicYear": -1, "_id.className": 1, "_id.section": 1 },
+    },
+  ]);
 
-  if (!students || students?.length === 0) {
+  if (!groupedStudents || groupedStudents.length === 0) {
     throw new ApiError("No students found", 404);
   }
 
   res
     .status(200)
-    .json(new ApiResponse(200, students, "Students fetched successfully"));
+    .json(
+      new ApiResponse(200, groupedStudents, "Students grouped successfully")
+    );
 });

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { classValidate } from "../helpers/classValidate.js";
 
 const studentSchema = new mongoose.Schema(
   {
@@ -13,6 +14,15 @@ const studentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
       required: [true, "Class Name is required"],
+    },
+    className: {
+      type: String,
+      required: [true, "Class Name is required"],
+      trim: true,
+      enum: {
+        values: classValidate,
+        message: `Class name must be either ${classValidate.join(", ")} `,
+      },
     },
     section: {
       type: String,
@@ -42,7 +52,7 @@ const studentSchema = new mongoose.Schema(
     rollNumber: {
       type: Number,
       required: [true, "Roll number is required"],
-      unique: true,
+      // unique: true,
       min: [1, "Roll number must be a positive integer"],
     },
     religion: {
