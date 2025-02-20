@@ -9,14 +9,14 @@ const studentSchema = new mongoose.Schema(
       minlength: [3, "Full name should be at least 3 characters"],
       maxlength: [50, "Full name should not exceed 50 characters"],
     },
-    className: {
+    classId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: Class,
+      ref: "Class",
       required: [true, "Class Name is required"],
     },
     section: {
       type: String,
-      required: [true, "Section is required"],
+      // required: [true, "Section is required"],
       enum: {
         values: ["A", "B", "C", "D"],
         message: "Section must be either 'A','B','C','D'",
@@ -24,7 +24,7 @@ const studentSchema = new mongoose.Schema(
     },
     academicYear: {
       type: String,
-      required: [true, "Academic Year is required"],
+      // required: [true, "Academic Year is required"],
       trim: true,
     },
     caste: {
