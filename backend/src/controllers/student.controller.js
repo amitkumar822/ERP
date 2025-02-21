@@ -120,8 +120,14 @@ export const addStudent = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, student, "Student admission successful"));
 });
 
-export const getAllStudents = asyncHandler(async (_, res) => {
+export const getAllStudents = asyncHandler(async (req, res) => {
+  // const { page = 1, limit = 100 } = req.query;
+
   const groupedStudents = await Student.aggregate([
+    // Step 1: Sort Students first (Optimized Performance)
+    { $sort: { academicYear: -1, className: 1, section: 1, rollNumber: 1 } },
+
+    // Step 2: Group students efficiently
     {
       $group: {
         _id: {
@@ -129,12 +135,13 @@ export const getAllStudents = asyncHandler(async (_, res) => {
           section: "$section",
           academicYear: "$academicYear",
         },
-        students: { $push: "$$ROOT" },
+        students: { $push: "$$ROOT" }, // Push sorted students
       },
     },
-    {
-      $sort: { "_id.academicYear": -1, "_id.className": 1, "_id.section": 1 },
-    },
+
+    // Step 3: Paginate Groups (Limit the number of groups)
+    // { $skip: (page - 1) * limit },
+    // { $limit: parseInt(limit) },
   ]);
 
   if (!groupedStudents || groupedStudents.length === 0) {

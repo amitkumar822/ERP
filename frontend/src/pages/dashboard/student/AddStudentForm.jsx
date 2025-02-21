@@ -48,6 +48,7 @@ const AddStudentForm = () => {
     motherOccupation: "",
     profileImage: "",
   });
+  
   const [sameAddressChecked, setSameAddressChecked] = useState(false);
   const [permanentAddress, setPermanentAddress] = useState({
     permanentAddress: "",

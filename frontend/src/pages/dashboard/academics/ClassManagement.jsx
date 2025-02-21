@@ -24,7 +24,6 @@ import { sections } from "@/helpers/sections";
 import { toast } from "react-toastify";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import API from "@/api/axiosInstance";
-import { Link } from "react-router";
 
 export default function ClassManagement() {
   // ****************👇Start Class Create and Edit or Update Section👇***********************
@@ -121,7 +120,6 @@ export default function ClassManagement() {
         const { data } = await axios.delete(
           `/api/class/delete/${deleteClassId}`
         );
-        console.log("Class Deleted Time: \n", data);
         toast.success(data?.message || "Successfully Class Deleted!");
         fetchAllClasses();
 

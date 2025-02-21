@@ -146,6 +146,11 @@ const studentSchema = new mongoose.Schema(
           type: String,
           trim: true,
         },
+        permanentAddress: {
+          type: String,
+          required: [true, "Permanent address is required"],
+          trim: true,
+        },
         city: {
           type: String,
           required: [true, "Permanent city is required"],
@@ -165,6 +170,10 @@ const studentSchema = new mongoose.Schema(
       },
       currentAddress: {
         street: {
+          type: String,
+          trim: true,
+        },
+        currentAddress: {
           type: String,
           trim: true,
         },
