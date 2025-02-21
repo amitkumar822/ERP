@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
@@ -120,7 +121,7 @@ export const addStudent = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, student, "Student admission successful"));
 });
 
-export const getAllStudents = asyncHandler(async (req, res) => {
+export const getAllStudents = asyncHandler(async (_, res) => {
   // const { page = 1, limit = 100 } = req.query;
 
   const groupedStudents = await Student.aggregate([
@@ -153,4 +154,19 @@ export const getAllStudents = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(200, groupedStudents, "Students grouped successfully")
     );
+});
+
+export const deleteStudentById = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    throw new ApiError(400, "Invalid student ID");
+  }
+
+  const student = await Student.findByIdAndDelete(studentId);
+  if (!student) {
+    throw new ApiError(404, "Student not found");
+  }
+
+  res.status(200).json(new ApiResponse(200, [], "Student deleted"));
 });

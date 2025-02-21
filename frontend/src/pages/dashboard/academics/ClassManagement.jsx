@@ -114,7 +114,6 @@ export default function ClassManagement() {
   const [isPendingDeleteClass, setIsPendingDeleteClass] = useTransition();
 
   const handleDelete = () => {
-    alert(deleteClassId);
     setIsPendingDeleteClass(async () => {
       try {
         const { data } = await axios.delete(

@@ -28,7 +28,7 @@ const DeleteClassModal = ({
           </p>
         </DialogHeader>
         <DialogFooter className="flex justify-center gap-4 mt-4">
-          <Button variant="outline" onClick={onClose} className="w-full cursor-pointer">
+          <Button variant="outline" disabled={isPending} onClick={onClose} className="w-full cursor-pointer">
             Cancel
           </Button>
           <Button

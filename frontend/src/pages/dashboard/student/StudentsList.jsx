@@ -1,4 +1,4 @@
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useTransition } from "react";
 import {
   Table,
   TableBody,
@@ -7,25 +7,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Eye, Edit, Trash } from "lucide-react";
-import { Link, Outlet } from "react-router";
+import { Link } from "react-router";
 import API from "@/api/axiosInstance";
 import StudentDialog from "@/components/dashboard/student/StudentDialog";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
+import { toast } from "react-toastify";
 
 export default function StudentList() {
+  // **************👇 Start Fetch All Student Details 👇*********************
   const [allStudentsList, setAllStudentsList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
 
   const fetchAllStudentList = async () => {
     try {
@@ -34,8 +29,9 @@ export default function StudentList() {
           "Content-Type": "application/json",
         },
       });
-      console.log("All Students Fetch: \n", data?.data);
-      setAllStudentsList(data?.data);
+
+      setAllStudentsList(data?.data || []);
+      setFilteredList(data?.data || []);
     } catch (error) {
       console.error("Error fetching all students: ", error);
     }
@@ -44,10 +40,40 @@ export default function StudentList() {
   useEffect(() => {
     fetchAllStudentList();
   }, []);
+  // **************👆 End Fetch All Student Details 👆***********************
 
+  //~ ****************👇 Start Search Functionality 👇***********************
   const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredList(allStudentsList);
+      return;
+    }
 
-  const filteredStudents = {};
+    const filtered = allStudentsList
+      .map((group) => {
+        const filteredStudents = group.students.filter((student) => {
+          const query = searchQuery.toLowerCase().trim();
+          return (
+            student.fullName.toLowerCase().includes(query) ||
+            student.fatherName.toLowerCase().includes(query) ||
+            student.fatherNumber.includes(query) ||
+            String(student.rollNumber).includes(query)
+          );
+        });
+
+        // Keep the group only if it has matching students
+        if (filteredStudents.length > 0) {
+          return { ...group, students: filteredStudents };
+        }
+        return null; // Remove groups with no matching students
+      })
+      .filter(Boolean); // Remove null values (empty class groups)
+    console.log("filtered", filtered);
+
+    setFilteredList(filtered);
+  }, [searchQuery, allStudentsList]);
+  //~ ****************👆 End Search Functionality 👆***********************
 
   // ****************👇Start Open Dilog Box View Student Details 👇***********************
   const [viewStudentDetailsDialog, setViewStudentDetailsDialog] =
@@ -57,9 +83,30 @@ export default function StudentList() {
   const toggleViewStudentDetailsDialog = (studentDetails) => {
     setViewStudentDetailsDialog((prev) => !prev);
     setStudentDetails(studentDetails);
-    console.log("Data changed: ", studentDetails);
   };
-  // ****************👇End Open Dilog Box View Student Details 👇*************************
+  // ****************👆 End Open Dilog Box View Student Details 👆*************************
+
+  //& ****************👇Start Delete Student 👇***********************
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteStudentId, setDeleteStudentId] = useState("");
+  const [isPendingDeleteStudent, setIsPendingDeleteStudent] = useTransition();
+
+  const handleDelete = () => {
+    setIsPendingDeleteStudent(async () => {
+      try {
+        const { data } = await API.delete(
+          `/students/delete/${deleteStudentId}`
+        );
+        toast.success(data?.message || "Successfully Student Deleted!");
+        fetchAllStudentList();
+        setDeleteModalOpen(false);
+      } catch (error) {
+        toast.error(error?.response?.data.message || "faild to delete Student");
+        console.error("Error Student Deleted Time: \n", error);
+      }
+    });
+  };
+  //& ****************👆 End Delete Student 👆***********************
 
   return (
     <div className="p-6 max-w-8xl mx-auto">
@@ -79,7 +126,7 @@ export default function StudentList() {
       </div>
 
       <Card className="p-4">
-        {allStudentsList?.map((classGroup, index) => (
+        {filteredList?.map((classGroup, index) => (
           <div key={index} className="mb-6 border p-4 rounded-lg shadow-lg">
             {/* Class Header */}
             <h2 className="text-lg font-bold">
@@ -87,7 +134,7 @@ export default function StudentList() {
               {classGroup._id.academicYear})
             </h2>
             <h1 className="text-lg text-green-600 font-semibold">
-              Total Students: ({classGroup?.students.length})
+              Total Students: ({classGroup?.students?.length})
             </h1>
             <Table>
               <TableHeader>
@@ -117,7 +164,20 @@ export default function StudentList() {
                         alt="Student"
                       />
                     </TableCell>
-                    <TableCell>{student.fullName}</TableCell>
+                    {/* <TableCell>{student.fullName}</TableCell> */}
+                    <TableCell
+                      className={`${
+                        searchQuery &&
+                        student.fullName
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase())
+                          ? "bg-yellow-200"
+                          : ""
+                      } rounded-lg`}
+                    >
+                      {student.fullName}
+                    </TableCell>
+
                     <TableCell>{student.rollNumber}</TableCell>
                     <TableCell>
                       {student.fatherName} <br /> {student.motherName}
@@ -141,17 +201,23 @@ export default function StudentList() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        className="cursor-pointer"
                         onClick={() => toggleViewStudentDetailsDialog(student)}
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm"
+                        className="cursor-pointer">
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-500"
+                        className="text-red-500 cursor-pointer"
+                        onClick={() => {
+                          setDeleteModalOpen(true),
+                            setDeleteStudentId(student?._id);
+                        }}
                       >
                         <Trash className="w-4 h-4" />
                       </Button>
@@ -173,14 +239,14 @@ export default function StudentList() {
         />
       </div>
 
-       {/* Class Delete Model */}
-       {/* <DeleteClassModal
+      {/* Class Delete Model */}
+      <DeleteClassModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDelete}
         message={"Student"}
-        isPending={isPendingDeleteClass}
-      /> */}
+        isPending={isPendingDeleteStudent}
+      />
     </div>
   );
 }
