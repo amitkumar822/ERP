@@ -5,6 +5,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Class from "../models/class.model.js";
 import Student from "../models/student.model.js";
 
+//^ Add a new student to the database
 export const addStudent = asyncHandler(async (req, res) => {
   const {
     fullName,
@@ -121,6 +122,7 @@ export const addStudent = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, student, "Student admission successful"));
 });
 
+//^ Get all students in a specific class
 export const getAllStudents = asyncHandler(async (_, res) => {
   // const { page = 1, limit = 100 } = req.query;
 
@@ -156,6 +158,7 @@ export const getAllStudents = asyncHandler(async (_, res) => {
     );
 });
 
+//^ Get student details by ID
 export const deleteStudentById = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
 
