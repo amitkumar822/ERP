@@ -4,40 +4,54 @@ const attendanceSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
-      required: [true, "Attendance date is required"],
-      index: true, // Helps to efficiently query by date
+      required: true,
+      index: true,
     },
     classId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
-      required: [true, "Class ID is required"],
-      index: true, // Optimize queries by class
+      required: true,
+      index: true,
     },
-    records: [
-      {
-        studentId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Student",
-          required: [true, "Student ID is required"],
-        },
+    section: {
+      type: String,
+      required: true,
+      index: true, // Helps with filtering
+    },
+    academicYear: {
+      type: String,
+      required: true,
+      index: true, // Helps with year-based queries
+    },
+    teacherId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Teacher",
+    },
+    records: {
+      type: Map,
+      of: {
         status: {
-          type: String,
-          enum: ["Present", "Absent", "Late", "Excused"],
-          required: [true, "Attendance status is required"],
+          type: Number,
+          enum: [1, 2, 3, 4], // 1=Present, 2=Absent, 3=Late, 4=Excused
+          required: true,
         },
         remarks: {
           type: String,
           trim: true,
-          max: [250, "Remarks should not exceed 250 characters"],
+          maxlength: 250,
         },
       },
-    ],
+    },
+    isUpdated: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
-// Ensure compound index for optimal query performance
-attendanceSchema.index({ classId: 1, date: 1 });
+// Compound index for faster lookups
+attendanceSchema.index({ classId: 1, section: 1, academicYear: 1, date: 1 });
 
 const Attendance = mongoose.model("Attendance", attendanceSchema);
 
@@ -45,63 +59,58 @@ export default Attendance;
 
 
 
-
-
-// import mongoose from 'mongoose';
+// import mongoose from "mongoose";
 
 // const attendanceSchema = new mongoose.Schema(
 //   {
-//     studentsId: [
-//       {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: "Student",
-//       },
-//     ],
+//     date: {
+//       type: Date,
+//       required: [true, "Attendance date is required"],
+//       index: true,
+//     },
 //     classId: {
 //       type: mongoose.Schema.Types.ObjectId,
-//       ref: 'Class',
+//       ref: "Class",
 //       required: [true, "Class ID is required"],
+//       index: true,
 //     },
-//     month: {
-//       type: Number,
-//       required: [true, "Month is required"],
-//       min: [1, "Month must be between 1 and 12"],
-//       max: [12, "Month must be between 1 and 12"],
+//     teacherId: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "Teacher",
+//       // required: true,
 //     },
-//     day: {
-//       type: Number,
-//       required: [true, "Day is required"],
-//       min: [1, "Day must be between 1 and 31"],
-//       max: [31, "Day must be between 1 and 31"],
-//     },
-//     year: {
-//       type: Number,
-//       required: [true, "Year is required"],
-//       min: [1900, "Year must be realistic"],
-//       max: [3000, "Year must be realistic"],
-//     },
-//     status: {
+//     records: [
+//       {
+//         studentId: {
+//           type: mongoose.Schema.Types.ObjectId,
+//           ref: "Student",
+//           required: [true, "Student ID is required"],
+//           index: true, // Optimizes student-specific queries
+//         },
+//         status: {
+//           type: Number,
+//           enum: [1, 2, 3, 4], // 1=Present, 2=Absent, 3=Late, 4=Excused
+//           required: [true, "Attendance status is required"],
+//         },
+//         remarks: {
+//           type: String,
+//           trim: true,
+//           maxlength: [250, "Remarks should not exceed 250 characters"],
+//         },
+//       },
+//     ],
+//     isUpdated: {
 //       type: Boolean,
-//       required: [true, "Attendance status is required"],
-//       default: false,
+//       default: false, // Tracks if attendance was edited
 //     },
-//     // status: {
-//     //   type: String,
-//     //   enum: {
-//     //     values: ['Present', 'Absent', 'Late', 'Excused'],
-//     //     message: "Status must be either 'Present', 'Absent', 'Late', or 'Excused'",
-//     //   },
-//     //   required: [true, "Attendance status is required"],
-//     // },
-//     // remarks: {
-//     //   type: String,
-//     //   trim: true,
-//     //   maxlength: [250, "Remarks should not exceed 250 characters"],
-//     // },
 //   },
 //   { timestamps: true }
 // );
 
-// const Attendance = mongoose.model('Attendance', attendanceSchema);
+// // Indexing for faster lookups
+// attendanceSchema.index({ classId: 1, date: 1 });
+// // attendanceSchema.index({ "records.studentId": 1 });
+
+// const Attendance = mongoose.model("Attendance", attendanceSchema);
 
 // export default Attendance;

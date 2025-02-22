@@ -27,7 +27,7 @@ import ThemeContext from "@/context/Theme/ThemeContext";
 const Sidebar = () => {
   const { themeColorProvider } = useContext(ThemeContext);
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [activeMenu, setActiveMenu] = useState(null);
 
   // Toggle sidebar collapse

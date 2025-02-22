@@ -1,12 +1,23 @@
-import { useState, useMemo } from "react"; 
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { Trash2, Edit } from "lucide-react";
+import { classNames } from "@/helpers/classNames";
+import { sections } from "@/helpers/sections";
 
 export default function AttendancePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [selectedClass, setSelectedClass] = useState("Class 1");
   const [selectedSection, setSelectedSection] = useState("A");
 
@@ -33,7 +44,13 @@ export default function AttendancePage() {
     setAttendance((prev) => ({
       ...prev,
       [currentClassKey]: prev[currentClassKey].map((student) =>
-        student.id === studentId ? { ...student, status, remark: status === "absent" ? student.remark : "" } : student
+        student.id === studentId
+          ? {
+              ...student,
+              status,
+              remark: status === "absent" ? student.remark : "",
+            }
+          : student
       ),
     }));
   };
@@ -50,13 +67,15 @@ export default function AttendancePage() {
   const handleDeleteStudent = () => {
     setAttendance((prev) => ({
       ...prev,
-      [currentClassKey]: prev[currentClassKey].filter((student) => student.id !== deleteStudentId),
+      [currentClassKey]: prev[currentClassKey].filter(
+        (student) => student.id !== deleteStudentId
+      ),
     }));
     setDeleteStudentId(null);
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
       {/* Search & Filters Section */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b pb-4">
         <h1 className="text-2xl font-bold">Daily Attendance</h1>
@@ -77,10 +96,13 @@ export default function AttendancePage() {
           <select
             value={selectedClass}
             onChange={(e) => setSelectedClass(e.target.value)}
-            className="border rounded p-2 w-full"
+            className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
           >
-            <option value="Class 1">Class 1</option>
-            <option value="Class 2">Class 2</option>
+            {classNames.map((cls, index) => (
+              <option value={cls} key={index}>
+                {cls}
+              </option>
+            ))}
           </select>
         </div>
         <div>
@@ -88,10 +110,17 @@ export default function AttendancePage() {
           <select
             value={selectedSection}
             onChange={(e) => setSelectedSection(e.target.value)}
-            className="border rounded p-2 w-full"
+            className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
           >
-            <option value="A">A</option>
-            <option value="B">B</option>
+            {
+              sections.map((section, index) => (
+                <option value={section} key={index}>
+                  {section}
+                </option>
+              ))
+            }
+            {/* <option value="A">A</option>
+            <option value="B">B</option> */}
           </select>
         </div>
         <div>
@@ -101,14 +130,15 @@ export default function AttendancePage() {
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
             required
-            className="w-full"
+            className="w-full dark:bg-gray-800 dark:text-white cursor-pointer"
           />
         </div>
       </div>
 
       {/* Selected Info */}
-      <div className="mb-4 p-3 bg-gray-100 rounded-md text-sm">
-        <strong>Current Selection:</strong> {selectedClass} - {selectedSection} | {selectedDate}
+      <div className="mb-4 p-3 bg-gray-100 rounded-md text-sm dark:text-white dark:bg-gray-900">
+        <strong>Current Selection:</strong> {selectedClass} - {selectedSection}{" "}
+        | {selectedDate}
       </div>
 
       {/* Attendance Table */}
@@ -130,7 +160,9 @@ export default function AttendancePage() {
                   <select
                     className="border rounded p-1"
                     value={student.status}
-                    onChange={(e) => handleStatusChange(student.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(student.id, e.target.value)
+                    }
                     required
                   >
                     <option value="present">Present</option>
@@ -142,7 +174,9 @@ export default function AttendancePage() {
                   <Input
                     placeholder="Enter remark"
                     value={student.remark}
-                    onChange={(e) => handleRemarkChange(student.id, e.target.value)}
+                    onChange={(e) =>
+                      handleRemarkChange(student.id, e.target.value)
+                    }
                     required
                     className="w-48"
                   />
@@ -151,7 +185,11 @@ export default function AttendancePage() {
                   <Button size="sm" variant="outline">
                     <Edit className="w-4 h-4" />
                   </Button>
-                  <Button size="sm" variant="destructive" onClick={() => setDeleteStudentId(student.id)}>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => setDeleteStudentId(student.id)}
+                  >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </TableCell>
@@ -164,20 +202,6 @@ export default function AttendancePage() {
       <div className="mt-6 flex justify-end">
         <Button className="w-full md:w-auto">Submit Attendance</Button>
       </div>
-
-      {/* Delete Confirmation Modal */}
-      {deleteStudentId && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
-            <p>Are you sure you want to delete this student?</p>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="outline" onClick={() => setDeleteStudentId(null)}>Cancel</Button>
-              <Button variant="destructive" onClick={handleDeleteStudent}>Confirm Delete</Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
