@@ -7,6 +7,7 @@ import {
   deleteClass,
   getAllClasses,
   getClassById,
+  getClassesByAcademicYearSection,
   removeStudentFromClassWise,
   removeSubjectsFromClassWise,
   removeTimeSlotSameDaysWise,
@@ -21,7 +22,10 @@ router.post("/create", createClass);
 router.put("/update/:classId", updateClass);
 router.delete("/delete/:classId", deleteClass);
 router.get("/get-all-class", getAllClasses);
+router.get("/get-class-academic-section/:className/:section/:academicYear", getClassesByAcademicYearSection);
 
+
+//^ Below routes currently not used
 router.get("/get-class-byid/:classId", getClassById);
 router.put("/add-student/:classId", addStudentFromClassWise);
 router.delete("/remove-student/:classId", removeStudentFromClassWise);

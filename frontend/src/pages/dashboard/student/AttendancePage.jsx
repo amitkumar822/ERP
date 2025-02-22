@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,66 +12,79 @@ import {
 import { Trash2, Edit } from "lucide-react";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
+import { compareAsc, format } from "date-fns";
+import { useGetClassBySectionAcademicYearClassNameQuery } from "@/redux/features/api/classesApi";
 
 export default function AttendancePage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-  const [selectedClass, setSelectedClass] = useState("Class 1");
-  const [selectedSection, setSelectedSection] = useState("A");
-
-  const [attendance, setAttendance] = useState({
-    "Class 1-A": [
-      { id: "1", name: "John Doe", status: "present", remark: "" },
-      { id: "2", name: "Jane Smith", status: "absent", remark: "Sick" },
-    ],
+  
+  //^ ***************** 👇 Start Fetch Student Details 👇**************************
+  const [fetchFormData, setFormFetchData] = useState({
+    className: "",
+    section: "",
+    academicYear: "",
   });
 
-  const [deleteStudentId, setDeleteStudentId] = useState(null);
+  const handleChange = (e) => {
+    setFormFetchData({ ...fetchFormData, [e.target.name]: e.target.value });
+  };
 
-  const currentClassKey = `${selectedClass}-${selectedSection}`;
-  const students = attendance[currentClassKey] || [];
+  const [getAllStudentClass, setGetAllStudentClass] = useState([]);
 
-  // Optimized Filtering (Memoized)
-  const filteredStudents = useMemo(() => {
-    return students.filter((student) =>
-      student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const { data: allClasses, error } =
+    useGetClassBySectionAcademicYearClassNameQuery(
+      {
+        academicYear: fetchFormData.academicYear,
+        className: fetchFormData.className,
+        section: fetchFormData.section,
+      },
+      {
+        skip: !(
+          fetchFormData.className &&
+          fetchFormData.section &&
+          fetchFormData.academicYear
+        ),
+      }
     );
-  }, [students, searchQuery]);
 
-  const handleStatusChange = (studentId, status) => {
-    setAttendance((prev) => ({
-      ...prev,
-      [currentClassKey]: prev[currentClassKey].map((student) =>
-        student.id === studentId
-          ? {
-              ...student,
-              status,
-              remark: status === "absent" ? student.remark : "",
-            }
-          : student
-      ),
-    }));
+  useEffect(() => {
+    if (error) {
+      setGetAllStudentClass([]);
+    } else if (allClasses?.data) {
+      const classData = allClasses.data[0] || { studentsId: [] };
+      setGetAllStudentClass(classData);
+
+      // Initialize attendanceData with all students marked "Present"
+      const initialAttendance = classData.studentsId.map((student) => ({
+        studentId: student._id,
+        status: "1", // Default: Present
+        remarks: "",
+      }));
+      setAttendanceRecord(initialAttendance);
+    }
+  }, [allClasses, error]);
+  //^ ***************** 👆 End Fetch Student Details 👆**************************
+  const [attendanceRecord, setAttendanceRecord] = useState([
+    {
+      studentId: "",
+      status: "",
+      remarks: "",
+    },
+  ]);
+  let currentDates = format(new Date(), "yyyy-MM-dd");
+  const [selectedDate, setSelectedDate] = useState(currentDates);
+
+  const handleChangeAttendanceRecord = (studentId, key, value) => {
+    setAttendanceRecord((prev) =>
+      prev.map((record) =>
+        record.studentId === studentId ? { ...record, [key]: value } : record
+      )
+    );
   };
 
-  const handleRemarkChange = (studentId, remark) => {
-    setAttendance((prev) => ({
-      ...prev,
-      [currentClassKey]: prev[currentClassKey].map((student) =>
-        student.id === studentId ? { ...student, remark } : student
-      ),
-    }));
-  };
-
-  const handleDeleteStudent = () => {
-    setAttendance((prev) => ({
-      ...prev,
-      [currentClassKey]: prev[currentClassKey].filter(
-        (student) => student.id !== deleteStudentId
-      ),
-    }));
-    setDeleteStudentId(null);
+  // Save attendance function (to send to API)
+  const handleSaveAttendance = () => {
+    console.log("Final Attendance Data:", attendanceRecord);
+    // API call to save attendance here
   };
 
   return (
@@ -82,22 +95,24 @@ export default function AttendancePage() {
         <Input
           type="text"
           placeholder="Search students..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          // value={searchQuery}
+          // onChange={(e) => setSearchQuery(e.target.value)}
           required
           className="w-full md:w-64"
         />
       </div>
 
       {/* Class & Section Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label className="block font-medium mb-1">Select Class:</label>
           <select
-            value={selectedClass}
-            onChange={(e) => setSelectedClass(e.target.value)}
+            name="className"
+            value={fetchFormData.className}
+            onChange={handleChange}
             className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
           >
+            <option value="">Select class</option>
             {classNames.map((cls, index) => (
               <option value={cls} key={index}>
                 {cls}
@@ -108,19 +123,32 @@ export default function AttendancePage() {
         <div>
           <label className="block font-medium mb-1">Select Section:</label>
           <select
-            value={selectedSection}
-            onChange={(e) => setSelectedSection(e.target.value)}
+            name="section"
+            value={fetchFormData.section}
+            onChange={handleChange}
             className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
           >
-            {
-              sections.map((section, index) => (
-                <option value={section} key={index}>
-                  {section}
-                </option>
-              ))
-            }
-            {/* <option value="A">A</option>
-            <option value="B">B</option> */}
+            <option value="">Select section</option>
+            {sections.map((section, index) => (
+              <option value={section} key={index}>
+                {section}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">Academic Year</label>
+          <select
+            name="academicYear"
+            value={fetchFormData.academicYear}
+            onChange={handleChange}
+            className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
+          >
+            <option value="">Select year</option>
+            <option value="2024-2025">2024-2025</option>
+            <option value="2025-2026">2025-2026</option>
+            <option value="2026-2027">2026-2027</option>
           </select>
         </div>
         <div>
@@ -136,9 +164,34 @@ export default function AttendancePage() {
       </div>
 
       {/* Selected Info */}
-      <div className="mb-4 p-3 bg-gray-100 rounded-md text-sm dark:text-white dark:bg-gray-900">
-        <strong>Current Selection:</strong> {selectedClass} - {selectedSection}{" "}
-        | {selectedDate}
+      <div className="mb-4 p-3 bg-yellow-100 rounded-md text-sm dark:text-white dark:bg-gray-900">
+        <strong>Current Selection: </strong>
+        <span className={error?.data?.message === undefined ? "" : "hidden"}>
+          {getAllStudentClass?.className} - {getAllStudentClass?.sections} |{" "}
+          {getAllStudentClass?.academicYear}
+        </span>
+        <span
+          className={
+            error?.data?.message === undefined
+              ? "hidden"
+              : "text-red-700 uppercase bg-red-200 p-3"
+          }
+        >
+          {error?.data?.message} With this ({fetchFormData?.className} -{" "}
+          {fetchFormData?.section} | {fetchFormData?.academicYear})
+        </span>
+        <span
+          className={
+            fetchFormData.className &&
+            fetchFormData.section &&
+            fetchFormData.academicYear
+              ? "hidden"
+              : "bg-blue-200 p-3 text-black rounded-md"
+          }
+        >
+          Please Slelect upper👆 Class, Section, and Academic Year get all
+          STUDENT
+        </span>
       </div>
 
       {/* Attendance Table */}
@@ -146,42 +199,75 @@ export default function AttendancePage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[200px]">Roll No.</TableHead>
               <TableHead className="w-[200px]">Student Name</TableHead>
+              <TableHead className="w-[200px]">Father Mobile</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="md:table-cell">Remark</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {/* <TableHead className="text-right">Actions</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredStudents.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell className="font-medium">{student.name}</TableCell>
+            {getAllStudentClass?.studentsId?.map((student, index) => (
+              <TableRow key={index + student?.fullName}>
+                <TableCell className="font-medium">
+                  {student.rollNumber}
+                </TableCell>
+                <TableCell className="font-medium">
+                  {student.fullName}
+                </TableCell>
+                <TableCell className="font-medium">
+                  <a
+                    className="text-blue-600 hover:text-blue-800 hover:underline duration-300"
+                    href={`tel: ${student.fatherNumber}`}
+                  >
+                    {student.fatherNumber}
+                  </a>
+                </TableCell>
                 <TableCell>
                   <select
-                    className="border rounded p-1"
-                    value={student.status}
+                    className="border rounded p-1 dark:bg-gray-900 dark:text-white"
+                    value={
+                      attendanceRecord.find(
+                        (record) => record.studentId === student._id
+                      )?.status || "1"
+                    }
                     onChange={(e) =>
-                      handleStatusChange(student.id, e.target.value)
+                      handleChangeAttendanceRecord(
+                        student._id,
+                        "status",
+                        e.target.value
+                      )
                     }
                     required
                   >
-                    <option value="present">Present</option>
-                    <option value="absent">Absent</option>
-                    <option value="late">Late</option>
+                    <option value="1">Present</option>
+                    <option value="2">Absent</option>
+                    <option value="3">Late</option>
                   </select>
                 </TableCell>
                 <TableCell className="md:table-cell">
                   <Input
                     placeholder="Enter remark"
-                    value={student.remark}
+                    maxLength={50}
+                    type="text"
+                    value={
+                      attendanceRecord.find(
+                        (record) => record.studentId === student._id
+                      )?.remarks || ""
+                    }
                     onChange={(e) =>
-                      handleRemarkChange(student.id, e.target.value)
+                      handleChangeAttendanceRecord(
+                        student._id,
+                        "remarks",
+                        e.target.value
+                      )
                     }
                     required
                     className="w-48"
                   />
                 </TableCell>
-                <TableCell className="text-right flex gap-2 justify-end">
+                {/* <TableCell className="text-right flex gap-2 justify-end">
                   <Button size="sm" variant="outline">
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -192,7 +278,7 @@ export default function AttendancePage() {
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
@@ -200,7 +286,9 @@ export default function AttendancePage() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button className="w-full md:w-auto">Submit Attendance</Button>
+        <Button className="w-full md:w-auto" onClick={handleSaveAttendance}>
+          Submit Attendance
+        </Button>
       </div>
     </div>
   );

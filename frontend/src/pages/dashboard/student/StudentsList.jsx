@@ -16,30 +16,22 @@ import API from "@/api/axiosInstance";
 import StudentDialog from "@/components/dashboard/student/StudentDialog";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import { toast } from "react-toastify";
+import { useGetStudentListQuery } from "@/redux/features/api/studentApi";
 
 export default function StudentList() {
   // **************👇 Start Fetch All Student Details 👇*********************
-  const [allStudentsList, setAllStudentsList] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
+  const { data } = useGetStudentListQuery();
 
-  const fetchAllStudentList = async () => {
-    try {
-      const { data } = await API.get("/students/get-all-students", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      setAllStudentsList(data?.data || []);
-      setFilteredList(data?.data || []);
-    } catch (error) {
-      console.error("Error fetching all students: ", error);
-    }
-  };
+  const [allStudentsList, setAllStudentsList] = useState(data?.data || []);
+  const [filteredList, setFilteredList] = useState(data?.data || []);
 
   useEffect(() => {
-    fetchAllStudentList();
-  }, []);
+    if (data?.data) {
+      setAllStudentsList(data.data);
+      setFilteredList(data.data);
+    }
+  }, [data]);
+
   // **************👆 End Fetch All Student Details 👆***********************
 
   //~ ****************👇 Start Search Functionality 👇***********************
@@ -206,8 +198,11 @@ export default function StudentList() {
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" size="sm"
-                        className="cursor-pointer">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="cursor-pointer"
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button

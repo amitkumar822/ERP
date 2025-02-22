@@ -23,9 +23,9 @@ export const markAttendance = asyncHandler(async (req, res) => {
   attendanceDate.setUTCHours(0, 0, 0, 0);
 
   // ✅ Remove duplicate studentId entries
-  const uniqueRecords = Array.from(
-    new Map(records.map((record) => [record.studentId, record])).values()
-  );
+  // const uniqueRecords = Array.from(
+  //   new Map(records.map((record) => [record.studentId, record])).values()
+  // );
 
   // ✅ Use upsert to either create or update the attendance document for the class and date
   const attendance = await Attendance.findOneAndUpdate(
@@ -35,7 +35,8 @@ export const markAttendance = asyncHandler(async (req, res) => {
         classId,
         date: attendanceDate,
         teacherId,
-        records: uniqueRecords,
+        records,
+        // records: uniqueRecords,
       },
       $setOnInsert: { createdAt: new Date() }, // Set only for new documents
     },

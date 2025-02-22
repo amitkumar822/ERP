@@ -129,6 +129,7 @@ export const getAllClasses = asyncHandler(async (_, res) => {
     .populate({
       path: "studentsId",
       select: "fullName fatherName motherName rollNumber dob",
+      options: { sort: { rollNumber: 1 } },
     })
     .lean();
 
@@ -140,6 +141,36 @@ export const getAllClasses = asyncHandler(async (_, res) => {
     new ApiResponse(200, classes, "All classes fetched successfully")
   );
 });
+
+//^ Get classes by academic year, className and section used to fetch classes by academic year, className and section from the database
+export const getClassesByAcademicYearSection = asyncHandler(async (req, res) => {
+  const { academicYear, className, section } = req.params;
+  console.log(academicYear, className, section);
+  
+  if (!academicYear ||!className ||!section) {
+    throw new ApiError(400, "Please provide all required fields");
+  }
+
+  const classes = await Class.find({ academicYear, className, sections: section })
+    .populate({
+      path: "studentsId",
+      select: "fullName rollNumber fatherNumber",
+      options: { sort: { rollNumber: 1 } },
+    })
+    .lean();
+    
+  if (!classes || classes.length === 0) {
+    throw new ApiError(404, "No classes found");
+  }
+  return res.json(
+    new ApiResponse(200, classes, "Classes fetched successfully")
+  );
+});
+
+
+
+
+
 
 export const getClassById = asyncHandler(async (req, res) => {
   const { classId } = req.params;
