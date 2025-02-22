@@ -27,9 +27,14 @@ const attendanceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Teacher",
     },
-    records: {
-      type: Map,
-      of: {
+    records: [
+      {
+        studentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+          required: true,
+          // index: true,
+        },
         status: {
           type: Number,
           enum: [1, 2, 3, 4], // 1=Present, 2=Absent, 3=Late, 4=Excused
@@ -41,11 +46,7 @@ const attendanceSchema = new mongoose.Schema(
           maxlength: 250,
         },
       },
-    },
-    isUpdated: {
-      type: Boolean,
-      default: false,
-    },
+    ],
   },
   { timestamps: true }
 );
@@ -56,8 +57,6 @@ attendanceSchema.index({ classId: 1, section: 1, academicYear: 1, date: 1 });
 const Attendance = mongoose.model("Attendance", attendanceSchema);
 
 export default Attendance;
-
-
 
 // import mongoose from "mongoose";
 
