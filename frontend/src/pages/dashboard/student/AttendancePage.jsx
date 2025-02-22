@@ -14,9 +14,18 @@ import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import { compareAsc, format } from "date-fns";
 import { useGetClassBySectionAcademicYearClassNameQuery } from "@/redux/features/api/classesApi";
+import { useMarkAttendanceMutation } from "@/redux/features/api/attendanceApi";
 
 export default function AttendancePage() {
-  
+  //~ attendance records
+  const [attendanceRecord, setAttendanceRecord] = useState([
+    {
+      studentId: "",
+      status: "",
+      remarks: "",
+    },
+  ]);
+
   //^ ***************** 👇 Start Fetch Student Details 👇**************************
   const [fetchFormData, setFormFetchData] = useState({
     className: "",
@@ -63,13 +72,9 @@ export default function AttendancePage() {
     }
   }, [allClasses, error]);
   //^ ***************** 👆 End Fetch Student Details 👆**************************
-  const [attendanceRecord, setAttendanceRecord] = useState([
-    {
-      studentId: "",
-      status: "",
-      remarks: "",
-    },
-  ]);
+
+  //& ************** �� Start Make Attendance �� ***************
+  const [markAttendance, { isLoading, isError }] = useMarkAttendanceMutation();
   let currentDates = format(new Date(), "yyyy-MM-dd");
   const [selectedDate, setSelectedDate] = useState(currentDates);
 
@@ -82,10 +87,22 @@ export default function AttendancePage() {
   };
 
   // Save attendance function (to send to API)
-  const handleSaveAttendance = () => {
-    console.log("Final Attendance Data:", attendanceRecord);
+  const handleSaveAttendance = async () => {
+    const { data } = await markAttendance({
+      date: selectedDate,
+      classId: getAllStudentClass?._id,
+      // teacherId: "", // Replace with actual teacher ID
+      records: attendanceRecord,
+    });
+    if (data) {
+      alert("Attendance saved successfully!");
+    } else if (isError) {
+      alert("Error saving attendance!");
+    }
+    console.log("Final Attendance Data:", data);
     // API call to save attendance here
   };
+  //& ************** �� End Make Attendance �� ***************
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto">

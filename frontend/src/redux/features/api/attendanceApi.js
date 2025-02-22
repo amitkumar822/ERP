@@ -9,10 +9,14 @@ export const attendanceApi = createApi({
         credentials: "include" 
     }),
     endpoints: (builder) => ({
-    getAttendance: builder.query({
-        query: () => "/attendance",
+        markAttendance: builder.mutation({
+            query: ({ date, classId, records }) => ({
+                url: "/attendance",
+                method: "POST",
+                body: { date, classId, records },
+            }),
         }),
     }),
 });
 
-export const { useGetAttendanceQuery } = attendanceApi;
+export const { useMarkAttendanceMutation } = attendanceApi;
