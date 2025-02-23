@@ -16,14 +16,18 @@ export const attendanceApi = createApi({
                 body: { date, classId, records },
             }),
         }),
-        // getAttendanceDayMonthWise: builder.mutation({
-        //     query: ({ date }) => ({
-        //         url: `/get-attendance-month-date`,
-        //         method: "POST",
-
-        //     }),
-        // })
+        getAttendanceDayMonthWise: builder.mutation({
+            query: ({ date, academicYear, className, section }) => ({
+                url: `/get-attendance-month-date`,
+                method: "POST",
+                body: { date, academicYear, className, section },
+            }),
+            keepUnusedDataFor: 3600, // Keeps data in memory for 1 hour
+        })
     }),
 });
 
-export const { useMarkAttendanceMutation } = attendanceApi;
+export const { 
+    useMarkAttendanceMutation, 
+    useGetAttendanceDayMonthWiseMutation 
+} = attendanceApi;

@@ -23,11 +23,6 @@ export const markAttendance = asyncHandler(async (req, res) => {
   const attendanceDate = new Date(date);
   attendanceDate.setUTCHours(0, 0, 0, 0);
 
-  // ✅ Remove duplicate studentId entries
-  // const uniqueRecords = Array.from(
-  //   new Map(records.map((record) => [record.studentId, record])).values()
-  // );
-
   // ✅ Use upsert to either create or update the attendance document for the class and date
   const attendance = await Attendance.findOneAndUpdate(
     { classId, date: attendanceDate },
@@ -37,7 +32,6 @@ export const markAttendance = asyncHandler(async (req, res) => {
         date: attendanceDate,
         teacherId,
         records,
-        // records: uniqueRecords,
       },
       $setOnInsert: { createdAt: new Date() }, // Set only for new documents
     },
@@ -73,8 +67,6 @@ export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
     throw new ApiError(404, "No classes found");
   }
 
-  console.log("Class: ", classes[0]._id);
-
   const attendanceDate = new Date(date);
   attendanceDate.setUTCHours(0, 0, 0, 0);
 
@@ -82,8 +74,8 @@ export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
     classId: classes[0]._id,
     date: attendanceDate,
   })
-    .select("-__v -createdAt -updatedAt")
-    .lean(); // Improves performance
+    .select("-__v -createdAt -updatedAt").populate("records.studentId", "fullName rollNumber fatherNumber")
+    .lean(); // Improves performance records
 
   if (!attendance) {
     throw new ApiError(404, "No attendance found");
@@ -91,7 +83,9 @@ export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, attendance, "Attendance retrieved successfully"));
+    .json(
+      new ApiResponse(200, attendance, "Attendance retrieved successfully")
+    );
 });
 
 /**

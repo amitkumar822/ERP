@@ -9,7 +9,7 @@ const router = Router();
 
 // Route definition
 router.post("/attendance", markAttendance);
-router.get("/get-attendance-month-date", getAttendanceByClassMonthDate);
+router.post("/get-attendance-month-date", getAttendanceByClassMonthDate);
 router.delete("/delete", deleteAttendance);
 
 export default router;

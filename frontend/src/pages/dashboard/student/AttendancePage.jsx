@@ -59,7 +59,7 @@ export default function AttendancePage() {
       // Initialize attendanceData with all students marked "Present"
       const initialAttendance = classData.studentsId.map((student) => ({
         studentId: student._id,
-        status: "1", // Default: Present
+        status: "Present",
         remarks: "",
       }));
       setAttendanceRecord(initialAttendance);
@@ -187,7 +187,7 @@ export default function AttendancePage() {
                     value={
                       attendanceRecord.find(
                         (record) => record.studentId === student._id
-                      )?.status || "1"
+                      )?.status || "Present"
                     }
                     onChange={(e) =>
                       handleChangeAttendanceRecord(
@@ -198,10 +198,10 @@ export default function AttendancePage() {
                     }
                     required
                   >
-                    <option value="1">Present</option>
-                    <option value="2">Absent</option>
-                    <option value="3">Late</option>
-                    <option value="4">Excused</option>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                    <option value="Late">Late</option>
+                    <option value="Excused">Excused</option>
                   </select>
                 </TableCell>
                 <TableCell className="md:table-cell">
@@ -225,18 +225,6 @@ export default function AttendancePage() {
                     className="w-48"
                   />
                 </TableCell>
-                {/* <TableCell className="text-right flex gap-2 justify-end">
-                  <Button size="sm" variant="outline">
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => setDeleteStudentId(student.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

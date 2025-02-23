@@ -10,14 +10,6 @@ const ClassSectionAcademicYear = ({
   fetchFormData,
   setFormFetchData,
 }) => {
-  //   let currentDates = format(new Date(), "yyyy-MM-dd");
-  //   const [selectedDate, setSelectedDate] = useState(currentDates);
-
-  //   const [fetchFormData, setFormFetchData] = useState({
-  //     className: "",
-  //     section: "",
-  //     academicYear: "",
-  //   });
 
   const handleChange = (e) => {
     setFormFetchData({ ...fetchFormData, [e.target.name]: e.target.value });
@@ -25,7 +17,7 @@ const ClassSectionAcademicYear = ({
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label className="block font-medium mb-1">Select Class:</label>
           <select

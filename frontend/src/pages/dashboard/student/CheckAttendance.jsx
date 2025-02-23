@@ -17,9 +17,13 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
-import { Calendar } from "lucide-react";
+import { Calendar, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ClassSectionAcademicYear from "@/components/dashboard/ClassSectionAcademicYear";
+import { Button } from "@/components/ui/button";
+import { useGetAttendanceDayMonthWiseMutation } from "@/redux/features/api/attendanceApi";
+import ExportAttendance from "@/components/dashboard/ExportAttendance";
+import { toast } from "react-toastify";
 
 const CheckAttendance = () => {
   let currentDates = format(new Date(), "yyyy-MM-dd");
@@ -31,9 +35,31 @@ const CheckAttendance = () => {
     academicYear: "",
   });
 
-  const handleChange = (e) => {
-    setFormFetchData({ ...fetchFormData, [e.target.name]: e.target.value });
+  const [getAttendanceDayMonthWise, { data, isError, isLoading, isSuccess }] =
+    useGetAttendanceDayMonthWiseMutation();
+
+  const handleGetAttendanceMonthDateWise = async () => {
+    if (
+      fetchFormData.className &&
+      fetchFormData.section &&
+      fetchFormData.academicYear
+    ) {
+      await getAttendanceDayMonthWise({
+        date: selectedDate,
+        academicYear: fetchFormData.academicYear,
+        className: fetchFormData.className,
+        section: fetchFormData.section,
+      });
+    } else {
+      alert("Please select Class, Academic Year & Section");
+    }
   };
+
+  useEffect(() => {
+    if (isError) {
+      toast.error("No attendance found for the selected date");
+    }
+  }, [isError]);
 
   return (
     <div className="max-w-7xl mx-auto p-4">
@@ -46,71 +72,81 @@ const CheckAttendance = () => {
           fetchFormData={fetchFormData}
           setFormFetchData={setFormFetchData}
         />
+        <Button
+          onClick={handleGetAttendanceMonthDateWise}
+          className="bg-blue-700 hover:bg-blue-800 cursor-pointer md:w-1/4 w-full"
+        >
+          <Search /> Search
+        </Button>
       </Card>
 
       <Card>
-        <CardContent className="p-4">
-          <h2 className="text-xl font-semibold mb-4">Student Attendance</h2>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Roll No.</TableHead>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead>Father's Contact</TableHead>
-                  <TableHead>Status</TableHead>
+        {/* Attendance Table */}
+        <div className="rounded-md border overflow-x-auto whitespace-nowrap">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[200px]">Roll No.</TableHead>
+                <TableHead className="w-[200px]">Student Name</TableHead>
+                <TableHead className="w-[200px]">Father Mobile</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="md:table-cell">Remark</TableHead>
+                {/* <TableHead className="text-right">Actions</TableHead> */}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data?.data?.records?.map((student, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">
+                    {student?.studentId?.rollNumber}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {student?.studentId?.fullName}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    <a
+                      className="text-blue-600 hover:text-blue-800 hover:underline duration-300"
+                      href={`tel: ${student?.studentId?.fatherNumber}`}
+                    >
+                      {student?.studentId?.fatherNumber}
+                    </a>
+                  </TableCell>
+                  <TableCell
+                    className={`
+                                 text-white font-medium text-center rounded-lg
+                                ${
+                                  student?.status === "Present"
+                                    ? "bg-green-500"
+                                    : student?.status === "Absent"
+                                    ? "bg-red-500"
+                                    : student?.status === "Late"
+                                    ? "bg-yellow-500"
+                                    : student?.status === "Excused"
+                                    ? "bg-blue-500"
+                                    : "bg-gray-300"
+                                }
+                            `}
+                  >
+                    {student?.status}
+                  </TableCell>
+
+                  <TableCell className="md:table-cell">
+                    {student?.remarks}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* {attendanceData.map((student) => (
-                  <TableRow key={student.studentId}>
-                    <TableCell>{student.rollNumber}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell>
-                      <a
-                        href={`tel:${student.fatherNumber}`}
-                        className="text-blue-600 hover:underline"
-                      >
-                        {student.fatherNumber}
-                      </a>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={student.status}
-                        onValueChange={(value) =>
-                          handleStatusChange(student.studentId, value)
-                        }
-                      >
-                        <SelectTrigger className="w-36">
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="present">
-                            <div className="flex items-center gap-2">
-                              <FaCheckCircle className="text-green-500" />{" "}
-                              Present
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="late">
-                            <div className="flex items-center gap-2">
-                              <FaClock className="text-yellow-500" /> Late
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="absent">
-                            <div className="flex items-center gap-2">
-                              <FaTimesCircle className="text-red-500" /> Absent
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                  </TableRow>
-                ))} */}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </Card>
+
+      {/* Add this inside the return statement, below the search button */}
+      {data?.data?.records?.length > 0 && (
+        <ExportAttendance
+          attendanceData={data.data.records}
+          selectedDate={selectedDate}
+        />
+      )}
     </div>
   );
 };
