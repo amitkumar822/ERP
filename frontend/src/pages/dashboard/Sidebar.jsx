@@ -20,8 +20,9 @@ import {
   UserCheck,
   Briefcase,
   Truck,
+  Table,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import ThemeContext from "@/context/Theme/ThemeContext";
 
 const Sidebar = () => {
@@ -81,19 +82,25 @@ const Sidebar = () => {
             {!isCollapsed && activeMenu === index && item.subItems && (
               <div className="pl-8 mt-2 space-y-1">
                 {item.subItems.map((subItem, subIndex) => (
-                  <Link
+                  <NavLink
                     to={subItem.link}
                     key={subIndex}
-                    className={`${
-                      themeColorProvider === "#ffff"
-                        ? "dark:text-black"
-                        : "dark:text-white"
-                    } flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200`}
-                    style={{ backgroundColor: themeColorProvider }}
+                    className={({ isActive }) =>
+                      `${
+                        themeColorProvider === "#ffff"
+                          ? "dark:text-black"
+                          : "dark:text-white"
+                      } flex items-center p-2 hover:bg-gray-200 rounded cursor-pointer transition-all duration-200 ${
+                        isActive ? "bg-gray-300" : ""
+                      }`
+                    }
+                    style={({ isActive }) =>
+                      isActive ? {} : { backgroundColor: themeColorProvider }
+                    }
                   >
                     {subItem.icon}
                     <span className="ml-3">{subItem.title}</span>
-                  </Link>
+                  </NavLink>
                 ))}
               </div>
             )}
@@ -129,9 +136,14 @@ const sidebarData = [
         link: "/students/add",
       },
       {
-        title: "Attendance",
+        title: "Mark Attendance",
         icon: <ClipboardList className="w-4 h-4" />,
         link: "/students/attendance",
+      },
+      {
+        title: "View Attendance",
+        icon: <Table className="w-4 h-4" />,
+        link: "/students/view-attendance",
       },
     ],
   },

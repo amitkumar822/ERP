@@ -145,7 +145,6 @@ export const getAllClasses = asyncHandler(async (_, res) => {
 //^ Get classes by academic year, className and section used to fetch classes by academic year, className and section from the database
 export const getClassesByAcademicYearSection = asyncHandler(async (req, res) => {
   const { academicYear, className, section } = req.params;
-  console.log(academicYear, className, section);
   
   if (!academicYear ||!className ||!section) {
     throw new ApiError(400, "Please provide all required fields");

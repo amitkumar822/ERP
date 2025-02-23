@@ -12,6 +12,7 @@ import TeacherSalaries from "@/pages/dashboard/payments/TeacherSalaries";
 import Settings from "@/pages/dashboard/settings/Settings";
 import AddStudentForm from "@/pages/dashboard/student/AddStudentForm";
 import AttendancePage from "@/pages/dashboard/student/AttendancePage";
+import CheckAttendance from "@/pages/dashboard/student/CheckAttendance";
 import StudentList from "@/pages/dashboard/student/StudentsList";
 import AddTeacher from "@/pages/dashboard/teacher/AddTeacherPage";
 import TeachersList from "@/pages/dashboard/teacher/TeachersList";
@@ -34,6 +35,7 @@ const router = createBrowserRouter(
       <Route path="students/list" element={<StudentList />} />
       <Route path="students/add" element={<AddStudentForm />} />
       <Route path="students/attendance" element={<AttendancePage />} />
+      <Route path="students/view-attendance" element={<CheckAttendance />} />
 
       {/* Teachers Routes */}
       <Route path="teachers/list" element={<TeachersList />} />

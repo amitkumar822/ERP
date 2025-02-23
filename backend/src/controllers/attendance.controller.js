@@ -2,6 +2,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import Attendance from "../models/attendance.model.js";
+import Class from "../models/class.model.js";
 
 /**
  * @desc  Create or Update Attendance in Bulk (Optimized)
@@ -54,16 +55,33 @@ export const markAttendance = asyncHandler(async (req, res) => {
  * @access Private (Teacher/Admin)
  */
 export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
-  const { date, classId } = req.body;
+  const { date, academicYear, className, section } = req.body;
 
-  if (!date || !classId) {
-    throw new ApiError(400, "Date and classId are required");
+  if (!date || !academicYear || !className || !section) {
+    throw new ApiError(400, "Please provide all required fields");
   }
+
+  const classes = await Class.find({
+    academicYear,
+    className,
+    sections: section,
+  })
+    .select("-studentsId")
+    .lean();
+
+  if (!classes || classes.length === 0) {
+    throw new ApiError(404, "No classes found");
+  }
+
+  console.log("Class: ", classes[0]._id);
 
   const attendanceDate = new Date(date);
   attendanceDate.setUTCHours(0, 0, 0, 0);
 
-  const attendance = await Attendance.findOne({ classId, date: attendanceDate })
+  const attendance = await Attendance.findOne({
+    classId: classes[0]._id,
+    date: attendanceDate,
+  })
     .select("-__v -createdAt -updatedAt")
     .lean(); // Improves performance
 
@@ -71,13 +89,9 @@ export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
     throw new ApiError(404, "No attendance found");
   }
 
-  // console.log("LENGTH: ", attendance.records);
-
   res
     .status(200)
-    .json(
-      new ApiResponse(200, attendance, "Attendance retrieved successfully")
-    );
+    .json(new ApiResponse(200, attendance, "Attendance retrieved successfully"));
 });
 
 /**

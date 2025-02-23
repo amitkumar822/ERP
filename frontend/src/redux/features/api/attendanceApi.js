@@ -16,6 +16,13 @@ export const attendanceApi = createApi({
                 body: { date, classId, records },
             }),
         }),
+        // getAttendanceDayMonthWise: builder.mutation({
+        //     query: ({ date }) => ({
+        //         url: `/get-attendance-month-date`,
+        //         method: "POST",
+
+        //     }),
+        // })
     }),
 });
 

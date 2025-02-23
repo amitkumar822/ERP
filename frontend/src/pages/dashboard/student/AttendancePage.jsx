@@ -9,12 +9,10 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { Trash2, Edit } from "lucide-react";
-import { classNames } from "@/helpers/classNames";
-import { sections } from "@/helpers/sections";
-import { compareAsc, format } from "date-fns";
+import { format } from "date-fns";
 import { useGetClassBySectionAcademicYearClassNameQuery } from "@/redux/features/api/classesApi";
 import { useMarkAttendanceMutation } from "@/redux/features/api/attendanceApi";
+import ClassSectionAcademicYear from "@/components/dashboard/ClassSectionAcademicYear";
 
 export default function AttendancePage() {
   //~ attendance records
@@ -32,10 +30,6 @@ export default function AttendancePage() {
     section: "",
     academicYear: "",
   });
-
-  const handleChange = (e) => {
-    setFormFetchData({ ...fetchFormData, [e.target.name]: e.target.value });
-  };
 
   const [getAllStudentClass, setGetAllStudentClass] = useState([]);
 
@@ -119,68 +113,14 @@ export default function AttendancePage() {
         />
       </div>
 
-      {/* Class & Section Selection */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div>
-          <label className="block font-medium mb-1">Select Class:</label>
-          <select
-            name="className"
-            value={fetchFormData.className}
-            onChange={handleChange}
-            className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
-          >
-            <option value="">Select class</option>
-            {classNames.map((cls, index) => (
-              <option value={cls} key={index}>
-                {cls}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block font-medium mb-1">Select Section:</label>
-          <select
-            name="section"
-            value={fetchFormData.section}
-            onChange={handleChange}
-            className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
-          >
-            <option value="">Select section</option>
-            {sections.map((section, index) => (
-              <option value={section} key={index}>
-                {section}
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* Class, Academic Year & Section Selection */}
+      <ClassSectionAcademicYear
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        fetchFormData={fetchFormData}
+        setFormFetchData={setFormFetchData}
+      />
 
-        <div>
-          <label className="block font-medium mb-1">Academic Year</label>
-          <select
-            name="academicYear"
-            value={fetchFormData.academicYear}
-            onChange={handleChange}
-            className="border rounded p-2 w-full dark:bg-gray-800 dark:text-white"
-          >
-            <option value="">Select year</option>
-            <option value="2024-2025">2024-2025</option>
-            <option value="2025-2026">2025-2026</option>
-            <option value="2026-2027">2026-2027</option>
-          </select>
-        </div>
-        <div>
-          <label className="block font-medium mb-1">Select Date:</label>
-          <Input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            required
-            className="w-full dark:bg-gray-800 dark:text-white cursor-pointer"
-          />
-        </div>
-      </div>
-
-      {/* Selected Info */}
       <div className="mb-4 p-3 bg-yellow-100 rounded-md text-sm dark:text-white dark:bg-gray-900">
         <strong>Current Selection: </strong>
         <span className={error?.data?.message === undefined ? "" : "hidden"}>
@@ -304,7 +244,10 @@ export default function AttendancePage() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button className="w-full md:w-auto cursor-pointer" onClick={handleSaveAttendance}>
+        <Button
+          className="w-full md:w-auto cursor-pointer"
+          onClick={handleSaveAttendance}
+        >
           Submit Attendance
         </Button>
       </div>
