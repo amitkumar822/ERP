@@ -261,6 +261,7 @@ export default function AttendancePage() {
                     <option value="1">Present</option>
                     <option value="2">Absent</option>
                     <option value="3">Late</option>
+                    <option value="4">Excused</option>
                   </select>
                 </TableCell>
                 <TableCell className="md:table-cell">
@@ -303,7 +304,7 @@ export default function AttendancePage() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button className="w-full md:w-auto" onClick={handleSaveAttendance}>
+        <Button className="w-full md:w-auto cursor-pointer" onClick={handleSaveAttendance}>
           Submit Attendance
         </Button>
       </div>

@@ -1,11 +1,15 @@
 import { Router } from "express";
-import { deleteAttendance, getAttendanceByClass, markAttendance } from "../controllers/attendance.controller.js";
+import {
+  deleteAttendance,
+  getAttendanceByClassMonthDate,
+  markAttendance,
+} from "../controllers/attendance.controller.js";
 
 const router = Router();
 
 // Route definition
 router.post("/attendance", markAttendance);
-router.get("/get-all-attendance", getAttendanceByClass);
+router.get("/get-attendance-month-date", getAttendanceByClassMonthDate);
 router.delete("/delete", deleteAttendance);
 
 export default router;

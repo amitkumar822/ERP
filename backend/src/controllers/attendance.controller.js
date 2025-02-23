@@ -53,7 +53,7 @@ export const markAttendance = asyncHandler(async (req, res) => {
  * @route GET /api/attendance
  * @access Private (Teacher/Admin)
  */
-export const getAttendanceByClass = asyncHandler(async (req, res) => {
+export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
   const { date, classId } = req.body;
 
   if (!date || !classId) {
