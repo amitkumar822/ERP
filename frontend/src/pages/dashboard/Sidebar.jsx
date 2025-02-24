@@ -131,9 +131,9 @@ const sidebarData = [
         link: "/students/list",
       },
       {
-        title: "Add Student",
+        title: "Admission Form",
         icon: <UserPlus className="w-4 h-4" />,
-        link: "/students/add",
+        link: "/students/admission-form",
       },
       {
         title: "Mark Attendance",
@@ -153,9 +153,9 @@ const sidebarData = [
     link: "/teachers",
     subItems: [
       {
-        title: "Add Teacher",
+        title: "Joining Form",
         icon: <UserPlus className="w-4 h-4" />,
-        link: "/teachers/add",
+        link: "/teachers/joining-form",
       },
       {
         title: "Teacher List",

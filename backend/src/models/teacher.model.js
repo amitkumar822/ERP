@@ -53,25 +53,55 @@ const teacherSchema = new mongoose.Schema({
     maxlength: [10, "Password must be at most 10 characters long"],
   },
   address: {
-    street: {
-      type: String,
-      trim: true,
+    permanentAddress: {
+      street: {
+        type: String,
+        trim: true,
+      },
+      permanentAddress: {
+        type: String,
+        required: [true, "Permanent address is required"],
+        trim: true,
+      },
+      city: {
+        type: String,
+        required: [true, "Permanent city is required"],
+        trim: true,
+      },
+      state: {
+        type: String,
+        required: [true, "Permanent state is required"],
+        trim: true,
+      },
+      zipCode: {
+        type: String,
+        required: [true, "Permanent zip code is required"],
+        trim: true,
+        match: [/^\d{6}$/, "Permanent zip code must be a 6-digit number"],
+      },
     },
-    city: {
-      type: String,
-      required: [true, "City is required"],
-      trim: true,
-    },
-    state: {
-      type: String,
-      required: [true, "State is required"],
-      trim: true,
-    },
-    zipCode: {
-      type: String,
-      required: [true, "Zip code is required"],
-      trim: true,
-      match: [/^\d{6}$/, "Zip code must be a 6-digit number"],
+    currentAddress: {
+      street: {
+        type: String,
+        trim: true,
+      },
+      currentAddress: {
+        type: String,
+        trim: true,
+      },
+      city: {
+        type: String,
+        trim: true,
+      },
+      state: {
+        type: String,
+        trim: true,
+      },
+      zipCode: {
+        type: String,
+        trim: true,
+        match: [/^\d{6}$/, "Current zip code must be a 6-digit number"],
+      },
     },
   },
   timeTable: [

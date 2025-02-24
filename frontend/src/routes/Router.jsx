@@ -10,11 +10,12 @@ import StaffSalary from "@/pages/dashboard/payments/StaffSalary";
 import StudentFeeStructure from "@/pages/dashboard/payments/StudentFeeStructure";
 import TeacherSalaries from "@/pages/dashboard/payments/TeacherSalaries";
 import Settings from "@/pages/dashboard/settings/Settings";
-import AddStudentForm from "@/pages/dashboard/student/AddStudentForm";
+import AdmisssionForm from "@/pages/dashboard/student/AdmisssionForm";
 import AttendancePage from "@/pages/dashboard/student/AttendancePage";
 import CheckAttendance from "@/pages/dashboard/student/CheckAttendance";
 import StudentList from "@/pages/dashboard/student/StudentsList";
-import AddTeacher from "@/pages/dashboard/teacher/AddTeacherPage";
+import JoiningTeacher from "@/pages/dashboard/teacher/JoiningTeacher";
+import AddTeacher from "@/pages/dashboard/teacher/JoiningTeacher";
 import TeachersList from "@/pages/dashboard/teacher/TeachersList";
 import Transport from "@/pages/dashboard/transport/Transport";
 import HelpAndSupport from "@/pages/helpAndSupport/HelpAndSupport";
@@ -33,13 +34,13 @@ const router = createBrowserRouter(
 
       {/* Students Routes */}
       <Route path="students/list" element={<StudentList />} />
-      <Route path="students/add" element={<AddStudentForm />} />
+      <Route path="students/admission-form" element={<AdmisssionForm />} />
       <Route path="students/attendance" element={<AttendancePage />} />
       <Route path="students/view-attendance" element={<CheckAttendance />} />
 
       {/* Teachers Routes */}
+      <Route path="teachers/joining-form" element={<JoiningTeacher />} />
       <Route path="teachers/list" element={<TeachersList />} />
-      <Route path="teachers/add" element={<AddTeacher />} />
 
       {/* Academics Routes */}
       <Route path="academics/classes" element={<ClassManagement />} />
