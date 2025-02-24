@@ -153,15 +153,16 @@ const sidebarData = [
     link: "/teachers",
     subItems: [
       {
-        title: "Teacher List",
-        icon: <User className="w-4 h-4" />,
-        link: "/teachers/list",
-      },
-      {
         title: "Add Teacher",
         icon: <UserPlus className="w-4 h-4" />,
         link: "/teachers/add",
       },
+      {
+        title: "Teacher List",
+        icon: <User className="w-4 h-4" />,
+        link: "/teachers/list",
+      },
+      
     ],
   },
   {

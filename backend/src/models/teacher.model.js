@@ -40,6 +40,18 @@ const teacherSchema = new mongoose.Schema({
     type: String,
     required: [true, "Experience is required"],
   },
+  previousInstitutionName: {
+    type: String,
+  },
+  extracurricularActivities: {
+    type: String,
+  },
+  password: {
+    type: String,
+    required: [true, "Password is required"],    
+    minlength: [4, "Password must be at least 4 characters long"],
+    maxlength: [10, "Password must be at most 10 characters long"],
+  },
   address: {
     street: {
       type: String,

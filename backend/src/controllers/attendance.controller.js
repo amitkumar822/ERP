@@ -4,12 +4,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Attendance from "../models/attendance.model.js";
 import Class from "../models/class.model.js";
 
-/**
- * @desc  Create or Update Attendance in Bulk (Optimized)
- * @route POST /api/attendance
- * @access Private (Teacher/Admin)
- */
-
+//^ Create or Update Attendance
 export const markAttendance = asyncHandler(async (req, res) => {
   const { date, classId, teacherId, records } = req.body;
 
@@ -43,11 +38,7 @@ export const markAttendance = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, attendance, "Attendance marked successfully"));
 });
 
-/**
- * @desc  Get Attendance by Class and Date
- * @route GET /api/attendance
- * @access Private (Teacher/Admin)
- */
+//^ Get Attendance by Class, Month and Date
 export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
   const { date, academicYear, className, section } = req.body;
 
