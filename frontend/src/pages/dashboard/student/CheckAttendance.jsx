@@ -8,22 +8,14 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
-import { Calendar, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Search } from "lucide-react";
 import ClassSectionAcademicYear from "@/components/dashboard/ClassSectionAcademicYear";
 import { Button } from "@/components/ui/button";
 import { useGetAttendanceDayMonthWiseMutation } from "@/redux/features/api/attendanceApi";
 import ExportAttendance from "@/components/dashboard/ExportAttendance";
 import { toast } from "react-toastify";
+import NoRecordFound from "@/components/dashboard/NoRecordFound";
 
 const CheckAttendance = () => {
   let currentDates = format(new Date(), "yyyy-MM-dd");
@@ -35,7 +27,7 @@ const CheckAttendance = () => {
     academicYear: "",
   });
 
-  const [getAttendanceDayMonthWise, { data, isError, isLoading, isSuccess }] =
+  const [getAttendanceDayMonthWise, { data, isError }] =
     useGetAttendanceDayMonthWiseMutation();
 
   const handleGetAttendanceMonthDateWise = async () => {
@@ -63,6 +55,7 @@ const CheckAttendance = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4">
+      <h1 className="text-2xl font-bold">Check Daily Attendance</h1>
       {/* Calender */}
       <Card className="p-4 mb-4">
         {/* Class, Academic Year & Section Selection */}
@@ -80,8 +73,8 @@ const CheckAttendance = () => {
         </Button>
       </Card>
 
+      {/* Attendance Table */}
       <Card>
-        {/* Attendance Table */}
         <div className="rounded-md border overflow-x-auto whitespace-nowrap">
           <Table>
             <TableHeader>
@@ -145,6 +138,16 @@ const CheckAttendance = () => {
         <ExportAttendance
           attendanceData={data.data.records}
           selectedDate={selectedDate}
+        />
+      )}
+
+      {isError && (
+        <NoRecordFound
+          message={"attendance"}
+          date={selectedDate}
+          className={fetchFormData?.className}
+          section={fetchFormData?.section}
+          academicYear={fetchFormData?.academicYear}
         />
       )}
     </div>

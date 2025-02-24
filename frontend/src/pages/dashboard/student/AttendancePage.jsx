@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { useGetClassBySectionAcademicYearClassNameQuery } from "@/redux/features/api/classesApi";
 import { useMarkAttendanceMutation } from "@/redux/features/api/attendanceApi";
 import ClassSectionAcademicYear from "@/components/dashboard/ClassSectionAcademicYear";
+import NoRecordFound from "@/components/dashboard/NoRecordFound";
 
 export default function AttendancePage() {
   //~ attendance records
@@ -71,6 +72,7 @@ export default function AttendancePage() {
   const [markAttendance, { isLoading, isError }] = useMarkAttendanceMutation();
   let currentDates = format(new Date(), "yyyy-MM-dd");
   const [selectedDate, setSelectedDate] = useState(currentDates);
+  
 
   const handleChangeAttendanceRecord = (studentId, key, value) => {
     setAttendanceRecord((prev) =>
@@ -239,6 +241,18 @@ export default function AttendancePage() {
           Submit Attendance
         </Button>
       </div>
+
+      {error && (
+        <div className="-mt-15">
+          <NoRecordFound
+          message={"Class"}
+          date={selectedDate}
+          className={fetchFormData?.className}
+          section={fetchFormData?.section}
+          academicYear={fetchFormData?.academicYear}
+        />
+        </div>
+      )}
     </div>
   );
 }
