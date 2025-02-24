@@ -2,15 +2,18 @@ import { combineReducers } from "@reduxjs/toolkit"
 import { classesApi } from "../features/api/classesApi"
 import { attendanceApi } from "../features/api/attendanceApi"
 import { studentApi } from "../features/api/studentApi"
+import { teacherApi } from "../features/api/teacherApi"
 
-// import { persistStore, persistReducer } from "redux-persist";
-// import storage from "redux-persist/lib/storage/session"; // Uses localStorage by default
 
 export const rootReducer = combineReducers({
     [classesApi.reducerPath]: classesApi.reducer,
     [attendanceApi.reducerPath]: attendanceApi.reducer,
     [studentApi.reducerPath]: studentApi.reducer,
+    [teacherApi.reducerPath]: teacherApi.reducer,
 })
+
+// import { persistStore, persistReducer } from "redux-persist";
+// import storage from "redux-persist/lib/storage/session"; // Uses localStorage by default
 
 // redux-persist used for store data in local storage
 // export const rootReducer = combineReducers({

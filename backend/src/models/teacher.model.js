@@ -16,25 +16,52 @@ const teacherSchema = new mongoose.Schema({
       "Please enter a valid email address",
     ],
   },
-  phoneNumber: {
-    type: String,
-    required: [true, "Phone number is required"],
-    unique: true,
-    match: [/^[6-9]\d{9}$/, "Please enter a valid 10 digit phone number"],
-  },
-  subjects: [
-    {
-      type: String,
-      required: [true, "At least one subject is required"],
-    },
-  ],
   joiningDate: {
     type: String,
     required: [true, "Joining date is required"],
   },
-  qualifications: {
+  password: {
     type: String,
-    required: [true, "Qualifications are required"],
+    required: [true, "Password is required"],
+    minlength: [4, "Password must be at least 4 characters long"],
+    maxlength: [10, "Password must be at most 10 characters long"],
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, "Phone number is required"],
+    unique: true,
+    // match: [/^[6-9]\d{9}$/, "Please enter a valid 10 digit phone number"],
+  },
+  gender: {
+    type: String,
+    enum: {
+      values: ["Male", "Female", "Other"],
+      message: "Gender must be either 'Male', 'Female', 'Other'",
+    },
+    required: [true, "Gender is required"],
+  },
+  designation: {
+    type: String,
+    trim: true,
+    minlength: [4, "Designation must be at least 4 characters long"],
+    maxlength: [50, "Designation must be at most 50 characters long"],
+  },
+  dob: {
+    type: String,
+    trim: true,
+  },
+  qualification: {
+    type: String,
+    required: [true, "Qualification are required"],
+  },
+  profileImage: {
+    type: String,
+  },
+  document: {
+    type: String,
+  },
+  identification: {
+    type: String,
   },
   experience: {
     type: String,
@@ -45,12 +72,6 @@ const teacherSchema = new mongoose.Schema({
   },
   extracurricularActivities: {
     type: String,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],    
-    minlength: [4, "Password must be at least 4 characters long"],
-    maxlength: [10, "Password must be at most 10 characters long"],
   },
   address: {
     permanentAddress: {
@@ -104,6 +125,14 @@ const teacherSchema = new mongoose.Schema({
       },
     },
   },
+
+  //^ Below is the working mode 
+  subjects: [
+    {
+      type: String,
+      required: [true, "At least one subject is required"],
+    },
+  ],
   timeTable: [
     {
       day: {

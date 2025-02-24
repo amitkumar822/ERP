@@ -59,10 +59,6 @@ const AdmisssionForm = () => {
     zipCode: "",
   });
 
-  const handleSameAddressChecked = () => {
-    setSameAddressChecked((prevChecked) => !prevChecked);
-  };
-
   // When sameAddressChecked is true, sync the Current Address with Permanent Address
   useEffect(() => {
     if (sameAddressChecked) {
@@ -510,27 +506,9 @@ const AdmisssionForm = () => {
           setPermanentAddress={setPermanentAddress}
           currAddress={currAddress}
           setCurrAddress={setCurrAddress}
+          isPending={isPending}
         />
 
-        {/* 📌 Submit Button */}
-        <div className="text-center">
-          <Button
-            disabled={isPending}
-            type="submit"
-            className="bg-blue-500 w-full md:w-1/4 cursor-pointer"
-          >
-            {isPending ? (
-              <span className="flex items-center gap-2">
-                <Loader2 size={18} className="animate-spin" />
-                Please Wait...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-1">
-                Submit
-              </span>
-            )}
-          </Button>
-        </div>
       </form>
     </div>
   );

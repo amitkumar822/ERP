@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 const AddressCurrentPermanent = ({
   sameAddressChecked,
@@ -11,11 +12,12 @@ const AddressCurrentPermanent = ({
   setPermanentAddress,
   currAddress,
   setCurrAddress,
+  isPending,
 }) => {
   const handleSameAddressChecked = () => {
     setSameAddressChecked((prevChecked) => !prevChecked);
   };
-  
+
   return (
     <div>
       {/* Address */}
@@ -37,25 +39,11 @@ const AddressCurrentPermanent = ({
                   permanentAddress: e.target.value,
                 })
               }
+              required
             />
           </div>
 
           <div className="col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="permanentCity">City</Label>
-              <Input
-                id="permanentCity"
-                placeholder="Enter City"
-                value={permanentAddress.city}
-                onChange={(e) =>
-                  setPermanentAddress({
-                    ...permanentAddress,
-                    city: e.target.value,
-                  })
-                }
-              />
-            </div>
-
             <div>
               <Label htmlFor="permanentState">State</Label>
               <Input
@@ -68,6 +56,23 @@ const AddressCurrentPermanent = ({
                     state: e.target.value,
                   })
                 }
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="permanentCity">City</Label>
+              <Input
+                id="permanentCity"
+                placeholder="Enter City"
+                value={permanentAddress.city}
+                onChange={(e) =>
+                  setPermanentAddress({
+                    ...permanentAddress,
+                    city: e.target.value,
+                  })
+                }
+                required
               />
             </div>
 
@@ -83,6 +88,7 @@ const AddressCurrentPermanent = ({
                     zipCode: e.target.value,
                   })
                 }
+                required
               />
             </div>
           </div>
@@ -117,21 +123,6 @@ const AddressCurrentPermanent = ({
           </div>
           <div className="col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="currentCity">City</Label>
-              <Input
-                id="currentCity"
-                placeholder="Enter City"
-                value={currAddress.city}
-                onChange={(e) =>
-                  setCurrAddress({
-                    ...currAddress,
-                    city: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div>
               <Label htmlFor="currentState">State</Label>
               <Input
                 id="currentState"
@@ -141,6 +132,21 @@ const AddressCurrentPermanent = ({
                   setCurrAddress({
                     ...currAddress,
                     state: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="currentCity">City</Label>
+              <Input
+                id="currentCity"
+                placeholder="Enter City"
+                value={currAddress.city}
+                onChange={(e) =>
+                  setCurrAddress({
+                    ...currAddress,
+                    city: e.target.value,
                   })
                 }
               />
@@ -163,6 +169,26 @@ const AddressCurrentPermanent = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* 📌 Submit Button */}
+      <div className="text-center">
+        <Button
+          disabled={isPending}
+          type="submit"
+          className="w-1/4 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-lg shadow-lg"
+        >
+          {isPending ? (
+            <span className="flex items-center gap-2">
+              <Loader2 size={18} className="animate-spin" />
+              Please Wait...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-1">
+              Submit
+            </span>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };

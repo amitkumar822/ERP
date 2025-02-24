@@ -5,34 +5,45 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Teacher from "../models/teacher.model.js";
 import { validDays } from "../helpers/validDays.js";
 
-export const addTeacher = asyncHandler(async (req, res) => {
+export const joiningTeacher = asyncHandler(async (req, res) => {
   const {
     fullName,
     email,
-    phoneNumber,
-    subjects,
     joiningDate,
-    qualifications,
+    password,
+    phoneNumber,
+    gender,
+    designation,
+    dob,
+    qualification,
+    profileImage,
+    document,
+    identification,
     experience,
-    street,
-    city,
-    state,
-    zipCode,
+    previousInstitutionName,
+    extracurricularActivities,
+    permanentAddress,
+    currentAddress,
   } = req.body;
+
+  console.log(req.body);
+  
 
   if (
     !fullName ||
     !email ||
-    !phoneNumber ||
-    !subjects ||
     !joiningDate ||
-    !qualifications ||
+    !password ||
+    !phoneNumber ||
+    !gender ||
+    !qualification ||
     !experience ||
-    !city ||
-    !state ||
-    !zipCode
+    !permanentAddress
   ) {
-    throw new ApiError(400, "All fields are required");
+    throw new ApiError(
+      400,
+      "This field is required fullName, email, joiningDate, password, phone Number, gender, qualification, experience, permanentAddress"
+    );
   }
 
   const existingTeacher = await Teacher.find({ email }).lean();
@@ -43,16 +54,22 @@ export const addTeacher = asyncHandler(async (req, res) => {
   const newTeacher = await Teacher.create({
     fullName,
     email,
-    phoneNumber,
-    subjects,
     joiningDate,
-    qualifications,
+    password,
+    phoneNumber,
+    gender,
+    designation,
+    dob,
+    qualification,
+    profileImage,
+    document,
+    identification,
     experience,
+    previousInstitutionName,
+    extracurricularActivities,
     address: {
-      street,
-      city,
-      state,
-      zipCode,
+      permanentAddress,
+      currentAddress,
     },
   });
 
@@ -233,9 +250,7 @@ export const updateTimeTablePeriod = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Teacher ID!");
   }
 
-  if (
-    !day
-  ) {
+  if (!day) {
     throw new ApiError(400, "Day must be required");
   }
 

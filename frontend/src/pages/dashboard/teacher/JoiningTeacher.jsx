@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import AddressCurrentPermanent from "@/components/dashboard/AddressCurrentPermanent";
 import { FileJsonIcon, UserPlus } from "lucide-react";
+import { useJoiningTeacherMutation } from "@/redux/features/api/teacherApi";
+import { toast } from "react-toastify";
 
 export default function JoiningTeacher() {
   const [teacherData, setTeacherData] = useState({
@@ -13,10 +15,9 @@ export default function JoiningTeacher() {
     joiningDate: "",
     password: "",
     confirmPassword: "",
-    mobileNumber: "",
+    phoneNumber: "",
     gender: "",
     designation: "",
-    classAssigned: "",
     dob: "",
     qualification: "",
     profileImage: null,
@@ -88,16 +89,43 @@ export default function JoiningTeacher() {
     setPreview((prev) => ({ ...prev, [name]: null }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [joiningTeacher, { data, error, isLoading, isSuccess }] =
+    useJoiningTeacherMutation();
 
-    console.log("Teacher Data Submitted", teacherData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await joiningTeacher({
+      fullName: teacherData?.fullName,
+      email: teacherData?.email,
+      joiningDate: teacherData?.joiningDate,
+      password: teacherData?.password,
+      phoneNumber: teacherData?.phoneNumber,
+      gender: teacherData?.gender,
+      designation: teacherData?.designation,
+      dob: teacherData?.dob,
+      qualification: teacherData?.qualification,
+      profileImage: teacherData?.profileImage,
+      document: teacherData?.document,
+      identification: teacherData?.identification,
+      experience: teacherData?.experience,
+      previousInstitutionName: teacherData?.previousInstitutionName,
+      extracurricularActivities: teacherData?.extracurricularActivities,
+      permanentAddress,
+      currentAddress: currAddress,
+    });
   };
-  console.log("CurrentAdd: ", currAddress);
-  console.log("Permanent Add: ", permanentAddress);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(error?.data?.message || "Successfully Joined Teacher!");
+    } else if (error) {
+      alert(error?.data?.message || "Failed to submit");
+    }
+  }, [error, isSuccess]);
+  
 
   return (
-    <div className="w-full mx-auto p-6 bg-white shadow rounded-md">
+    <div className="w-full mx-auto p-6 bg-white shadow rounded-md dark:bg-gray-900 dark:text-white">
       <div>
         <h1 className="text-2xl font-bold mb-6 flex justify-center items-center gap-3">
           <UserPlus className="h-8 w-8 text-blue-500" /> Welcome New Educator!
@@ -106,7 +134,7 @@ export default function JoiningTeacher() {
 
       <Card className="p-4">
         <form
-          // onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
           {/* First Name */}
@@ -128,7 +156,7 @@ export default function JoiningTeacher() {
             <Input
               id="mobileNumber"
               type="tel"
-              name="mobileNumber"
+              name="phoneNumber"
               placeholder="Ex. +91 9876543210"
               onChange={handleInputChange}
               required
@@ -144,7 +172,6 @@ export default function JoiningTeacher() {
               name="identification"
               placeholder="Ex. Aadhaar card, passport"
               onChange={handleInputChange}
-              required
             />
           </div>
 
@@ -199,7 +226,6 @@ export default function JoiningTeacher() {
               name="designation"
               placeholder="Ex. Mathematics Teacher"
               onChange={handleInputChange}
-              required
             />
           </div>
 
@@ -348,29 +374,21 @@ export default function JoiningTeacher() {
               </div>
             )}
           </div>
+
+          {/* Address */}
+          <div className="col-span-2">
+            <AddressCurrentPermanent
+              sameAddressChecked={sameAddressChecked}
+              setSameAddressChecked={setSameAddressChecked}
+              permanentAddress={permanentAddress}
+              setPermanentAddress={setPermanentAddress}
+              currAddress={currAddress}
+              setCurrAddress={setCurrAddress}
+              isPending={isLoading}
+            />
+          </div>
         </form>
       </Card>
-
-      {/* Address */}
-      <AddressCurrentPermanent
-        sameAddressChecked={sameAddressChecked}
-        setSameAddressChecked={setSameAddressChecked}
-        permanentAddress={permanentAddress}
-        setPermanentAddress={setPermanentAddress}
-        currAddress={currAddress}
-        setCurrAddress={setCurrAddress}
-      />
-
-      {/* Submit Button */}
-      <div className="md:col-span-2 flex justify-end">
-        <Button
-          type="submit"
-          onClick={handleSubmit}
-          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-lg shadow-lg"
-        >
-          Submit
-        </Button>
-      </div>
     </div>
   );
 }

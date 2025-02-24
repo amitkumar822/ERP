@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 const baseURL = "http://localhost:4000/api/v1/attendance";
 
+//* Define the API Student attendance endpoints
 export const attendanceApi = createApi({
   reducerPath: "attendanceApi",
     baseQuery: fetchBaseQuery({ 

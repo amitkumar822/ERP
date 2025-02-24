@@ -3,13 +3,19 @@ import { rootReducer } from "./rootReducer";
 import { classesApi } from "../features/api/classesApi";
 import { attendanceApi } from "../features/api/attendanceApi";
 import { studentApi } from "../features/api/studentApi";
+import { teacherApi } from "../features/api/teacherApi";
 
 // import persistStore from "redux-persist/es/persistStore";
 
 export const appStore = configureStore({
   reducer: rootReducer,
   middleware: (defaultMiddleware) =>
-    defaultMiddleware().concat(classesApi.middleware, attendanceApi.middleware, studentApi.middleware),
+    defaultMiddleware().concat(
+      classesApi.middleware,
+      attendanceApi.middleware,
+      studentApi.middleware,
+      teacherApi.middleware
+    ),
 });
 
 // export const appStore = configureStore({

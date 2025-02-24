@@ -1,10 +1,10 @@
 import { Router } from "express"
-import { addTeacher, addTimeTablesTeacher, deleteTimeTablePeriod, getAllTeachers, getTeacherById, updateTimeTablePeriod } from "../controllers/teacher.controller.js";
+import { addTimeTablesTeacher, deleteTimeTablePeriod, getAllTeachers, getTeacherById, joiningTeacher, updateTimeTablePeriod } from "../controllers/teacher.controller.js";
 
 const router = Router();
 
 // Route definition
-router.post("/add", addTeacher);
+router.post("/joining-class", joiningTeacher);
 router.get("/get-all-teachers", getAllTeachers);
 router.get("/get-teacher-byid/:teacherId", getTeacherById);
 router.post("/add-time-table/:teacherId", addTimeTablesTeacher);
