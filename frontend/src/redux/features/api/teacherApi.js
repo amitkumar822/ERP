@@ -11,12 +11,21 @@ export const teacherApi = createApi({
     endpoints: (builder) => ({
         joiningTeacher: builder.mutation({
             query: ({fullName, email, joiningDate, password, phoneNumber, gender, designation, dob, qualification, profileImage, document,identification, experience, previousInstitutionName, extracurricularActivities, permanentAddress, currentAddress}) => ({
-                url: "/joining-class",
+                url: "/joining-and-update",
                 method: "POST",
                 body: { fullName, email, joiningDate, password, phoneNumber, gender, designation, dob, qualification, profileImage, document,identification, experience, previousInstitutionName, extracurricularActivities, permanentAddress, currentAddress },
+            })
+        }),
+        getAllTeacher: builder.query({
+            query: () => ({
+                url: "/get-all-teachers",
+                method: "GET"
             })
         })
     })
 })
 
-export const { useJoiningTeacherMutation } = teacherApi;
+export const { 
+    useJoiningTeacherMutation,
+    useGetAllTeacherQuery 
+} = teacherApi;

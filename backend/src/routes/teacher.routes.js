@@ -4,7 +4,7 @@ import { addTimeTablesTeacher, deleteTimeTablePeriod, getAllTeachers, getTeacher
 const router = Router();
 
 // Route definition
-router.post("/joining-class", joiningTeacher);
+router.post("/joining-and-update", joiningTeacher);
 router.get("/get-all-teachers", getAllTeachers);
 router.get("/get-teacher-byid/:teacherId", getTeacherById);
 router.post("/add-time-table/:teacherId", addTimeTablesTeacher);

@@ -13,10 +13,10 @@ import { Card } from "@/components/ui/card";
 import { Eye, Edit, Trash } from "lucide-react";
 import { Link } from "react-router";
 import API from "@/api/axiosInstance";
-import StudentDialog from "@/components/dashboard/student/StudentDialog";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import { toast } from "react-toastify";
 import { useGetStudentListQuery } from "@/redux/features/api/studentApi";
+import { ViewDetails } from "@/components/dashboard/ViewDetails";
 
 export default function StudentList() {
   // **************👇 Start Fetch All Student Details 👇*********************
@@ -175,7 +175,7 @@ export default function StudentList() {
                       {student.fatherName} <br /> {student.motherName}
                     </TableCell>
                     <TableCell>{student.gender}</TableCell>
-                    <TableCell className="hover:text-blue-700 hover:underline ">
+                    <TableCell className="hover:text-blue-700 text-blue-500 hover:underline ">
                       <a href={`tel:${student.fatherNumber}`}>
                         {student.fatherNumber}
                       </a>
@@ -227,8 +227,9 @@ export default function StudentList() {
 
       {/* Studetn Details Show Dilog */}
       <div>
-        <StudentDialog
-          student={studentDetails}
+        <ViewDetails
+          data={studentDetails}
+          title="Student Details"
           open={viewStudentDetailsDialog}
           onClose={setViewStudentDetailsDialog}
         />

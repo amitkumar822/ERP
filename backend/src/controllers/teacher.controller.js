@@ -5,6 +5,11 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Teacher from "../models/teacher.model.js";
 import { validDays } from "../helpers/validDays.js";
 
+/**
+ * @desc  Create And Update a Teacher
+ * @route "POST" /joining-and-update
+ * @access Private (Admin)
+ */
 export const joiningTeacher = asyncHandler(async (req, res) => {
   const {
     fullName,
@@ -26,9 +31,6 @@ export const joiningTeacher = asyncHandler(async (req, res) => {
     currentAddress,
   } = req.body;
 
-  console.log(req.body);
-  
-
   if (
     !fullName ||
     !email ||
@@ -47,8 +49,37 @@ export const joiningTeacher = asyncHandler(async (req, res) => {
   }
 
   const existingTeacher = await Teacher.find({ email }).lean();
-  if (existingTeacher.length > 0) {
-    throw new ApiError(409, "Teacher with the same email already exists");
+  if (existingTeacher) {
+    const updatedTeacher = await Teacher.findByIdAndUpdate(
+      existingTeacher._id,
+      {
+        fullName,
+        email,
+        phoneNumber,
+        gender,
+        designation,
+        dob,
+        qualification,
+        experience,
+        permanentAddress,
+        document,
+        identification,
+        previousInstitutionName,
+        extracurricularActivities,
+        address: {
+          permanentAddress,
+          currentAddress,
+        },
+        ...(password && { password }), // Only update password if provided
+      },
+      { new: true, runValidators: true } // Return updated document, ensure validation
+    ).lean();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedTeacher, "Teacher updated successfully")
+      );
   }
 
   const newTeacher = await Teacher.create({
@@ -78,6 +109,11 @@ export const joiningTeacher = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, newTeacher, "Teacher added successfully"));
 });
 
+/**
+ * @desc Get All Teachers
+ * @route "GET" /get-all-teachers 
+ * @access Private (Admin)
+ */
 export const getAllTeachers = asyncHandler(async (_, res) => {
   const teachers = await Teacher.find().lean();
 
@@ -89,6 +125,11 @@ export const getAllTeachers = asyncHandler(async (_, res) => {
     .status(200)
     .json(new ApiResponse(200, teachers, "Teachers fetched successfully"));
 });
+
+
+
+
+
 
 export const getTeacherById = asyncHandler(async (req, res) => {
   const { teacherId } = req.params;

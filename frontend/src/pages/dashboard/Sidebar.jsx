@@ -52,7 +52,7 @@ const Sidebar = () => {
         {!isCollapsed && <h1 className="text-xl font-bold">School Admin</h1>}
         <button
           onClick={toggleSidebar}
-          className="p-2 hover:bg-gray-700 rounded transition-all duration-200"
+          className="p-2 hover:bg-blue-700 rounded transition-all duration-200 cursor-pointer"
         >
           {isCollapsed ? (
             <ChevronRight className="w-5 h-5" />
