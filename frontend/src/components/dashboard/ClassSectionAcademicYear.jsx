@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Input } from "../ui/input";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
-import { format } from "date-fns";
 
 const ClassSectionAcademicYear = ({
   selectedDate,
@@ -10,7 +9,6 @@ const ClassSectionAcademicYear = ({
   fetchFormData,
   setFormFetchData,
 }) => {
-
   const handleChange = (e) => {
     setFormFetchData({ ...fetchFormData, [e.target.name]: e.target.value });
   };

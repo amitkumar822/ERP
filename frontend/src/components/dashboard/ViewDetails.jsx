@@ -63,7 +63,7 @@ export function ViewDetails({ data, title, open, onClose }) {
 
                 return (
                   <tr key={key} className="border-b border-gray-200">
-                    <td className="font-semibold p-3 bg-gray-200 capitalize whitespace-nowrap">
+                    <td className="font-semibold p-3 bg-gray-200 capitalize md:whitespace-nowrap">
                       {key.replace(/([A-Z])/g, " $1")}
                     </td>
                     <td className="p-3">{formatValue(key, value)}</td>

@@ -30,7 +30,8 @@ const teacherSchema = new mongoose.Schema({
     type: String,
     required: [true, "Phone number is required"],
     unique: true,
-    // match: [/^[6-9]\d{9}$/, "Please enter a valid 10 digit phone number"],
+    minlength: [10, "Phone Number must be at least 10 characters long"],
+    maxlength: [10, "Phone Number must be at most 10 characters long"],
   },
   gender: {
     type: String,
@@ -126,61 +127,11 @@ const teacherSchema = new mongoose.Schema({
     },
   },
 
-  //^ Below is the working mode 
+  //^ Below is the working mode
   subjects: [
     {
       type: String,
-      required: [true, "At least one subject is required"],
-    },
-  ],
-  timeTable: [
-    {
-      day: {
-        type: String,
-        enum: {
-          values: [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-          ],
-          message:
-            "Please enter a valid days Sunday or Monday or Tuesday or Wednesday or Thursday or Friday or Saturday",
-        },
-      },
-      periods: [
-        {
-          subject: {
-            type: String,
-          },
-          startTime: {
-            type: String,
-          },
-          endTime: {
-            type: String,
-          },
-          className: {
-            type: String,
-            enum: {
-              values: classValidate,
-              message: "Invalid class name",
-            },
-          },
-          roomNumber: {
-            type: String,
-          },
-          section: {
-            type: String,
-            enum: {
-              values: ["A", "B", "C", "D"],
-              message: "Invalid section",
-            },
-          }
-        },
-      ],
+      // required: [true, "At least one subject is required"],
     },
   ],
 });
