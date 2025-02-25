@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,52 +9,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pencil, Trash2, Eye, CalendarDays } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Pencil, Trash2, Eye, UserSquareIcon } from "lucide-react";
 import { format } from "date-fns";
-import { useGetAllTeacherQuery } from "@/redux/features/api/teacherApi";
+import {
+  useGetAllTeacherQuery,
+  useRemoveTeacherMutation,
+} from "@/redux/features/api/teacherApi";
 import { ViewDetails } from "@/components/dashboard/ViewDetails";
-
-const teachersData = [
-  {
-    id: 1,
-    img: "https://via.placeholder.com/50",
-    name: "John Doe",
-    department: "Mathematics",
-    gender: "Male",
-    education: "M.Sc",
-    mobile: "9876543210",
-    email: "john@example.com",
-    joiningDate: new Date(2020, 4, 12),
-  },
-  {
-    id: 2,
-    img: "https://via.placeholder.com/50",
-    name: "Sarah Smith",
-    department: "Science",
-    gender: "Female",
-    education: "Ph.D",
-    mobile: "9876543220",
-    email: "sarah@example.com",
-    joiningDate: new Date(2019, 2, 10),
-  },
-];
+import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
+import { toast } from "react-toastify";
 
 const TeachersList = () => {
-  const { data, isError, isLoading } = useGetAllTeacherQuery();
+  const { data, refetch } = useGetAllTeacherQuery();
 
   const [viewTeacherDetailsDialog, setViewTeacherDetailsDialog] =
     useState(false);
@@ -65,9 +32,43 @@ const TeachersList = () => {
     setTeacherDetails(teacherDetails);
   };
 
+  //& ****************👇Start Delete Student 👇***********************
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [teacherId, setTeacherId] = useState("");
+
+  const [
+    removeTeacher,
+    {
+      data: removeData,
+      isError: reomveError,
+      isLoading: removeIsLoading,
+      isSuccess,
+      error,
+    },
+  ] = useRemoveTeacherMutation();
+
+  const handleRemoveTeacher = async () => {
+    await removeTeacher(teacherId);
+  };
+
+  useEffect(() => {
+    if (reomveError && error) {
+      toast.error(error?.data?.message || "Failed to remove");
+    } else if (isSuccess) {
+      setDeleteModalOpen(false);
+      refetch();
+      toast.success(removeData?.message || "Successfully removed!");
+    }
+  }, [reomveError, error, isSuccess]);
+
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-6">Teachers List</h1>
+      <div className="flex items-center justify-center mb-6">
+        <UserSquareIcon className="h-7 w-7 mr-2 text-blue-600" />
+        <h1 className="md:text-2xl text-base font-semibold text-center text-gray-800">
+          Meet Our Dedicated Teachers
+        </h1>
+      </div>
 
       {/* 📌 Optimized Teachers Table */}
       <Card>
@@ -126,19 +127,29 @@ const TeachersList = () => {
                           <Button
                             variant="outline"
                             size="icon"
+                            className="cursor-pointer"
                             onClick={() =>
                               toggleViewTeacherDetailsDialog(teacher)
                             }
                           >
                             <Eye className="w-5 h-5" />
                           </Button>
-                          <Button variant="outline" size="icon">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="cursor-pointer"
+                          >
                             <Pencil className="w-5 h-5 text-blue-600" />
                           </Button>
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleDelete(teacher.id)}
+                            className="cursor-pointer"
+                            onClick={() => {
+                              setDeleteModalOpen(true),
+                                setTeacherId(teacher?._id);
+                            }}
+                            // onClick={() => handleRemoveTeacher(teacher._id)}
                           >
                             <Trash2 className="w-5 h-5 text-red-600" />
                           </Button>
@@ -168,6 +179,15 @@ const TeachersList = () => {
           onClose={setViewTeacherDetailsDialog}
         />
       </div>
+
+      {/* Class Delete Model */}
+      <DeleteClassModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleRemoveTeacher}
+        message={"Teacher"}
+        isPending={removeIsLoading}
+      />
     </div>
   );
 };

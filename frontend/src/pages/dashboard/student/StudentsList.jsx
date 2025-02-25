@@ -90,7 +90,6 @@ export default function StudentList() {
           `/students/delete/${deleteStudentId}`
         );
         toast.success(data?.message || "Successfully Student Deleted!");
-        fetchAllStudentList();
         setDeleteModalOpen(false);
       } catch (error) {
         toast.error(error?.response?.data.message || "faild to delete Student");

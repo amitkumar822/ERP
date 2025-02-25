@@ -21,11 +21,18 @@ export const teacherApi = createApi({
                 url: "/get-all-teachers",
                 method: "GET"
             })
+        }),
+        removeTeacher: builder.mutation({
+            query: (teacherId) => ({
+                url: `/remove-teacher/${teacherId}`,
+                method: "DELETE"
+            })
         })
     })
 })
 
 export const { 
     useJoiningTeacherMutation,
-    useGetAllTeacherQuery 
+    useGetAllTeacherQuery,
+    useRemoveTeacherMutation
 } = teacherApi;

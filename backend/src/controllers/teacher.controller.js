@@ -111,7 +111,7 @@ export const joiningTeacher = asyncHandler(async (req, res) => {
 
 /**
  * @desc Get All Teachers
- * @route "GET" /get-all-teachers 
+ * @route "GET" /get-all-teachers
  * @access Private (Admin)
  */
 export const getAllTeachers = asyncHandler(async (_, res) => {
@@ -126,10 +126,25 @@ export const getAllTeachers = asyncHandler(async (_, res) => {
     .json(new ApiResponse(200, teachers, "Teachers fetched successfully"));
 });
 
+/**
+ * @desc Delete Teachers
+ * @route "GET" /remove-teacher
+ * @access Private (Admin)
+ */
+export const deleteTeacher = asyncHandler(async (req, res) => {
+  const { teacherId } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(teacherId)) {
+    throw new ApiError(400, "Invalid Teacher ID!");
+  }
 
+  const deletedTeacher = await Teacher.findByIdAndDelete(teacherId);
+  if (!deletedTeacher) {
+    throw new ApiError(404, "Teacher not found");
+  }
 
-
+  res.status(200).json(new ApiResponse(200, [], "Teacher deleted"));
+});
 
 export const getTeacherById = asyncHandler(async (req, res) => {
   const { teacherId } = req.params;
