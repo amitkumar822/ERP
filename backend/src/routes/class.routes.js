@@ -14,6 +14,7 @@ import {
   removeTimeTableSlotDayPeriodWise,
   updateClass,
 } from "../controllers/class.controller.js";
+import { createUpdateTimeTable } from "../controllers/classTimeTable.controller.js";
 
 const router = Router();
 
@@ -23,6 +24,9 @@ router.put("/update/:classId", updateClass);
 router.delete("/delete/:classId", deleteClass);
 router.get("/get-all-class", getAllClasses);
 router.get("/get-class-academic-section/:className/:section/:academicYear", getClassesByAcademicYearSection);
+
+//& Class Time Table Router Methods
+router.post("/create-class-timetable", createUpdateTimeTable); 
 
 
 //^ Below routes currently not used

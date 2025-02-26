@@ -29,14 +29,20 @@ const classTimeTableSchema = new mongoose.Schema(
           trim: true,
           required: [true, "Subject is required."],
         },
+        period: {
+          type: String,
+          trim: true,
+          required: [true, "Period is required."]
+        },
         periodsTime: {
           type: String,
+          trim: true,
           required: [true, "Start time is required."],
         },
-        roomNumber: {
-          type: String,
-          required: [true, "Room number is required."],
-        },
+        // roomNumber: {
+        //   type: String,
+        //   required: [true, "Room number is required."],
+        // },
         section: {
           type: String,
           enum: {

@@ -25,31 +25,44 @@ import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import { periodsList } from "@/helpers/periodsList";
 import { academicYear } from "@/helpers/academicYear";
+import { useCreateClassTimeTableMutation } from "@/redux/features/api/classesApi";
 
 export default function TimeTable() {
-  const [periods, setPeriods] = useState([]);
   const [form, setForm] = useState({
     className: "",
     section: "",
+    academicYear: "",
     day: "",
     period: "",
     periodTime: "",
     subject: "",
-    teacher: "",
-    academicYear: "",
     emailPhone: "",
+    teacher: "",
   });
-  const [editIndex, setEditIndex] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const [createClassTimeTable, { data, isLoading, isError, isSuccess }] =
+    useCreateClassTimeTableMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-    
+    await createClassTimeTable({
+      className: form.className,
+      section: form.section,
+      academicYear: form.academicYear,
+      day: form.day,
+      period: form.period,
+      periodTime: form.periodTime,
+      subject: form.subject,
+      emailPhone: form.emailPhone,
+      teacher: form.teacher,
+    });
   };
+
+  console.log(data, isLoading, isError, isSuccess);
 
   const handleEdit = (index) => {};
 
@@ -230,8 +243,11 @@ export default function TimeTable() {
 
             {/* Submit Button */}
             <div className="col-span-1 md:col-span-3">
-              <Button type="submit" className="w-full flex gap-2 cursor-pointer">
-                <PlusCircle size={18} />{" "}Add Period
+              <Button
+                type="submit"
+                className="w-full flex gap-2 cursor-pointer"
+              >
+                <PlusCircle size={18} /> Add Period
                 {/* {editIndex !== null ? "Update Period" : "Add Period"} */}
               </Button>
             </div>

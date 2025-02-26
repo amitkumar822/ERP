@@ -16,7 +16,19 @@ export const classesApi = createApi({
       }),
       keepUnusedDataFor: 3600, // Keeps data in memory for 1 hour
     }),
+
+    // Class Time Table Create
+    createClassTimeTable: builder.mutation({
+      query: ({ className, section, academicYear, day, period, periodTime, subject, emailPhone}) => ({
+        url: `/create-class-timetable`,
+        method: "POST",
+        body: { className, section, academicYear, day, period, periodTime, subject, emailPhone},
+      }),
+    }),
   }),
 });
 
-export const { useGetClassBySectionAcademicYearClassNameQuery } = classesApi;
+export const { 
+  useGetClassBySectionAcademicYearClassNameQuery,
+  useCreateClassTimeTableMutation,
+} = classesApi;
