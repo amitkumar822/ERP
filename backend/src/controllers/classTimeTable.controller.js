@@ -12,7 +12,6 @@ import ClassTimeTable from "../models/classTimeTable.model.js";
  * @route POST /create-class-timetable
  * @access Private (Admin)
  */
-//^ Create and update a class time table for a given class
 export const createUpdateTimeTable = asyncHandler(async (req, res) => {
   const {
     className,
@@ -131,4 +130,81 @@ export const createUpdateTimeTable = asyncHandler(async (req, res) => {
         "Successfully created a new time table"
       )
     );
+});
+
+/**
+ * @desc  Gets the time table
+ * @route GET /get-class-timetable
+ * @access Private (Admin)
+ */
+export const getAllTimeTable = asyncHandler(async (_, res) => {
+  const timeTable = await ClassTimeTable.find({})
+    .populate("periods.className", "className")
+    .populate("periods.teacher", "fullName email phoneNumber")
+    .lean();
+
+  if (!timeTable) {
+    throw new ApiError(404, "No time table found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, timeTable, "Successfully fetched all time tables")
+    );
+});
+
+/**
+ * @desc  Edit a time table
+ * @route PUT /edit-timetable-period/:periodId
+ * @access Private (Admin)
+ */
+export const editTimeTablePeriod = asyncHandler(async (req, res) => {
+  const { periodId } = req.params;
+  const { period, subject, periodTime } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(periodId)) {
+    throw new ApiError(400, "Invalid period ID");
+  }
+
+  const updatedTimeTable = await ClassTimeTable.findOneAndUpdate(
+    { "periods._id": periodId },
+    {
+      $set: {
+        "periods.$.period": period,
+        "periods.$.subject": subject,
+        "periods.$.periodsTime": periodTime,
+      },
+    },
+    { new: true }
+  );
+
+  console.log(updatedTimeTable);
+
+  if (!updatedTimeTable) {
+    return res.status(404).json(new ApiResponse(404, null, "Period not found"));
+  }
+
+  res.status(200).json(new ApiResponse(200, updatedTimeTable, "success"));
+});
+
+/**
+ * @desc  Delete a time table
+ * @route DELETE /delete-timetable-period/:periodId
+ * @access Private (Admin)
+ */
+export const deleteTimeTablePeriod = asyncHandler(async (req, res) => {
+  const { periodId } = req.params;
+
+  const deletedTimeTable = await ClassTimeTable.findOneAndUpdate(
+    { "periods._id": periodId },
+    { $pull: { periods: { _id: periodId } } },
+    { new: true }
+  );
+
+  if (!deletedTimeTable) {
+    return res.status(404).json(new ApiResponse(404, null, "Period not found"));
+  }
+
+  res.status(200).json(new ApiResponse(200, deletedTimeTable, "success"));
 });

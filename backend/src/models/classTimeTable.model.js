@@ -16,7 +16,7 @@ const classTimeTableSchema = new mongoose.Schema(
       {
         className: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Teacher",
+          ref: "Class",
           required: [true, "Class name is required."],
         },
         teacher: {

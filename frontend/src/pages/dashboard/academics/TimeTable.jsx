@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,16 +18,22 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { PlusCircle, Plus, MapIcon } from "lucide-react";
-import "jspdf-autotable";
+import { PlusCircle, MapIcon, Edit, Trash2 } from "lucide-react";
 import { days } from "@/helpers/days";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import { periodsList } from "@/helpers/periodsList";
 import { academicYear } from "@/helpers/academicYear";
-import { useCreateClassTimeTableMutation } from "@/redux/features/api/classesApi";
+import {
+  useCreateClassTimeTableMutation,
+  useDeleteTimeTablePeriodMutation,
+  useGetTimeTablesQuery,
+} from "@/redux/features/api/classesApi";
+import { toast } from "react-toastify";
+import { UpdateTimeTablePeriod } from "./updateTimeTablePeriod";
 
 export default function TimeTable() {
+  //**************👇 Start Add Time Table 👇************** */
   const [form, setForm] = useState({
     className: "",
     section: "",
@@ -44,7 +50,7 @@ export default function TimeTable() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const [createClassTimeTable, { data, isLoading, isError, isSuccess }] =
+  const [createClassTimeTable, { data, isLoading, error, isSuccess }] =
     useCreateClassTimeTableMutation();
 
   const handleSubmit = async (e) => {
@@ -62,11 +68,60 @@ export default function TimeTable() {
     });
   };
 
-  console.log(data, isLoading, isError, isSuccess);
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "Period added successfully");
+      setForm({
+        className: "",
+        section: "",
+        academicYear: "",
+        day: "",
+        period: "",
+        periodTime: "",
+        subject: "",
+        emailPhone: "",
+        teacher: "",
+      });
+    } else if (error) {
+      toast.error(error?.data?.message || "Failed to add period");
+    }
+  }, [isSuccess, error]);
+  //**************👆 End Add Time Table 👆************** */
 
-  const handleEdit = (index) => {};
+  //^ **************�� Start Time Table List ��************** */
+  const {
+    data: timeTableData,
+    isError,
+    isSuccess: timeTableIsSuccess,
+  } = useGetTimeTablesQuery();
 
-  const handleDelete = (index) => {};
+  //^ **************�� End Time Table List ��************** */
+
+  //********👇 Start Edit Time Table Period👇******** */
+  const [open, setOpen] = useState(false);
+  const [periodId, setPeriodId] = useState("");
+
+  //*********👇 End Edit Time Table Period👇********* */
+
+  //& **********👇 Start Delete Time Table Period 👇************* */
+  const [
+    deleteTimeTablePeriod,
+    { error: deleteIsError, isSuccess: deleteIsSuccess },
+  ] = useDeleteTimeTablePeriodMutation();
+
+  const handleDeletePeriod = async (periodId) => {
+    await deleteTimeTablePeriod({ periodId });
+  };
+
+  useEffect(() => {
+    if (deleteIsSuccess) {
+      toast.success(data?.message || "Period deleted successfully");
+    } else if (deleteIsError) {
+      toast.error(deleteIsError?.data?.message || "Failed to delete period");
+    }
+  }, [deleteIsError, deleteIsSuccess]);
+
+  //& **********�� End Delete Time Table Period ��************* */
 
   return (
     <div className="p-4 space-y-4">
@@ -255,52 +310,74 @@ export default function TimeTable() {
         </CardContent>
       </Card>
 
-      {/* {Object.keys(groupedTimetable).map((key, index) => {
-        const [className, section, day] = key.split("-");
-        return (
-          <Card key={index} className="mt-4">
-            <CardContent className="p-4">
-              <h3 className="text-lg font-bold">{`${className} - ${section} - ${day}`}</h3>
-              <Table className="mt-2">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Period</TableHead>
-                    <TableHead>Period Time</TableHead>
-                    <TableHead>Subject</TableHead>
-                    <TableHead>Teacher</TableHead>
-                    <TableHead>Actions</TableHead>
+      {timeTableData?.data?.map((daySchedule, index) => (
+        <Card className="p-4" key={index}>
+          <div className="mb-6">
+            <h2 className="text-xl font-bold mb-2">{daySchedule.day}</h2>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Period</TableHead>
+                  <TableHead>Subject</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Class</TableHead>
+                  <TableHead>Teacher</TableHead>
+                  <TableHead>Teacher Contact</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {daySchedule.periods.map((period, index) => (
+                  <TableRow key={period._id + index}>
+                    <TableCell>{period.period}</TableCell>
+                    <TableCell>{period.subject}</TableCell>
+                    <TableCell>{period.periodsTime}</TableCell>
+                    <TableCell>
+                      {period.className?.className || "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {period.teacher?.fullName || "Unknown"}
+                    </TableCell>
+                    <TableCell className="hover:text-blue-700 text-blue-500 hover:underline ">
+                      <a href={`tel:${period.teacher?.phoneNumber}`}>
+                        {period.teacher?.phoneNumber}
+                      </a>
+                    </TableCell>
+                    <TableCell className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          setPeriodId(period._id);
+                          setOpen(true);
+                        }}
+                      >
+                        <Edit size={16} />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={() => handleDeletePeriod(period._id)}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {groupedTimetable[key].map((entry, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell>{entry.period}</TableCell>
-                      <TableCell>{entry.periodTime}</TableCell>
-                      <TableCell>{entry.subject}</TableCell>
-                      <TableCell>{entry.teacher}</TableCell>
-                      <TableCell>
-                        <Button
-                          size="sm"
-                          onClick={() => handleEdit(periods.indexOf(entry))}
-                        >
-                          <Edit size={14} />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDelete(periods.indexOf(entry))}
-                        >
-                          <Trash2 size={14} />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        );
-      })} */}
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+      ))}
+
+      {/* Edit Model */}
+      <UpdateTimeTablePeriod
+        open={open}
+        onClose={setOpen}
+        periodId={periodId}
+      />
     </div>
   );
 }

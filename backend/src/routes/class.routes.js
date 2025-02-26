@@ -1,20 +1,12 @@
 import { Router } from "express";
 import {
-  addStudentFromClassWise,
-  addSubjectsFromClassWise,
-  addTimeTableFromClassWise,
   createClass,
   deleteClass,
   getAllClasses,
-  getClassById,
   getClassesByAcademicYearSection,
-  removeStudentFromClassWise,
-  removeSubjectsFromClassWise,
-  removeTimeSlotSameDaysWise,
-  removeTimeTableSlotDayPeriodWise,
   updateClass,
 } from "../controllers/class.controller.js";
-import { createUpdateTimeTable } from "../controllers/classTimeTable.controller.js";
+import { createUpdateTimeTable, deleteTimeTablePeriod, editTimeTablePeriod, getAllTimeTable } from "../controllers/classTimeTable.controller.js";
 
 const router = Router();
 
@@ -27,22 +19,9 @@ router.get("/get-class-academic-section/:className/:section/:academicYear", getC
 
 //& Class Time Table Router Methods
 router.post("/create-class-timetable", createUpdateTimeTable); 
+router.get("/get-class-timetable", getAllTimeTable);
+router.put("/edit-timetable-period/:periodId", editTimeTablePeriod);
+router.delete("/delete-timetable-period/:periodId", deleteTimeTablePeriod);
 
-
-//^ Below routes currently not used
-router.get("/get-class-byid/:classId", getClassById);
-router.put("/add-student/:classId", addStudentFromClassWise);
-router.delete("/remove-student/:classId", removeStudentFromClassWise);
-router.put("/add-subjects/:classId", addSubjectsFromClassWise);
-router.delete("/remove-subject/:classId", removeSubjectsFromClassWise);
-router.put("/add-time-table/:classId", addTimeTableFromClassWise);
-router.delete(
-  "/remove-time-day-period-slot/:classId",
-  removeTimeTableSlotDayPeriodWise
-);
-router.delete(
-  "/remove-time-same-day-slot/:classId",
-  removeTimeSlotSameDaysWise
-);
 
 export default router;
