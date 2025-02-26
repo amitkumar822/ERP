@@ -10,7 +10,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { PlusCircle, MapIcon } from "lucide-react";
+import { MapIcon, Upload } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { periodsList } from "@/helpers/periodsList";
 import { toast } from "react-toastify";
@@ -114,7 +114,7 @@ export const UpdateTimeTablePeriod = ({ open, onClose, periodId }) => {
                   type="submit"
                   className="w-full flex gap-2 cursor-pointer"
                 >
-                  <PlusCircle size={18} /> Add Period
+                  <Upload size={18} /> Update
                 </Button>
               </div>
             </form>
