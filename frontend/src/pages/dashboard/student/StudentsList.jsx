@@ -111,8 +111,8 @@ export default function StudentList() {
           className="w-full sm:w-1/2 md:w-1/3"
         />
 
-        <Link to="/students/add">
-          <Button className="bg-blue-500 w-full sm:w-auto">+ Add New</Button>
+        <Link to="/students/admission-form">
+          <Button className="bg-blue-500 w-full sm:w-auto cursor-pointer">+ Add New</Button>
         </Link>
       </div>
 
