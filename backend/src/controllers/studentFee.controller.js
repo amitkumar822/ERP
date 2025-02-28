@@ -7,7 +7,7 @@ import Student from "../models/student.model.js";
 
 /**
  * @desc Pay student fees
- * @rootRoute /api/v1/student-fees
+ * @rootRoute /api/v1/pay-fees
  * @route POST /pay-student-fee
  * @access Private
  */
@@ -31,6 +31,8 @@ export const payStudentFees = asyncHandler(async (req, res) => {
     utrNo,
     otherFees,
   } = req.body;
+
+  console.log(rollNumber, className, section, academicYear);
 
   const student = await Student.findOne({
     rollNumber,
@@ -111,5 +113,21 @@ export const payStudentFees = asyncHandler(async (req, res) => {
     .status(201)
     .json(
       new ApiResponse(201, studentFee, "Fee payment recorded successfully")
+    );
+});
+
+export const getStudentFee = asyncHandler(async (_, res) => {
+  const allStudentFees = await StudentFee.find()
+    .populate("studentId", "fullName rollNumber fatherName fatherNumber")
+    .lean();
+
+  if (!allStudentFees) {
+    throw new ApiError(404, "No student fees found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, allStudentFees, "Successfully get all students fees")
     );
 });

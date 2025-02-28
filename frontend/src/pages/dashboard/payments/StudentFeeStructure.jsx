@@ -16,6 +16,7 @@ import { sections } from "@/helpers/sections";
 import { academicYear } from "@/helpers/academicYear";
 import { useStudentPayFeeMutation } from "@/redux/features/api/feeApi";
 import { toast } from "react-toastify";
+import { StudentFeePDF } from "@/components/dashboard/student/StudentFeePDF";
 
 export default function StudentFeeStructure() {
   const [formData, setFormData] = useState({
@@ -74,6 +75,16 @@ export default function StudentFeeStructure() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (totalAmount < 0) {
+      return alert(
+        "Total amount can not be negative. Please check your discount fee"
+      );
+    }
+
+    if (totalAmount < formData.paymentAmount) {
+      return alert("Payment amount not be greater than the total amount.");
+    }
+
     await studentPayFee({
       studentName: formData.studentName,
       rollNumber: formData.rollNumber,
@@ -100,25 +111,18 @@ export default function StudentFeeStructure() {
       toast.success(
         error?.data?.message || "Successfully Student Fees Payment!"
       );
-      setFormData({
-        studentName: "",
-        rollNumber: "",
-        className: "",
-        section: "",
-        academicYear: "",
-        paymentDate: new Date().toISOString().split("T")[0],
-        tuitionFee: "",
-        examFee: "",
-        transportFee: "",
-        hostelFee: "",
-        totalFee: "",
-        paymentMode: "",
-        utrNo: "",
-        miscellaneousFee: "",
-        discountFees: "",
-        paymentAmount: "",
-        otherFees: "",
-      });
+
+      StudentFeePDF(
+        {
+          name: "Oakwood Academy",
+          address: "123 Maple Street, Anytown, CA 91234",
+          contact: "+1 (555) 123-4567",
+        },
+        formData
+      );
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } else if (error) {
       alert(error?.data?.message || "Failed to submit");
     }
@@ -331,8 +335,8 @@ export default function StudentFeeStructure() {
                 <SelectValue placeholder="Payment Mode" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Online">Online</SelectItem>
                 <SelectItem value="Cash">Cash</SelectItem>
+                <SelectItem value="Online">Online</SelectItem>
               </SelectContent>
             </Select>
           </div>

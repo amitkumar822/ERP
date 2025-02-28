@@ -21,6 +21,10 @@ import {
   Briefcase,
   Truck,
   Table,
+  UserRoundCheck,
+  Users2,
+  Receipt,
+  ListChecks,
 } from "lucide-react";
 import { Link, NavLink } from "react-router";
 import ThemeContext from "@/context/Theme/ThemeContext";
@@ -229,6 +233,43 @@ const sidebarData = [
       },
     ],
   },
+  {
+    title: "Payment Records",
+    icon: <Clock className="w-5 h-5" />,
+    link: "/payment-history",
+    subItems: [
+      {
+        title: "Student Payments",
+        icon: <Users className="w-4 h-4" />,
+        link: "/payment-history/students",
+      },
+      {
+        title: "Teacher Payments",
+        icon: <UserRoundCheck className="w-4 h-4" />,
+        link: "/payment-history/teachers",
+      },
+      {
+        title: "Staff Payments",
+        icon: <Users2 className="w-4 h-4" />,
+        link: "/payment-history/staff",
+      },
+      {
+        title: "Driver Payments",
+        icon: <Truck className="w-4 h-4" />,
+        link: "/payment-history/drivers",
+      },
+      {
+        title: "Other Payments",
+        icon: <Receipt className="w-4 h-4" />,
+        link: "/payment-history/others",
+      },
+      {
+        title: "All Transactions",
+        icon: <ListChecks className="w-4 h-4" />,
+        link: "/payment-history/all",
+      },
+    ],
+  },  
   {
     title: "Settings",
     icon: <Settings className="w-5 h-5" />,

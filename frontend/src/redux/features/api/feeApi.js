@@ -9,16 +9,25 @@ export const feeApi = createApi({
         credentials: "include",
     }),
     endpoints: (builder) => ({
+        // ****** Student fees api ******
         studentPayFee: builder.mutation({
             query: ({ studentName, rollNumber, className, section, academicYear, paymentDate, tuitionFee, examFee, transportFee, hostelFee, totalFee, paymentMode, utrNo, miscellaneousFee, discountFees, paymentAmount, otherFees  }) => ({
                 url: "/pay-student-fee",
                 method: "POST",
                 body: { studentName, rollNumber, className, section, academicYear, paymentDate, tuitionFee, examFee, transportFee, hostelFee, totalFee, paymentMode, utrNo, miscellaneousFee, discountFees, paymentAmount, otherFees },
             }),
+        }),
+
+        getAllStudentFees: builder.query({
+            query: () => ({
+                url: "/get-student-fee",
+                method: "GET"
+            })
         })
     })
 })
 
 export const { 
-    useStudentPayFeeMutation
+    useStudentPayFeeMutation,
+    useGetAllStudentFeesQuery,
  } = feeApi;

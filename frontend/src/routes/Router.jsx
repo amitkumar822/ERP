@@ -6,6 +6,7 @@ import Library from "@/pages/dashboard/library/Library";
 import MainDashboard from "@/pages/dashboard/MainDashboard";
 import DriverSalaryPayment from "@/pages/dashboard/payments/DriverSalaryPayment";
 import FeeStructure from "@/pages/dashboard/payments/FeeStructure";
+import StudentFeesList from "@/pages/dashboard/payments/listPayment/StudentFeesList";
 import StaffSalary from "@/pages/dashboard/payments/StaffSalary";
 import StudentFeeStructure from "@/pages/dashboard/payments/StudentFeeStructure";
 import TeacherSalaries from "@/pages/dashboard/payments/TeacherSalaries";
@@ -57,6 +58,9 @@ const router = createBrowserRouter(
       <Route path="payments/staff" element={<StaffSalary />} />
       <Route path="payments/drivers" element={<DriverSalaryPayment />} />
       <Route path="payments/fee-structure" element={<FeeStructure />} />
+
+      {/* Payment Recourds */}
+      <Route path="payment-history/students" element={<StudentFeesList />} />
 
       <Route path="settings" element={<Settings />} />
       <Route path="help" element={<HelpAndSupport />} />
