@@ -189,3 +189,38 @@ export const payPendingFees = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, studentFee, "Pending fee payment successful"));
 });
+
+/**
+ * @desc Get Pending Fee Details
+ * @route GET /get-pending-fees
+ * @access Private
+ */
+export const getPendingFeeDetail = asyncHandler(async (_, res) => {
+  const allPendingFeeDetail = await StudentFee.find({
+    "feeDetails.status": "Partial",
+  })
+    .populate("studentId", "fullName rollNumber fatherName fatherNumber")
+    .lean();
+
+  if (!allPendingFeeDetail) {
+    throw new ApiError(404, "No pending fee found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        allPendingFeeDetail,
+        "Successfully get all pending fees"
+      )
+    );
+});
+
+/**
+ * @desc Get Student Fee Details by Roll Number
+ * @route GET /get-student-fee-by-roll/:rollNumber
+ * @access Private
+ */
+
+export const getStudentFeeByRoll = asyncHandler(async (req, res) => {});
