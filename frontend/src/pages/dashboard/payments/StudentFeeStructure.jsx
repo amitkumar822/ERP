@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreditCard } from "lucide-react";
 import {
   Select,
@@ -37,6 +37,23 @@ export default function StudentFeeStructure() {
     otherFees: "",
   });
 
+  const totalAmount = calculateTotalFee(
+    formData.tuitionFee,
+    formData.examFee,
+    formData.transportFee,
+    formData.hostelFee,
+    formData.miscellaneousFee,
+    formData.discountFees,
+    formData.otherFees
+  );
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      totalFee: totalAmount,
+    }));
+  }, [totalAmount]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -48,7 +65,6 @@ export default function StudentFeeStructure() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
-    
   };
 
   return (
@@ -242,7 +258,9 @@ export default function StudentFeeStructure() {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="discountFees" className="text-green-600">Discount Fees</Label>
+            <Label htmlFor="discountFees" className="text-green-600">
+              Discount Fees
+            </Label>
             <Input
               type="number"
               id="discountFees"
@@ -254,37 +272,40 @@ export default function StudentFeeStructure() {
             />
           </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="paymentMode">Payment Mode*</Label>
-              <Select
-                value={formData.paymentMode}
-                onValueChange={(value) =>
-                  handleChange({ target: { name: "paymentMode", value } })
-                }
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Payment Mode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Online">Online</SelectItem>
-                  <SelectItem value="Offline">Offline</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="paymentMode">Payment Mode*</Label>
+            <Select
+              value={formData.paymentMode}
+              onValueChange={(value) =>
+                handleChange({ target: { name: "paymentMode", value } })
+              }
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Payment Mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Online">Online</SelectItem>
+                <SelectItem value="Offline">Offline</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="utrNo">UTR/Bank Tran. No.(Online)</Label>
-              <Input
-                type="text"
-                id="utrNo"
-                name="utrNo"
-                placeholder="Enter UTR/Bank Tran. No.(Online)"
-                value={formData.utrNo}
-                onChange={handleChange}
-                disabled={formData.paymentMode === "Offline" || formData.paymentMode === ""}
-              />
-            </div>
-          
+          <div className="grid gap-2">
+            <Label htmlFor="utrNo">UTR/Bank Tran. No.(Online)</Label>
+            <Input
+              type="text"
+              id="utrNo"
+              name="utrNo"
+              placeholder="Enter UTR/Bank Tran. No.(Online)"
+              value={formData.utrNo}
+              onChange={handleChange}
+              disabled={
+                formData.paymentMode === "Offline" ||
+                formData.paymentMode === ""
+              }
+            />
+          </div>
+
           <div className="grid gap-2">
             <Label htmlFor="paymentAmount">Payment Amount</Label>
             <Input
@@ -296,7 +317,7 @@ export default function StudentFeeStructure() {
               onChange={handleChange}
             />
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="totalFee">Total Fee</Label>
             <Input
@@ -321,3 +342,23 @@ export default function StudentFeeStructure() {
     </div>
   );
 }
+
+const calculateTotalFee = (
+  tuitionFee,
+  examFee,
+  transportFee,
+  hostelFee,
+  miscellaneousFee,
+  discountFees,
+  otherFees
+) => {
+  return (
+    Number(tuitionFee) +
+    Number(examFee) +
+    Number(transportFee) +
+    Number(hostelFee) +
+    Number(miscellaneousFee) +
+    Number(otherFees) -
+    Number(discountFees)
+  );
+};

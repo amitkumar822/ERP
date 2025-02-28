@@ -3,103 +3,102 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import StudentFee from "../models/studentFee.model.js";
-
+import Student from "../models/student.model.js";
 
 /**
  * @desc Pay student fees
- * @route POST /api/fees/pay
+ * @rootRoute /api/v1/student-fees
+ * @route POST /pay-student-fee
  * @access Private
  */
-export const payStudentFees = async (req, res) => {
-  try {
-    const {
-      studentName,
-      rollNumber,
-      fatherName,
-      class: studentClass,
-      section,
-      academicYear,
-      paymentDate,
-      tuitionFee,
-      examFee,
-      transportFee,
-      hostelFee,
-      totalFee,
-      paymentMode,
-      utrNo,
-      miscellaneousFee,
-      discountFees,
-      paymentAmount,
-      otherFees,
-    } = req.body;
+export const payStudentFees = asyncHandler(async (req, res) => {
+  const {
+    rollNumber,
+    class: className,
+    section,
+    academicYear,
+    studentName,
+    paymentDate,
+    tuitionFee,
+    examFee,
+    transportFee,
+    hostelFee,
+    miscellaneousFee,
+    discountFees,
+    paymentAmount,
+    totalFee,
+    paymentMode,
+    utrNo,
+    otherFees,
+  } = req.body;
 
-    // Validate required fields
-    if (
-      !studentName ||
-      !rollNumber ||
-      !academicYear ||
-      !totalFee ||
-      !paymentAmount ||
-      !paymentMode
-    ) {
-      return res
-        .status(400)
-        .json({ message: "All required fields must be provided" });
-    }
+  const student = await Student.findOne({
+    rollNumber,
+    className,
+    section,
+    academicYear,
+  });
 
-    // Find the student's fee record
-    let studentFee = await StudentFee.findOne({ rollNumber, academicYear });
-
-    if (!studentFee) {
-      // If no record exists, create a new one
-      studentFee = new StudentFee({
-        studentName,
-        rollNumber,
-        fatherName,
-        class: studentClass,
-        section,
-        academicYear,
-        feeDetails: [],
-      });
-    }
-
-    // Calculate the pending amount
-    const pendingAmount = totalFee - (paymentAmount + discountFees);
-
-    // Construct new fee payment entry
-    const newFeeEntry = {
-      paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
-      tuitionFee: tuitionFee || 0,
-      examFee: examFee || 0,
-      transportFee: transportFee || 0,
-      hostelFee: hostelFee || 0,
-      miscellaneousFee: miscellaneousFee || 0,
-      otherFees: otherFees || 0,
-      discountFees: discountFees || 0,
-      totalFee,
-      paymentMode,
-      transactionId: paymentMode === "Online" ? utrNo || null : null,
-      paymentAmount,
-      pendingAmount: pendingAmount < 0 ? 0 : pendingAmount, // Avoid negative pending amount
-      status:
-        pendingAmount <= 0 ? "Paid" : paymentAmount > 0 ? "Partial" : "Pending",
-    };
-
-    // Push new fee payment entry to the feeDetails array
-    studentFee.feeDetails.push(newFeeEntry);
-
-    // Update last payment date
-    studentFee.lastPaymentDate = newFeeEntry.paymentDate;
-
-    // Save the updated fee record
-    await studentFee.save();
-
-    return res.status(200).json({
-      message: "Payment recorded successfully",
-      data: studentFee,
-    });
-  } catch (error) {
-    console.error("Error in payStudentFees:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+  if (!student) {
+    throw new ApiError(404, "Student not found");
   }
-};
+
+  if (
+    student?.fullName.toLowerCase() !==
+    studentName.toString().trim().toLowerCase()
+  ) {
+    throw new ApiError(
+      400,
+      `Data mismatch. Please verify: Student Name, Roll Number, and Class Name. Provided details do not match the stored record. Databse Student Name is ${student?.fullName}.`
+    );
+  }
+
+  // **Find or create StudentFee record for this student & academic year & month**
+  const currentMonth = new Date(paymentDate).toLocaleString("default", {
+    month: "long",
+  });
+
+  let studentFee = await StudentFee.findOne({
+    studentId: student._id,
+    academicYear,
+    month: currentMonth,
+  });
+
+  if (!studentFee) {
+    studentFee = new StudentFee({
+      studentId: student._id,
+      academicYear,
+      month: currentMonth,
+      feeDetails: [],
+    });
+  }
+
+  studentFee.feeDetails.push({
+    paymentDate,
+    tuitionFee,
+    examFee,
+    transportFee,
+    hostelFee,
+    miscellaneousFee,
+    discountFees,
+    paymentAmount,
+    totalFee,
+    paymentMode,
+    otherFees,
+    transactionId: utrNo || null, // Set UTR No. if available
+    status:
+      paymentAmount >= totalFee
+        ? "Paid"
+        : paymentAmount > 0
+        ? "Partial"
+        : "Pending",
+  });
+
+  await studentFee.save();
+
+  res
+    .status(201)
+    .json(
+      new ApiResponse(201, studentFee, "Fee payment recorded successfully")
+    );
+});
