@@ -25,38 +25,48 @@ const studentFeeSchema = new mongoose.Schema(
         tuitionFee: {
           type: Number,
           default: 0,
-          // required: [true, "Tuition fee is required"],
+          min: [0, "Tuition fee cannot be negative"],
         },
         examFee: {
           type: Number,
           default: 0,
+          min: [0, "Exam fee cannot be negative"],
         },
         transportFee: {
           type: Number,
           default: 0,
+          min: [0, "Transport fee cannot be negative"],
         },
         hostelFee: {
           type: Number,
           default: 0,
+          min: [0, "Hostel fee cannot be negative"],
         },
         miscellaneousFee: {
           type: Number,
           default: 0,
+          min: [0, "Miscellaneous fee cannot be negative"],
         },
         discountFees: {
           type: Number,
           default: 0,
+          min: [0, "Discount fees cannot be negative"],
         },
         paymentAmount: {
           type: Number,
+          required: [true, "Payment amount is required"],
           default: 0,
+          min: [0, "Payment amount cannot be negative"],
         },
         totalFee: {
           type: Number,
           required: [true, "Total fee amount is required"],
+          min: [0, "Total fee cannot be negative"],
         },
         pendingAmount: {
           type: Number,
+          default: 0,
+          min: [0, "Pending amount cannot be negative"],
         },
         paymentMode: {
           type: String,
@@ -69,6 +79,7 @@ const studentFeeSchema = new mongoose.Schema(
         otherFees: {
           type: Number,
           default: 0,
+          min: [0, "Other fees cannot be negative"],
         },
         status: {
           type: String,
@@ -81,26 +92,11 @@ const studentFeeSchema = new mongoose.Schema(
       type: Date,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { timestamps: true }
 );
 
 // **Indexing for optimized queries**
 studentFeeSchema.index({ studentId: 1, academicYear: 1, month: 1 });
-
-// **✅ Corrected Virtual for Calculated Total Fee (Sum of All FeeDetails)**
-studentFeeSchema.virtual("calculatedTotalFee").get(function () {
-  return this.feeDetails.reduce((total, fee) => {
-    return (
-      total +
-      fee.tuitionFee +
-      fee.examFee +
-      fee.transportFee +
-      fee.hostelFee +
-      fee.miscellaneousFee -
-      fee.discountFees
-    );
-  }, 0);
-});
 
 // **✅ Corrected Pre-save Hook for `pendingAmount`**
 studentFeeSchema.pre("save", function (next) {

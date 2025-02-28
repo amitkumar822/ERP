@@ -25,7 +25,7 @@ import staffRoutes from "./src/routes/staff.routes.js";
 import vehicleRoutes from "./src/routes/vehicle.routes.js";
 
 // fees all import routes
-import studentFeesRoutes from "./src/routes/studentFee.routes.js";
+import feesPayRoutes from "./src/routes/feePay.routes.js";
 
 
 // define routes
@@ -37,7 +37,7 @@ app.use("/api/v1/staff", staffRoutes);
 app.use("/api/v1/vehicle", vehicleRoutes);
 
 // fees all define routes
-app.use("/api/v1/student-fees", studentFeesRoutes);
+app.use("/api/v1/pay-fees", feesPayRoutes);
 
 app.use(errorHandler);
 export { app };

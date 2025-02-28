@@ -14,7 +14,7 @@ import Student from "../models/student.model.js";
 export const payStudentFees = asyncHandler(async (req, res) => {
   const {
     rollNumber,
-    class: className,
+    className,
     section,
     academicYear,
     studentName,
@@ -40,7 +40,10 @@ export const payStudentFees = asyncHandler(async (req, res) => {
   });
 
   if (!student) {
-    throw new ApiError(404, "Student not found");
+    throw new ApiError(
+      404,
+      `No student found with Roll Number: ${rollNumber}, Class: ${className}, Section: ${section}, Academic Year: ${academicYear}. Please verify the details and try again.`
+    );
   }
 
   if (
@@ -49,7 +52,15 @@ export const payStudentFees = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(
       400,
-      `Data mismatch. Please verify: Student Name, Roll Number, and Class Name. Provided details do not match the stored record. Databse Student Name is ${student?.fullName}.`
+      `Student data mismatch detected. Please verify the details:  
+    - Entered Name: ${studentName}  
+    - Entered Roll Number: ${rollNumber}  
+    - Entered Class: ${className}  
+      
+    These details do not match our records. The correct details are:  
+    - Registered Name: ${student?.fullName}  
+    - Registered Roll Number: ${student?.rollNumber}  
+    - Registered Class: ${student?.className}.`
     );
   }
 

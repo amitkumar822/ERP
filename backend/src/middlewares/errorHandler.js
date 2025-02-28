@@ -1,8 +1,21 @@
 import { ApiError } from "../../utils/ApiError.js";
 
 const errorHandler = (err, req, res, next) => {
-  // Check if the error is an instance of ApiError
-  if (err instanceof ApiError) {
+  // Handle Mongoose validation errors
+  if (err.name === "ValidationError") {
+    // Extract only error messages from validation errors
+    const validationMessages = Object.values(err.errors).map(
+      (error) => error.message
+    );
+
+    res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: validationMessages.join(", "),
+      errors: validationMessages,
+    });
+  } else if (err instanceof ApiError) {
+    // Check if the error is an instance of ApiError
     res.status(err.statusCode || 500).json({
       success: err.success,
       statusCode: err.statusCode,

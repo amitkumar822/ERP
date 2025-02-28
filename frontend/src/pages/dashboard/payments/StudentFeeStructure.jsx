@@ -14,22 +14,23 @@ import { Label } from "@/components/ui/label";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import { academicYear } from "@/helpers/academicYear";
+import { useStudentPayFeeMutation } from "@/redux/features/api/feeApi";
+import { toast } from "react-toastify";
 
 export default function StudentFeeStructure() {
   const [formData, setFormData] = useState({
     studentName: "",
     rollNumber: "",
-    fatherName: "",
-    class: "",
+    className: "",
     section: "",
     academicYear: "",
-    paymentDate: "",
+    paymentDate: new Date().toISOString().split("T")[0],
     tuitionFee: "",
     examFee: "",
     transportFee: "",
     hostelFee: "",
     totalFee: "",
-    paymentMode: "",
+    paymentMode: "Cash",
     utrNo: "",
     miscellaneousFee: "",
     discountFees: "",
@@ -55,17 +56,73 @@ export default function StudentFeeStructure() {
   }, [totalAmount]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+
+    // Ensure numbers are not negative
+    if (type === "number" && value < 0) {
+      return; // Prevent negative values
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const [studentPayFee, { data, error, isLoading, isSuccess }] =
+    useStudentPayFeeMutation();
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    await studentPayFee({
+      studentName: formData.studentName,
+      rollNumber: formData.rollNumber,
+      className: formData.className,
+      section: formData.section,
+      academicYear: formData.academicYear,
+      paymentDate: formData.paymentDate,
+      tuitionFee: formData.tuitionFee,
+      examFee: formData.examFee,
+      transportFee: formData.transportFee,
+      hostelFee: formData.hostelFee,
+      totalFee: formData.totalFee,
+      paymentMode: formData.paymentMode,
+      utrNo: formData.utrNo,
+      miscellaneousFee: formData.miscellaneousFee,
+      discountFees: formData.discountFees,
+      paymentAmount: formData.paymentAmount,
+      otherFees: formData.otherFees,
+    });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(
+        error?.data?.message || "Successfully Student Fees Payment!"
+      );
+      setFormData({
+        studentName: "",
+        rollNumber: "",
+        className: "",
+        section: "",
+        academicYear: "",
+        paymentDate: new Date().toISOString().split("T")[0],
+        tuitionFee: "",
+        examFee: "",
+        transportFee: "",
+        hostelFee: "",
+        totalFee: "",
+        paymentMode: "",
+        utrNo: "",
+        miscellaneousFee: "",
+        discountFees: "",
+        paymentAmount: "",
+        otherFees: "",
+      });
+    } else if (error) {
+      alert(error?.data?.message || "Failed to submit");
+    }
+  }, [error, isSuccess]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
@@ -77,25 +134,13 @@ export default function StudentFeeStructure() {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          <div className="grid gap-2">
+          <div className="grid gap-2 col-span-2">
             <Label htmlFor="studentName">Student Name*</Label>
             <Input
               id="studentName"
               placeholder="Enter student name"
               name="studentName"
               value={formData.studentName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="fatherName">Father Name</Label>
-            <Input
-              id="fatherName"
-              placeholder="Enter father name"
-              name="fatherName"
-              value={formData.fatherName}
               onChange={handleChange}
               required
             />
@@ -117,9 +162,11 @@ export default function StudentFeeStructure() {
             <Label htmlFor="selectClass">Select Class*</Label>
             <Select
               id="selectClass"
-              name="class"
-              value={formData.class}
-              onValueChange={(val) => setFormData({ ...formData, class: val })}
+              name="className"
+              value={formData.className}
+              onValueChange={(val) =>
+                setFormData({ ...formData, className: val })
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Class" />
@@ -285,7 +332,7 @@ export default function StudentFeeStructure() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Online">Online</SelectItem>
-                <SelectItem value="Offline">Offline</SelectItem>
+                <SelectItem value="Cash">Cash</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -300,8 +347,7 @@ export default function StudentFeeStructure() {
               value={formData.utrNo}
               onChange={handleChange}
               disabled={
-                formData.paymentMode === "Offline" ||
-                formData.paymentMode === ""
+                formData.paymentMode === "Cash" || formData.paymentMode === ""
               }
             />
           </div>
@@ -329,13 +375,14 @@ export default function StudentFeeStructure() {
               value={formData.totalFee}
             />
           </div>
-          <div className="col-span-1 md:col-span-2 flex justify-between items-center mt-4">
-            <Button type="submit" className="flex items-center gap-2">
+          <div className="col-span-1 md:col-span-2 flex justify-center items-center mt-4">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <CreditCard className="w-5 h-5" /> Pay Now
             </Button>
-            {/* <Button onClick={handleDownloadPDF} variant="outline" className="flex items-center gap-2">
-          <Download className="w-5 h-5" /> Download PDF
-        </Button> */}
           </div>
         </form>
       </Card>

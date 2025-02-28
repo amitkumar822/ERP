@@ -4,8 +4,7 @@ import { classesApi } from "../features/api/classesApi";
 import { attendanceApi } from "../features/api/attendanceApi";
 import { studentApi } from "../features/api/studentApi";
 import { teacherApi } from "../features/api/teacherApi";
-
-// import persistStore from "redux-persist/es/persistStore";
+import { feeApi } from "../features/api/feeApi";
 
 export const appStore = configureStore({
   reducer: rootReducer,
@@ -14,9 +13,12 @@ export const appStore = configureStore({
       classesApi.middleware,
       attendanceApi.middleware,
       studentApi.middleware,
-      teacherApi.middleware
+      teacherApi.middleware,
+      feeApi.middleware
     ),
 });
+
+// import persistStore from "redux-persist/es/persistStore";
 
 // export const appStore = configureStore({
 //     reducer: persistedReducer,
