@@ -41,6 +41,8 @@ export const markAttendance = asyncHandler(async (req, res) => {
 //^ Get Attendance by Class, Month and Date
 export const getAttendanceByClassMonthDate = asyncHandler(async (req, res) => {
   const { date, academicYear, className, section } = req.body;
+  console.log("BODY: \n",req.body);
+  
 
   if (!date || !academicYear || !className || !section) {
     throw new ApiError(400, "Please provide all required fields");

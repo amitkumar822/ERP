@@ -4,6 +4,7 @@ const baseURL = "http://localhost:4000/api/v1/pay-fees";
 
 export const feeApi = createApi({
     reducerPath: "feeApi",
+    tagTypes: ["Refetch_Get_Student_fees"],
     baseQuery: fetchBaseQuery({
         baseUrl: baseURL,
         credentials: "include",
@@ -22,7 +23,16 @@ export const feeApi = createApi({
             query: () => ({
                 url: "/get-student-fee",
                 method: "GET"
-            })
+            }),
+            providesTags: ["Refetch_Get_Student_fees"]
+        }),
+        payStudentPendingAmount: builder.mutation({
+            query: ({pendingAmount, paymentMode, transactionId, pendingFeeId}) => ({
+                url: `/pay-pending-student-fee/${pendingFeeId}`,
+                method: "PUT",
+                body: ({pendingAmount, paymentMode, transactionId})
+            }),
+            invalidatesTags: ["Refetch_Get_Student_fees"]
         })
     })
 })
@@ -30,4 +40,5 @@ export const feeApi = createApi({
 export const { 
     useStudentPayFeeMutation,
     useGetAllStudentFeesQuery,
+    usePayStudentPendingAmountMutation,
  } = feeApi;

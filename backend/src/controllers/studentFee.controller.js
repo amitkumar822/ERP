@@ -116,6 +116,11 @@ export const payStudentFees = asyncHandler(async (req, res) => {
     );
 });
 
+/**
+ * @desc Get All Payment
+ * @route POST /get-student-fees
+ * @access Private
+ */
 export const getStudentFee = asyncHandler(async (_, res) => {
   const allStudentFees = await StudentFee.find()
     .populate("studentId", "fullName rollNumber fatherName fatherNumber")
@@ -130,4 +135,57 @@ export const getStudentFee = asyncHandler(async (_, res) => {
     .json(
       new ApiResponse(200, allStudentFees, "Successfully get all students fees")
     );
+});
+
+/**
+ * @desc Pay Pending Fee Payment
+ * @route POST /gpay-pending-student-fee/:feeId
+ * @access Private
+ */
+export const payPendingFees = asyncHandler(async (req, res) => {
+  const { feeId } = req.params;
+  const { pendingAmount: paymentAmount, paymentMode, transactionId } = req.body;
+
+  // Find the specific student fee record by feeId
+  const studentFee = await StudentFee.findOne({ "feeDetails._id": feeId });
+
+  if (!studentFee) {
+    throw new ApiError(404, "Fee record not found");
+  }
+
+  // Find the specific feeDetail entry within feeDetails array
+  const feeDetail = studentFee.feeDetails.find(
+    (fee) => fee._id.toString() === feeId
+  );
+
+  if (!feeDetail) {
+    throw new ApiError(404, "Fee detail entry not found");
+  }
+
+  if (feeDetail.status === "Paid") {
+    throw new ApiError(400, "This fee has already been fully paid");
+  }
+
+  if (paymentAmount <= 0) {
+    throw new ApiError(400, "Payment amount must be greater than zero");
+  }
+
+  if (paymentAmount > feeDetail.pendingAmount) {
+    throw new ApiError(400, "Payment amount exceeds pending amount");
+  }
+
+  // Update pending amount and payment status
+  feeDetail.paymentAmount += paymentAmount;
+  feeDetail.pendingAmount -= paymentAmount;
+  feeDetail.paymentMode = paymentMode;
+  feeDetail.transactionId = transactionId || null;
+
+  // Update status based on remaining pendingAmount
+  feeDetail.status = feeDetail.pendingAmount === 0 ? "Paid" : "Partial";
+
+  await studentFee.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, studentFee, "Pending fee payment successful"));
 });

@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import { Outlet } from "react-router";
 import Navbar from "./Navbar";
+import MobileSidebar from "./MobileSidebar";
 
 const MainDashboard = () => {
   return (
@@ -15,7 +16,12 @@ const MainDashboard = () => {
       <div className="flex pt-10 h-full">
         {/* Sidebar (Fixed) */}
         <div>
-          <Sidebar />
+          <div className="hidden md:block">
+            <Sidebar />
+          </div>
+          <div className="md:hidden">
+            <MobileSidebar />
+          </div>
         </div>
 
         {/* Dashboard (Scrollable) */}

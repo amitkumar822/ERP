@@ -118,7 +118,7 @@ const Sidebar = () => {
 export default Sidebar;
 
 // Sidebar data in JSON format for easy management
-const sidebarData = [
+export const sidebarData = [
   {
     title: "Dashboard",
     icon: <LayoutDashboard className="w-5 h-5" />,
