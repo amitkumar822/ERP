@@ -125,17 +125,17 @@ export default function JoiningTeacher() {
   
 
   return (
-    <div className="w-full mx-auto p-6 bg-white shadow rounded-md dark:bg-gray-900 dark:text-white">
+    <div className="w-full mx-auto md:p-6 p-2 pt-5 bg-white shadow rounded-md dark:bg-gray-900 dark:text-white">
       <div>
-        <h1 className="text-2xl font-bold mb-6 flex justify-center items-center gap-3">
-          <UserPlus className="h-8 w-8 text-blue-500" /> Welcome New Educator!
+        <h1 className="md:text-2xl font-bold mb-6 flex justify-center items-center gap-3">
+          <UserPlus className="md:h-8 md:w-8 text-blue-500" /> Welcome New Educator!
         </h1>
       </div>
 
-      <Card className="p-4">
+      <Card className="md:p-4 p-2">
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          className="grid md:grid-cols-2 grid-cols-1 gap-4"
         >
           {/* First Name */}
           <div>
@@ -182,6 +182,7 @@ export default function JoiningTeacher() {
               id="joiningDate"
               type="date"
               name="joiningDate"
+              placeholder="Ex. 2021-12-31"
               onChange={handleInputChange}
               required
             />
@@ -376,7 +377,7 @@ export default function JoiningTeacher() {
           </div>
 
           {/* Address */}
-          <div className="col-span-2">
+          <div className="md:col-span-2">
             <AddressCurrentPermanent
               sameAddressChecked={sameAddressChecked}
               setSameAddressChecked={setSameAddressChecked}

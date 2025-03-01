@@ -21,7 +21,7 @@ const AddressCurrentPermanent = ({
   return (
     <div>
       {/* Address */}
-      <Card className="my-6">
+      <Card className="md:my-6 ">
         <CardHeader>
           <CardTitle>Address</CardTitle>
         </CardHeader>
@@ -171,11 +171,11 @@ const AddressCurrentPermanent = ({
       </Card>
 
       {/* 📌 Submit Button */}
-      <div className="text-center">
+      <div className="text-center md:pb-0 pb-15">
         <Button
           disabled={isPending}
           type="submit"
-          className="w-1/4 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-lg shadow-lg"
+          className="md:w-1/4 w-full mt-4 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-lg shadow-lg"
         >
           {isPending ? (
             <span className="flex items-center gap-2">
