@@ -30,6 +30,7 @@ const teacherSchema = new mongoose.Schema({
     type: String,
     required: [true, "Phone number is required"],
     unique: true,
+    match: [/^[6-9]\d{9}$/, "Phone number must be a 10-digit valid Indian number"],
     minlength: [10, "Phone Number must be at least 10 characters long"],
     maxlength: [10, "Phone Number must be at most 10 characters long"],
   },
@@ -134,7 +135,7 @@ const teacherSchema = new mongoose.Schema({
       // required: [true, "At least one subject is required"],
     },
   ],
-});
+}, { timestamps: true });
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 export default Teacher;

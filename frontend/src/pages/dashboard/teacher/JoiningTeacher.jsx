@@ -119,6 +119,8 @@ export default function JoiningTeacher() {
     if (isSuccess) {
       toast.success(error?.data?.message || "Successfully Joined Teacher!");
     } else if (error) {
+      console.log("Error Teacher Joing:\n ", error);
+      
       alert(error?.data?.message || "Failed to submit");
     }
   }, [error, isSuccess]);

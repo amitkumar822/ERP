@@ -26,7 +26,7 @@ const vehicleSchema = new mongoose.Schema({
     type: Date,
     required: [true, "Maintenance date is required"],
   },
-});
+}, { timestamps: true });
 
 const Vehicle = mongoose.model("Vehicle", vehicleSchema);
 export default Vehicle;

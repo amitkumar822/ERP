@@ -3,7 +3,6 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import Teacher from "../models/teacher.model.js";
-import { validDays } from "../helpers/validDays.js";
 
 /**
  * @desc  Create And Update a Teacher
@@ -48,38 +47,13 @@ export const joiningTeacher = asyncHandler(async (req, res) => {
     );
   }
 
-  const existingTeacher = await Teacher.find({ email }).lean();
-  if (existingTeacher) {
-    const updatedTeacher = await Teacher.findByIdAndUpdate(
-      existingTeacher._id,
-      {
-        fullName,
-        email,
-        phoneNumber,
-        gender,
-        designation,
-        dob,
-        qualification,
-        experience,
-        permanentAddress,
-        document,
-        identification,
-        previousInstitutionName,
-        extracurricularActivities,
-        address: {
-          permanentAddress,
-          currentAddress,
-        },
-        ...(password && { password }), // Only update password if provided
-      },
-      { new: true, runValidators: true } // Return updated document, ensure validation
-    ).lean();
+  const existingTeacher = await Teacher.findOne({ phoneNumber }).lean();
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, updatedTeacher, "Teacher updated successfully")
-      );
+  if (existingTeacher) {
+    throw new ApiError(
+      400,
+      `Teacher with phone number ${phoneNumber} already exists`
+    );
   }
 
   const newTeacher = await Teacher.create({

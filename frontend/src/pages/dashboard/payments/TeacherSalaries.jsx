@@ -1,155 +1,202 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import jsPDF from 'jspdf';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DollarSign,
+  User,
+  Banknote,
+  BadgeCheck,
+  ClipboardList,
+} from "lucide-react";
 
-export default function TeacherSalaries() {
-  const [darkMode, setDarkMode] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [formData, setFormData] = useState(null);
+const TeacherSalaries = () => {
+  const [formData, setFormData] = useState({
+    teacher: "",
+    month: "",
+    basicSalary: "",
+    bonus: "",
+    deductions: "",
+    paymentMode: "",
+    transactionId: "",
+    status: "Pending",
+    remarks: "",
+  });
 
-  const downloadPDF = () => {
-    if (!formData) return;
-
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-    doc.text('Salary Receipt', 20, 20);
-
-    doc.setFontSize(12);
-    let yPosition = 40;
-
-    Object.entries(formData).forEach(([key, value]) => {
-      doc.text(`${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`, 20, yPosition);
-      yPosition += 10;
-    });
-
-    doc.save('salary-receipt.pdf');
-  };
-
-  const onSubmit = (data) => {
-    setFormData(data);
-    downloadPDF();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className={`min-h-screen p-8 dark:bg-gray-900 dark:text-white`}>
-      <div className="max-w-4xl mx-auto">
-       
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Teacher Name */}
-            <div className="space-y-2">
-              <Label htmlFor="teacherName" className="font-medium">
-                Teacher Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="teacherName"
-                {...register('teacherName', { required: 'Teacher name is required' })}
-                className={`${errors.teacherName ? 'border-red-500' : ''}`}
-              />
-              {errors.teacherName && (
-                <p className="text-red-500 text-sm">{errors.teacherName.message}</p>
-              )}
-            </div>
+    <div className="container mx-auto p-4 space-y-6">
+      <Card className="shadow-lg rounded-2xl">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold flex items-center gap-2">
+            <Banknote className="w-6 h-6 text-green-600" /> Teacher Salary
+            Payment
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label htmlFor="teacher" className="font-medium">
+              Teacher Name
+            </label>
+            <Select
+              onValueChange={(value) =>
+                setFormData({ ...formData, teacher: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Teacher" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="John Doe">John Doe</SelectItem>
+                <SelectItem value="Jane Smith">Jane Smith</SelectItem>
+              </SelectContent>
+            </Select>
 
-            {/* Salary Amount */}
-            <div className="space-y-2">
-              <Label htmlFor="salaryAmount" className="font-medium">
-                Salary Amount (₹) <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="salaryAmount"
-                type="number"
-                {...register('salaryAmount', {
-                  required: 'Salary amount is required',
-                  min: { value: 0, message: 'Amount must be positive' }
-                })}
-                className={`${errors.salaryAmount ? 'border-red-500' : ''}`}
-              />
-              {errors.salaryAmount && (
-                <p className="text-red-500 text-sm">{errors.salaryAmount.message}</p>
-              )}
-            </div>
+            <label htmlFor="month" className="font-medium">
+              Month & Year
+            </label>
+            <Input
+              type="month"
+              id="month"
+              name="month"
+              value={formData.month}
+              onChange={handleChange}
+            />
 
-            {/* Payment Mode */}
-            <div className="space-y-2">
-              <Label className="font-medium">
-                Payment Mode <span className="text-red-500">*</span>
-              </Label>
-              <Select {...register('paymentMode', { required: 'Payment mode is required' })}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select mode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="online">Online</SelectItem>
-                  <SelectItem value="offline">Offline</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.paymentMode && (
-                <p className="text-red-500 text-sm">{errors.paymentMode.message}</p>
-              )}
-            </div>
+            <label htmlFor="basicSalary" className="font-medium">
+              Basic Salary
+            </label>
+            <Input
+              type="number"
+              id="basicSalary"
+              name="basicSalary"
+              value={formData.basicSalary}
+              onChange={handleChange}
+              icon={<DollarSign />}
+            />
 
-            {/* Salary Date */}
-            <div className="space-y-2">
-              <Label htmlFor="salaryDate" className="font-medium">
-                Salary Date <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="salaryDate"
-                type="date"
-                {...register('salaryDate', { required: 'Salary date is required' })}
-                className={`${errors.salaryDate ? 'border-red-500' : ''}`}
-              />
-              {errors.salaryDate && (
-                <p className="text-red-500 text-sm">{errors.salaryDate.message}</p>
-              )}
-            </div>
+            <label htmlFor="bonus" className="font-medium">
+              Bonuses / Allowances
+            </label>
+            <Input
+              type="number"
+              id="bonus"
+              name="bonus"
+              value={formData.bonus}
+              onChange={handleChange}
+              icon={<DollarSign />}
+            />
 
-            {/* Bonus */}
-            <div className="space-y-2">
-              <Label htmlFor="bonus" className="font-medium">
-                Bonus (₹)
-              </Label>
-              <Input
-                id="bonus"
-                type="number"
-                {...register('bonus', { min: 0 })}
-              />
-            </div>
+            <label htmlFor="deductions" className="font-medium">
+              Deductions
+            </label>
+            <Input
+              type="number"
+              id="deductions"
+              name="deductions"
+              value={formData.deductions}
+              onChange={handleChange}
+              icon={<DollarSign />}
+            />
 
-            {/* Status */}
-            <div className="space-y-2">
-              <Label className="font-medium">
-                Status <span className="text-red-500">*</span>
-              </Label>
-              <Select {...register('status', { required: 'Status is required' })}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.status && (
-                <p className="text-red-500 text-sm">{errors.status.message}</p>
-              )}
-            </div>
+            <label htmlFor="paymentMode" className="font-medium">
+              Payment Mode
+            </label>
+            <Select
+              onValueChange={(value) =>
+                setFormData({ ...formData, paymentMode: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select Mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cash">Cash</SelectItem>
+                <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                <SelectItem value="UPI">UPI</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <label htmlFor="transactionId" className="font-medium">
+              Transaction ID
+            </label>
+            <Input
+              type="text"
+              id="transactionId"
+              name="transactionId"
+              value={formData.transactionId}
+              onChange={handleChange}
+            />
           </div>
-
-          <div className="flex justify-end gap-4">
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
-              Generate PDF and Save
+          <div className="flex justify-end mt-4">
+            <Button className="bg-green-600 hover:bg-green-700">
+              Submit Payment
             </Button>
           </div>
-        </form>
-      </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-lg rounded-2xl">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold flex items-center gap-2">
+            <ClipboardList className="w-6 h-6 text-blue-600" /> Salary Payment
+            History
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Teacher Name</TableHead>
+                <TableHead>Month & Year</TableHead>
+                <TableHead>Basic Salary</TableHead>
+                <TableHead>Total Salary</TableHead>
+                <TableHead>Payment Mode</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>John Doe</TableCell>
+                <TableCell>January 2025</TableCell>
+                <TableCell>$5000</TableCell>
+                <TableCell>$5200</TableCell>
+                <TableCell>Bank Transfer</TableCell>
+                <TableCell>
+                  <BadgeCheck className="text-green-600" /> Paid
+                </TableCell>
+                <TableCell>
+                  <Button variant="outline" size="sm">
+                    View Receipt
+                  </Button>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
-}
+};
+
+export default TeacherSalaries;

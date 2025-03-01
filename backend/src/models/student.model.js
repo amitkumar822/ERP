@@ -72,7 +72,7 @@ const studentSchema = new mongoose.Schema(
     studentNumber: {
       type: String,
       trim: true,
-      // match: [/^\d{13}$/, "Phone number must be a 13-digit number"],
+      match: [/^[6-9]\d{9}$/, "Phone number must be a 10-digit valid Indian number"],
     },
     dob: {
       type: String,
@@ -122,7 +122,10 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: [true, "Phone number is required"],
       trim: true,
-      // match: [/^\d{13}$/, "Phone number must be a 13-digit number"],
+      match: [
+        /^[6-9]\d{9}$/,
+        "Phone number must be a 10-digit valid Indian number",
+      ],
     },
     motherName: {
       type: String,
@@ -138,7 +141,7 @@ const studentSchema = new mongoose.Schema(
     motherNumber: {
       type: String,
       trim: true,
-      // match: [/^\d{13}$/, "Phone number must be a 13-digit number"],
+      match: [/^[6-9]\d{9}$/, "Phone number must be a 10-digit valid Indian number"],
     },
     address: {
       permanentAddress: {

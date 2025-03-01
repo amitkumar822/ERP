@@ -26,7 +26,7 @@ const staffSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Salary is required"],
   },
-});
+}, { timestamps: true });
 
 const Staff = mongoose.model("Staff", staffSchema);
 export default Staff;

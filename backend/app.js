@@ -6,6 +6,13 @@ import errorHandler from "./src/middlewares/errorHandler.js";
 
 const app = express();
 
+app.use(
+  cors({
+    origin:"*",
+    credentials: true,
+  })
+);
+
 // app.use(
 //   cors({
 //     origin: process.env.CORS_ORIGIN,

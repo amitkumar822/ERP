@@ -4,6 +4,7 @@ const baseURL = "http://localhost:4000/api/v1/teacher";
 
 export const teacherApi = createApi({
     reducerPath: "teacherApi",
+    tagTypes: ["Refreshing_teacher"],
     baseQuery: fetchBaseQuery({ 
         baseUrl: baseURL,  
         credentials: "include" 
@@ -20,13 +21,15 @@ export const teacherApi = createApi({
             query: () => ({
                 url: "/get-all-teachers",
                 method: "GET"
-            })
+            }),
+            providesTags: ["Refreshing_teacher"]
         }),
         removeTeacher: builder.mutation({
             query: (teacherId) => ({
                 url: `/remove-teacher/${teacherId}`,
                 method: "DELETE"
-            })
+            }),
+            invalidatesTags: ["Refreshing_teacher"],
         })
     })
 })
