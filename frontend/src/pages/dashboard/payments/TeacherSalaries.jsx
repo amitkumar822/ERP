@@ -25,7 +25,6 @@ import {
   ClipboardList,
   Calendar,
   CreditCard,
-  Locate,
   Loader2,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -34,9 +33,10 @@ import { usePayTeacherFeesMutation } from "@/redux/features/api/feeApi";
 import { toast } from "react-toastify";
 
 const TeacherSalaries = () => {
-  const { data, refetch } = useGetAllTeacherQuery();
+  const { data } = useGetAllTeacherQuery();
   const [teacherDetails, setTeacherDetails] = useState("");
 
+  //********👇Start Pay Teacher Salary👇********** */
   const [formData, setFormData] = useState({
     teacherId: "",
     month: "",
@@ -72,6 +72,7 @@ const TeacherSalaries = () => {
 
   const [payTeacherFees, { isLoading, isSuccess, error }] =
     usePayTeacherFeesMutation();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -92,10 +93,24 @@ const TeacherSalaries = () => {
   useEffect(() => {
     if (isSuccess) {
       toast.success(error?.data?.message || "Successfully Pay Teacher Salary!");
+      setFormData({
+        teacherId: "",
+        month: "",
+        basicSalary: "",
+        bonus: "",
+        deductions: "",
+        grossSalary: "",
+        netSalary: "",
+        paymentMode: "Cash",
+        paymentAmount: "",
+        transactionId: "",
+      });
+      setTeacherDetails("");
     } else if (error) {
       alert(error?.data?.message || "Failed to Pay Teacher Salary!");
     }
   }, [error, isSuccess]);
+  //********��End Pay Teacher Salary��********** */
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -292,15 +307,15 @@ const TeacherSalaries = () => {
                 className="bg-green-600 hover:bg-green-700 cursor-pointer"
               >
                 {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 size={18} className="animate-spin" />
-                  Please Wait...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-1">
-                  Pay Salary
-                </span>
-              )}
+                  <span className="flex items-center gap-2">
+                    <Loader2 size={18} className="animate-spin" />
+                    Please Wait...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-1">
+                    Pay Salary
+                  </span>
+                )}
               </Button>
             </div>
           </CardContent>
