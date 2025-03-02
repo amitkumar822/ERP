@@ -29,8 +29,12 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useGetAllTeacherQuery } from "@/redux/features/api/teacherApi";
-import { usePayTeacherFeesMutation } from "@/redux/features/api/feeApi";
+import {
+  useGetAllTeacherFeesQuery,
+  usePayTeacherFeesMutation,
+} from "@/redux/features/api/feeApi";
 import { toast } from "react-toastify";
+import TeacherSalariesHistory from "@/components/dashboard/teacher/TeacherSalariesHistory";
 
 const TeacherSalaries = () => {
   const { data } = useGetAllTeacherQuery();
@@ -49,6 +53,8 @@ const TeacherSalaries = () => {
     paymentAmount: "",
     transactionId: "",
   });
+  console.log(formData.month);
+  
 
   useEffect(() => {
     if (data && data.data) {
@@ -111,6 +117,7 @@ const TeacherSalaries = () => {
     }
   }, [error, isSuccess]);
   //********��End Pay Teacher Salary��********** */
+
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -322,46 +329,8 @@ const TeacherSalaries = () => {
         </form>
       </Card>
 
-      <Card className="shadow-lg rounded-2xl">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold flex items-center gap-2">
-            <ClipboardList className="w-6 h-6 text-blue-600" /> Salary Payment
-            History
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Teacher Name</TableHead>
-                <TableHead>Month & Year</TableHead>
-                <TableHead>Basic Salary</TableHead>
-                <TableHead>Total Salary</TableHead>
-                <TableHead>Payment Mode</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>January 2025</TableCell>
-                <TableCell>$5000</TableCell>
-                <TableCell>$5200</TableCell>
-                <TableCell>Bank Transfer</TableCell>
-                <TableCell>
-                  <BadgeCheck className="text-green-600" /> Paid
-                </TableCell>
-                <TableCell>
-                  <Button variant="outline" size="sm">
-                    View Receipt
-                  </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {/* Teacher Salary History List */}
+      <TeacherSalariesHistory />
     </div>
   );
 };

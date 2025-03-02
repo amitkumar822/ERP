@@ -53,6 +53,11 @@ const teacherFeeSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    status: {
+      type: String,
+      default: "Partial",
+      enum: ["Partial", "Paid"],
+    },
   },
   { timestamps: true }
 );
@@ -63,6 +68,11 @@ teacherFeeSchema.index({ teacherId: 1, monthYear: 1 }, { unique: true });
 // ✅ Pre-save Hook for `pendingAmount`
 teacherFeeSchema.pre("save", function (next) {
   this.pendingAmount = this.netSalary - this.paymentAmount;
+  if (this.pendingAmount === 0) {
+    this.status = "Paid";
+  } else if (this.pendingAmount > 0) {
+    this.status = "Partial";
+  }
   next();
 });
 

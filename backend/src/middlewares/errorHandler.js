@@ -1,6 +1,6 @@
 import { ApiError } from "../../utils/ApiError.js";
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, _, res, __) => {
   // Handle Mongoose validation errors
   if (err.name === "ValidationError") {
     // Extract only error messages from validation errors
@@ -21,6 +21,18 @@ const errorHandler = (err, req, res, next) => {
       statusCode: err.statusCode,
       message: err.message,
       errors: err.errors,
+    });
+  } else if (err.code === 11000 || err.code === 11001) {
+    const field = Object.keys(err.keyPattern)[0];
+    const duplicateValue = err.keyValue[field];
+
+    res.status(400).json({
+      success: false,
+      statusCode: 400,
+      message: `Duplicate ${field} detected: ${duplicateValue}`,
+      errors: [
+        `${field.charAt(0).toUpperCase() + field.slice(1)} already exists!`,
+      ],
     });
   } else {
     // Handle other errors not thrown with ApiError

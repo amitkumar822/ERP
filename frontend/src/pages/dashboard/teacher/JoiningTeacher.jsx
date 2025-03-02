@@ -7,6 +7,7 @@ import AddressCurrentPermanent from "@/components/dashboard/AddressCurrentPerman
 import { FileJsonIcon, UserPlus } from "lucide-react";
 import { useJoiningTeacherMutation } from "@/redux/features/api/teacherApi";
 import { toast } from "react-toastify";
+import { Link } from "react-router";
 
 export default function JoiningTeacher() {
   const [teacherData, setTeacherData] = useState({
@@ -119,18 +120,16 @@ export default function JoiningTeacher() {
     if (isSuccess) {
       toast.success(error?.data?.message || "Successfully Joined Teacher!");
     } else if (error) {
-      console.log("Error Teacher Joing:\n ", error);
-      
       alert(error?.data?.message || "Failed to submit");
     }
   }, [error, isSuccess]);
-  
 
   return (
     <div className="w-full mx-auto md:p-6 p-2 pt-5 bg-white shadow rounded-md dark:bg-gray-900 dark:text-white">
       <div>
         <h1 className="md:text-2xl font-bold mb-6 flex justify-center items-center gap-3">
-          <UserPlus className="md:h-8 md:w-8 text-blue-500" /> Welcome New Educator!
+          <UserPlus className="md:h-8 md:w-8 text-blue-500" /> Welcome New
+          Educator!
         </h1>
       </div>
 
@@ -391,6 +390,14 @@ export default function JoiningTeacher() {
             />
           </div>
         </form>
+
+        <div className="text-center mt-4">
+          <Link to="/teachers/list">
+            <Button className="md:w-1/4 w-full bg-gradient-to-r from-orange-600 to-pink-600 hover:from-orange-500 hover:to-pink-500 cursor-pointer duration-300 ease-in-out">
+              Teacher List
+            </Button>
+          </Link>
+        </div>
       </Card>
     </div>
   );

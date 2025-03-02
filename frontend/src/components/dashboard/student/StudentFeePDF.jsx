@@ -1,7 +1,5 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import React from "react";
-import { Button } from "@/components/ui/button";
 
 export const StudentFeePDF = (school, formData) => {
   const doc = new jsPDF();

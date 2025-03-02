@@ -29,6 +29,25 @@ export function ViewDetails({ data, title, open, onClose }) {
             </p>
           </div>
         );
+      } else if (key === "teacherId") {
+        return (
+          <div>
+            <p>
+              <span className="font-semibold">Name:</span> {value?.fullName}
+            </p>
+            <p>
+              <span className="font-semibold">Contact:</span>{" "}
+              {value?.phoneNumber}
+            </p>
+            <p>
+              <span className="font-semibold">Email:</span> {value?.email}
+            </p>
+            <p>
+              <span className="font-semibold">Designation:</span>{" "}
+              {value?.designation}
+            </p>
+          </div>
+        );
       }
       return JSON.stringify(value, null, 2);
     }

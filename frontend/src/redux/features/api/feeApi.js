@@ -4,7 +4,7 @@ const baseURL = "http://localhost:4000/api/v1/pay-fees";
 
 export const feeApi = createApi({
     reducerPath: "feeApi",
-    tagTypes: ["Refetch_Get_Student_fees"],
+    tagTypes: ["Refetch_Get_Student_fees", "Refetch_Get_Teacher_fees"],
     baseQuery: fetchBaseQuery({
         baseUrl: baseURL,
         credentials: "include",
@@ -42,7 +42,16 @@ export const feeApi = createApi({
                 method: "POST",
                 body: { month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId},
             }),
+            invalidatesTags: ["Refetch_Get_Teacher_fees"]
         }),
+
+        getAllTeacherFees: builder.query({
+            query: () => ({
+                url: "/get-teacher-fees",
+                method: "GET"
+            }),
+            providesTags: ["Refetch_Get_Teacher_fees"]
+        })
     })
 })
 
@@ -50,5 +59,7 @@ export const {
     useStudentPayFeeMutation,
     useGetAllStudentFeesQuery,
     usePayStudentPendingAmountMutation,
+
     usePayTeacherFeesMutation,
+    useGetAllTeacherFeesQuery,
  } = feeApi;

@@ -4,6 +4,12 @@ import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import TeacherFee from "../../models/fees/teacherFee.model.js";
 
+/**
+ * @desc Pay Teacher fees
+ * @rootRoute /api/v1/pay-fees
+ * @route POST /pay-teacher-fees
+ * @access Private
+ */
 export const payTeacherFees = asyncHandler(async (req, res) => {
   const { teacherId } = req.params;
   const {
@@ -17,8 +23,6 @@ export const payTeacherFees = asyncHandler(async (req, res) => {
     paymentAmount,
     transactionId,
   } = req.body;
-  console.log(teacherId);
-  
 
   if (!mongoose.Types.ObjectId.isValid(teacherId)) {
     throw new ApiError(400, "Invalid teacher ID");
@@ -46,7 +50,7 @@ export const payTeacherFees = asyncHandler(async (req, res) => {
   // create teacher fee document
   const newTeacherFee = new TeacherFee({
     teacherId,
-    month: month,
+    monthYear: month,
     basicSalary,
     bonus,
     deductions,
@@ -63,4 +67,24 @@ export const payTeacherFees = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(201, newTeacherFee, "Teacher Salary Successfully Payment")
     );
+});
+
+/**
+ * @desc Get All Payment
+ * @route GET /get-teacher-fees
+ * @access Private
+ */
+export const getTeacherFee = asyncHandler(async (_, res) => {
+  const allTeacherFees = await TeacherFee.find()
+    .populate("teacherId", "fullName phoneNumber email designation")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (!allTeacherFees || allTeacherFees.length === 0) {
+    throw new ApiError(404, "No teacher fees found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, allTeacherFees, "All Teacher Fees"));
 });

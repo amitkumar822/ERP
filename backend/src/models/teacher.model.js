@@ -45,7 +45,7 @@ const teacherSchema = new mongoose.Schema({
   designation: {
     type: String,
     trim: true,
-    minlength: [4, "Designation must be at least 4 characters long"],
+    minlength: [3, "Designation must be at least 3 characters long"],
     maxlength: [50, "Designation must be at most 50 characters long"],
   },
   dob: {
