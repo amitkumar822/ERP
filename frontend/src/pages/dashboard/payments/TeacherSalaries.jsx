@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,25 +23,79 @@ import {
   Banknote,
   BadgeCheck,
   ClipboardList,
+  Calendar,
+  CreditCard,
+  Locate,
+  Loader2,
 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { useGetAllTeacherQuery } from "@/redux/features/api/teacherApi";
+import { usePayTeacherFeesMutation } from "@/redux/features/api/feeApi";
+import { toast } from "react-toastify";
 
 const TeacherSalaries = () => {
+  const { data, refetch } = useGetAllTeacherQuery();
+  const [teacherDetails, setTeacherDetails] = useState("");
+
   const [formData, setFormData] = useState({
-    teacher: "",
+    teacherId: "",
     month: "",
     basicSalary: "",
     bonus: "",
     deductions: "",
-    paymentMode: "",
+    grossSalary: "",
+    netSalary: "",
+    paymentMode: "Cash",
+    paymentAmount: "",
     transactionId: "",
-    status: "Pending",
-    remarks: "",
   });
+
+  useEffect(() => {
+    if (data && data.data) {
+      let teacherDetails = data.data.filter(
+        (details) => details._id === formData.teacherId
+      );
+      setTeacherDetails(teacherDetails[0]);
+    }
+  }, [formData.teacherId]);
+
+  useEffect(() => {
+    const grossSalary = Number(formData.basicSalary) + Number(formData.bonus);
+    const netSalary = grossSalary - Number(formData.deductions);
+    setFormData((prev) => ({ ...prev, grossSalary, netSalary }));
+  }, [formData.basicSalary, formData.bonus, formData.deductions]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const [payTeacherFees, { isLoading, isSuccess, error }] =
+    usePayTeacherFeesMutation();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await payTeacherFees({
+      teacherId: formData.teacherId,
+      month: formData.month,
+      basicSalary: formData.basicSalary,
+      bonus: formData.bonus,
+      deductions: formData?.deductions,
+      grossSalary: formData.grossSalary,
+      netSalary: formData.netSalary,
+      paymentMode: formData.paymentMode,
+      paymentAmount: formData.paymentAmount,
+      transactionId: formData.transactionId,
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(error?.data?.message || "Successfully Pay Teacher Salary!");
+    } else if (error) {
+      alert(error?.data?.message || "Failed to Pay Teacher Salary!");
+    }
+  }, [error, isSuccess]);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -52,107 +106,205 @@ const TeacherSalaries = () => {
             Payment
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label htmlFor="teacher" className="font-medium">
-              Teacher Name
-            </label>
-            <Select
-              onValueChange={(value) =>
-                setFormData({ ...formData, teacher: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Teacher" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="John Doe">John Doe</SelectItem>
-                <SelectItem value="Jane Smith">Jane Smith</SelectItem>
-              </SelectContent>
-            </Select>
+        <form onSubmit={handleSubmit}>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Label htmlFor="teacher" className="font-medium">
+                <User className="mr-2 inline-block h-4 w-4" /> Teacher Name*
+              </Label>
+              <Select
+                onValueChange={(value) =>
+                  setFormData({ ...formData, teacherId: value })
+                }
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Teacher" />
+                </SelectTrigger>
+                <SelectContent>
+                  {data &&
+                    data?.data.map((teacher, index) => (
+                      <SelectItem key={index} value={teacher._id}>
+                        {teacher.fullName} ({teacher.designation})
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
 
-            <label htmlFor="month" className="font-medium">
-              Month & Year
-            </label>
-            <Input
-              type="month"
-              id="month"
-              name="month"
-              value={formData.month}
-              onChange={handleChange}
-            />
+              <Label
+                htmlFor="month"
+                className={`font-medium ${
+                  teacherDetails?.length === 0 ? "hidden" : "block"
+                }`}
+              >
+                <Calendar className="mr-2 inline-block h-4 w-4" /> Contact &
+                Email
+              </Label>
+              <Card
+                className={`border p-2 rounded-md shadow-md ${
+                  teacherDetails?.length === 0 ? "hidden" : "block"
+                }`}
+              >
+                <a
+                  href={`tel:${teacherDetails?.phoneNumber}`}
+                  className="text-blue-600 hover:text-blue-700 hover:underline"
+                >
+                  {teacherDetails?.phoneNumber}
+                </a>{" "}
+                {", "}(
+                <a
+                  href={`mailto:${teacherDetails?.email}`}
+                  className="text-orange-600 hover:text-orange-700 hover:underline"
+                >
+                  {teacherDetails?.email}
+                </a>
+                )
+              </Card>
 
-            <label htmlFor="basicSalary" className="font-medium">
-              Basic Salary
-            </label>
-            <Input
-              type="number"
-              id="basicSalary"
-              name="basicSalary"
-              value={formData.basicSalary}
-              onChange={handleChange}
-              icon={<DollarSign />}
-            />
+              <Label htmlFor="month" className="font-medium">
+                <Calendar className="mr-2 inline-block h-4 w-4" /> Month & Year*
+              </Label>
+              <Input
+                type="month"
+                id="month"
+                name="month"
+                value={formData.month}
+                onChange={handleChange}
+                required
+              />
 
-            <label htmlFor="bonus" className="font-medium">
-              Bonuses / Allowances
-            </label>
-            <Input
-              type="number"
-              id="bonus"
-              name="bonus"
-              value={formData.bonus}
-              onChange={handleChange}
-              icon={<DollarSign />}
-            />
+              <Label htmlFor="basicSalary" className="font-medium">
+                <DollarSign className="mr-2 inline-block h-4 w-4" /> Basic
+                Salary*
+              </Label>
+              <Input
+                type="number"
+                id="basicSalary"
+                name="basicSalary"
+                placeholder="Enter Basic Salary"
+                value={formData.basicSalary}
+                onChange={handleChange}
+                required
+              />
 
-            <label htmlFor="deductions" className="font-medium">
-              Deductions
-            </label>
-            <Input
-              type="number"
-              id="deductions"
-              name="deductions"
-              value={formData.deductions}
-              onChange={handleChange}
-              icon={<DollarSign />}
-            />
+              <Label htmlFor="bonus" className="font-medium">
+                <DollarSign className="mr-2 inline-block h-4 w-4" /> Bonuses /
+                Allowances
+              </Label>
+              <Input
+                type="number"
+                id="bonus"
+                name="bonus"
+                placeholder="Enter Bonuses / Allowances"
+                value={formData.bonus}
+                onChange={handleChange}
+              />
 
-            <label htmlFor="paymentMode" className="font-medium">
-              Payment Mode
-            </label>
-            <Select
-              onValueChange={(value) =>
-                setFormData({ ...formData, paymentMode: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Mode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Cash">Cash</SelectItem>
-                <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
-                <SelectItem value="UPI">UPI</SelectItem>
-              </SelectContent>
-            </Select>
+              <Label htmlFor="deductions" className="font-medium">
+                <DollarSign className="mr-2 inline-block h-4 w-4" /> Deductions
+              </Label>
+              <Input
+                type="number"
+                id="deductions"
+                name="deductions"
+                placeholder="Enter Deductions"
+                value={formData.deductions}
+                onChange={handleChange}
+              />
 
-            <label htmlFor="transactionId" className="font-medium">
-              Transaction ID
-            </label>
-            <Input
-              type="text"
-              id="transactionId"
-              name="transactionId"
-              value={formData.transactionId}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex justify-end mt-4">
-            <Button className="bg-green-600 hover:bg-green-700">
-              Submit Payment
-            </Button>
-          </div>
-        </CardContent>
+              <Label htmlFor="grossSalary" className="font-medium">
+                <DollarSign className="mr-2 inline-block h-4 w-4" /> Gross
+                Salary
+              </Label>
+              <Input
+                type="number"
+                id="grossSalary"
+                name="grossSalary"
+                placeholder="Enter Gross Salary"
+                value={formData.grossSalary}
+                onChange={handleChange}
+                readOnly
+              />
+
+              <Label htmlFor="netSalary" className="font-medium">
+                <DollarSign className="mr-2 inline-block h-4 w-4" /> Net Salary
+              </Label>
+              <Input
+                type="number"
+                id="netSalary"
+                name="netSalary"
+                placeholder="Enter Net Salary"
+                value={formData.netSalary}
+                onChange={handleChange}
+                readOnly
+              />
+
+              <Label htmlFor="paymentMode" className="font-medium">
+                <CreditCard className="mr-2 inline-block h-4 w-4" /> Payment
+                Mode
+              </Label>
+              <Select
+                onValueChange={(value) =>
+                  setFormData({ ...formData, paymentMode: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Cash">Cash</SelectItem>
+                  <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="UPI">UPI</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Label htmlFor="transactionId" className="font-medium">
+                <CreditCard className="mr-2 inline-block h-4 w-4" /> Transaction
+                ID
+              </Label>
+              <Input
+                type="text"
+                id="transactionId"
+                name="transactionId"
+                disabled={formData.paymentMode !== "Cash" ? false : true}
+                placeholder="Enter Transaction ID"
+                value={formData.transactionId}
+                onChange={handleChange}
+              />
+
+              <Label htmlFor="paymentAmount" className="font-medium">
+                <DollarSign className="mr-2 inline-block h-4 w-4" /> Payment
+                Amount*
+              </Label>
+              <Input
+                type="number"
+                id="paymentAmount"
+                name="paymentAmount"
+                placeholder="Enter Payment Amount"
+                value={formData.paymentAmount}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button
+                disabled={isLoading}
+                className="bg-green-600 hover:bg-green-700 cursor-pointer"
+              >
+                {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 size={18} className="animate-spin" />
+                  Please Wait...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-1">
+                  Pay Salary
+                </span>
+              )}
+              </Button>
+            </div>
+          </CardContent>
+        </form>
       </Card>
 
       <Card className="shadow-lg rounded-2xl">

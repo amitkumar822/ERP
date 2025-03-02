@@ -33,7 +33,16 @@ export const feeApi = createApi({
                 body: ({pendingAmount, paymentMode, transactionId})
             }),
             invalidatesTags: ["Refetch_Get_Student_fees"]
-        })
+        }),
+
+        // ****** Teacher fees api ******
+        payTeacherFees: builder.mutation({
+            query: ({ teacherId, month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId}) => ({
+                url: `/pay-teacher-fees/${teacherId}`,
+                method: "POST",
+                body: { month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId},
+            }),
+        }),
     })
 })
 
@@ -41,4 +50,5 @@ export const {
     useStudentPayFeeMutation,
     useGetAllStudentFeesQuery,
     usePayStudentPendingAmountMutation,
+    usePayTeacherFeesMutation,
  } = feeApi;
