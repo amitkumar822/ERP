@@ -32,8 +32,6 @@ export const payStudentFees = asyncHandler(async (req, res) => {
     otherFees,
   } = req.body;
 
-  console.log(rollNumber, className, section, academicYear);
-
   const student = await Student.findOne({
     rollNumber,
     className,

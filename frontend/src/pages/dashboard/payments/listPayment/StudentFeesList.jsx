@@ -19,6 +19,8 @@ import {
   Phone,
   User,
   UserCircle,
+  BadgeCheck,
+  Clock,
 } from "lucide-react";
 import axios from "axios";
 import {
@@ -112,7 +114,10 @@ export default function StudentFeesList() {
                 <p className="text-md text-gray-800 font-medium flex items-center gap-2 mt-1">
                   <Phone className="text-purple-500" size={18} />
                   <span className="text-purple-700">Father's Mobile:</span>{" "}
-                  <a href={`tel:${student.studentId.fatherNumber}`} className="hover:text-blue-700 text-blue-500 hover:underline ">
+                  <a
+                    href={`tel:${student.studentId.fatherNumber}`}
+                    className="hover:text-blue-700 text-blue-500 hover:underline "
+                  >
                     {student.studentId.fatherNumber}
                   </a>
                 </p>
@@ -130,20 +135,6 @@ export default function StudentFeesList() {
                   <span className="text-red-700">Month:</span> {student.month}
                 </p>
               </div>
-              {/* <h3 className="text-lg font-medium">
-                {student.studentId.fullName} (Roll No:{" "}
-                {student.studentId.rollNumber})
-              </h3>
-              <p className="text-sm text-gray-600">
-                Father's Name: {student.studentId.fatherName}
-              </p>
-              <p className="text-sm text-gray-600">
-                Father's Mobile: {student.studentId.fatherNumber}
-              </p>
-              <p className="text-sm text-gray-600">
-                Academic Year: {student.academicYear}
-              </p>
-              <p className="text-sm text-gray-600">Month: {student.month}</p> */}
               <Table className="text-nowrap">
                 <TableHeader>
                   <TableRow>
@@ -180,10 +171,13 @@ export default function StudentFeesList() {
                       <TableCell>{fee.paymentMode}</TableCell>
                       <TableCell>
                         <Badge
-                          className={`${
-                            statusColors[fee.status]
-                          } px-2 py-1 rounded-md`}
+                          className={`${statusColors[fee.status]} rounded-md`}
                         >
+                          {fee.status === "Paid" ? (
+                            <BadgeCheck className=" text-green-600" />
+                          ) : (
+                            <Clock className=" text-yellow-600" />
+                          )}
                           {fee.status}
                         </Badge>
                       </TableCell>
