@@ -77,5 +77,5 @@ export const TeacherSalaryHistoryPdf = (school, salaryData) => {
   });
 
   // Save PDF
-  doc.save(`Teacher_Salary_${Date.now()}.pdf`);
+  doc.save(`${salaryData.teacherId.fullName} Teacher_Salary_${Date.now()}.pdf`);
 };

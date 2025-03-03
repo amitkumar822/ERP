@@ -24,6 +24,7 @@ import { sections } from "@/helpers/sections";
 import { toast } from "react-toastify";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import API from "@/api/axiosInstance";
+import axios from "axios";
 
 export default function ClassManagement() {
   // ****************👇Start Class Create and Edit or Update Section👇***********************
@@ -57,7 +58,6 @@ export default function ClassManagement() {
     startTransitionAddClass(async () => {
       try {
         const { data } = await API[apiMethod](apiEndpoint, form);
-        console.log("Class Created Time: \n", data);
         toast.success(data?.message || "Successfully Class Created!");
         fetchAllClasses();
         setForm({
@@ -262,7 +262,7 @@ export default function ClassManagement() {
       </Card>
 
       {/* Manage Classes */}
-      <Card className=" dark:text-white dark:bg-gray-800">
+      <Card className=" dark:text-white dark:bg-gray-800 whitespace-nowrap">
         <CardContent className="p-4">
           <h2 className="text-xl font-bold">Manage Classes</h2>
           <Table className="mt-4">

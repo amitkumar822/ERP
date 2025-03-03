@@ -101,6 +101,7 @@ const studentSchema = new mongoose.Schema(
     studentEmail: {
       type: String,
       trim: true,
+      lowercase: true,
       match: [
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "Please enter a valid email address",
