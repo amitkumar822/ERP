@@ -23,10 +23,6 @@ import { Button } from "@/components/ui/button";
 import moment from "moment";
 import { FaFilePdf } from "react-icons/fa";
 import { useState } from "react";
-import {
-  useGetAllStaffFeesQuery,
-  useGetAllTeacherFeesQuery,
-} from "@/redux/features/api/feeApi";
 import { ViewDetails } from "./ViewDetails";
 import { SalaryTeacherStaffPDF } from "./pdf/SalaryTeacherStaffPDF";
 
