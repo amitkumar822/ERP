@@ -1,4 +1,4 @@
-import { useEffect, useState, use, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   Table,
   TableBody,
@@ -112,7 +112,9 @@ export default function StudentList() {
         />
 
         <Link to="/students/admission-form">
-          <Button className="bg-blue-500 w-full sm:w-auto cursor-pointer">+ Add New</Button>
+          <Button className="bg-blue-500 w-full sm:w-auto cursor-pointer">
+            + Add New
+          </Button>
         </Link>
       </div>
 

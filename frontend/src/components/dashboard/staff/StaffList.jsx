@@ -7,7 +7,11 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Edit, Trash2, Download } from "lucide-react";
 import {
@@ -20,6 +24,8 @@ import { ViewDetails } from "../ViewDetails";
 import { useEffect, useState } from "react";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import { toast } from "react-toastify";
+import { FaFilePdf } from "react-icons/fa";
+import { StaffPDFDownload } from "../pdf/StaffDetailsViewPdf";
 
 const statusColors = {
   Active: "bg-green-500 text-white",
@@ -52,6 +58,17 @@ export const StaffList = () => {
       alert(error?.data?.message || "Faild to Delete Staff");
     }
   }, [error, isSuccess]);
+
+  //! PDF
+  const handleGeneratePDF = (member) => {
+    const school = {
+      name: "New Delhi Public School",
+      address: "21, Masaurhi, new station",
+      mobile: "+91 8965365236",
+    };
+
+    StaffPDFDownload({ member, school });
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -105,48 +122,69 @@ export const StaffList = () => {
                 </TableCell>
                 <TableCell className="p-3 flex justify-center space-x-2">
                   <Tooltip content="View">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="bg-gray-200 border border-gray-300 cursor-pointer"
-                      onClick={() => {
-                        setViewDetailsData(member);
-                        setIsViewDetailsModalOpen(true);
-                      }}
-                    >
-                      <Eye className="w-5 h-5" />
-                    </Button>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="bg-gray-200 border border-gray-300 cursor-pointer"
+                        onClick={() => {
+                          setViewDetailsData(member);
+                          setIsViewDetailsModalOpen(true);
+                        }}
+                      >
+                        <Eye className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>View Staff</TooltipContent>
                   </Tooltip>
+
+                  {/* Edit Button */}
                   <Tooltip content="Edit">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="bg-gray-200 border border-gray-300 cursor-pointer"
-                    >
-                      <Edit className="w-5 h-5" />
-                    </Button>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="bg-gray-200 border border-gray-300 cursor-pointer"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit Staff</TooltipContent>
                   </Tooltip>
+
+                  {/* Delete Button */}
                   <Tooltip content="Delete">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="bg-red-500 border hover:bg-red-600 hover:text-white duration-300 border-red-600 text-white cursor-pointer"
-                      onClick={() => {
-                        setDeleteModalOpen(true);
-                        setDeleteStaffId(member._id);
-                      }}
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </Button>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="bg-red-500 border hover:bg-red-600 hover:text-white duration-300 border-red-600 text-white cursor-pointer"
+                        onClick={() => {
+                          setDeleteModalOpen(true);
+                          setDeleteStaffId(member._id);
+                        }}
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete Staff</TooltipContent>
                   </Tooltip>
-                  <Tooltip content="Download PDF">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="bg-gray-200 border border-gray-300 cursor-pointer"
-                    >
-                      <Download className="w-5 h-5" />
-                    </Button>
+
+                  {/* PDF Download Button */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          handleGeneratePDF(member);
+                        }}
+                        className="bg-green-100 hover:bg-green-200 text-red-600 hover:text-red-500 duration-300 border border-gray-300 cursor-pointer"
+                      >
+                        <FaFilePdf className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Download PDF</TooltipContent>
                   </Tooltip>
                 </TableCell>
               </TableRow>
