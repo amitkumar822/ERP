@@ -94,7 +94,7 @@ export const getStaffFee = asyncHandler(async (_, res) => {
  */
 export const payPendingStaffFees = asyncHandler(async (req, res) => {
   const { feeId } = req.params;
-  const { paymentMode, paymentAmount, transactionId } = req.body;
+  const { paymentMode, pendingAmount, transactionId } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(feeId)) {
     throw new ApiError(400, "Invalid Payment ID");
@@ -110,12 +110,12 @@ export const payPendingStaffFees = asyncHandler(async (req, res) => {
     throw new ApiError(400, "This fee has already been fully paid");
   }
 
-  if (feeDetails.pendingAmount < paymentAmount) {
+  if (feeDetails.pendingAmount < pendingAmount) {
     throw new ApiError(400, "Payment amount exceeds pending amount");
   }
 
   // update pending amount
-  feeDetails.paymentAmount += paymentAmount;
+  feeDetails.paymentAmount += pendingAmount;
   feeDetails.paymentMode = paymentMode;
   feeDetails.transactionId = transactionId;
 

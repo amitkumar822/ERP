@@ -258,6 +258,8 @@ export const Teacher_Staf_SalaryPaymentForm = ({
         title={title}
         salaryDetails={userSalaryList}
       />
+
+      
     </div>
   );
 };

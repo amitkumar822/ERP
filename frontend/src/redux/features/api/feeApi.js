@@ -45,6 +45,15 @@ export const feeApi = createApi({
             invalidatesTags: ["Refetch_Get_Teacher_fees"]
         }),
 
+        payPendingTeacherFees: builder.mutation({
+            query: ({ pendingAmount, paymentMode, transactionId, feeId}) => ({
+                url: `/pay-pending-teacher-fee/${feeId}`,
+                method: "PUT",
+                body: ({pendingAmount, paymentMode, transactionId})
+            }),
+            invalidatesTags: ["Refetch_Get_Teacher_fees"]
+        }),
+
         getAllTeacherFees: builder.query({
             query: () => ({
                 url: "/get-teacher-fees",
@@ -59,6 +68,15 @@ export const feeApi = createApi({
                 url: `/pay-staff-fees/${staffId}`,
                 method: "POST",
                 body: { month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId},
+            }),
+            invalidatesTags: ["Refetch_Get_Staff_fees"]
+        }),
+
+        payPendingStaffFees: builder.mutation({
+            query: ({ pendingAmount, paymentMode, transactionId, feeId}) => ({
+                url: `pay-pending-staff-fee/${feeId}`,
+                method: "PUT",
+                body: ({pendingAmount, paymentMode, transactionId})
             }),
             invalidatesTags: ["Refetch_Get_Staff_fees"]
         }),
@@ -80,9 +98,11 @@ export const {
 
     // Teacher Fees API
     usePayTeacherFeesMutation,
+    usePayPendingTeacherFeesMutation,
     useGetAllTeacherFeesQuery,
 
     // Staff Fees API
     usePayStaffFeesMutation,
+    usePayPendingStaffFeesMutation,
     useGetAllStaffFeesQuery,
  } = feeApi;

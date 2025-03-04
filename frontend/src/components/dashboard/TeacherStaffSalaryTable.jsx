@@ -18,13 +18,22 @@ import {
   Clock,
   ClipboardList,
   Eye,
+  CreditCard,
+  LucideBadgeIndianRupee,
+  BadgeIndianRupee,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import moment from "moment";
 import { FaFilePdf } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ViewDetails } from "./ViewDetails";
 import { SalaryTeacherStaffPDF } from "./pdf/SalaryTeacherStaffPDF";
+import {
+  usePayPendingStaffFeesMutation,
+  usePayPendingTeacherFeesMutation,
+} from "@/redux/features/api/feeApi";
+import { toast } from "react-toastify";
+import { PayPendingFees } from "./student/PayPendingFees";
 
 export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
   const [salaryData, setSalaryData] = useState(null);
@@ -42,6 +51,66 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
     );
   };
 
+  //   **********👇 Start Pending Fee Pay👇*********
+  const [verifyUserType, setVerifyUserType] = useState("");
+  const [openDilogBoxPayPendingFees, setOpenDilogBoxPayPendingFees] =
+    useState(false);
+  const [pendingAmount, setPendingAmount] = useState("");
+  const [pendingFeeId, setPendingFeeId] = useState("");
+  const [paymentMode, setPaymentMode] = useState("Cash");
+  const [transactionId, setTransactionId] = useState("");
+
+  // Teacher Pending Fee API
+  const [payPendingTeacherFees, { data, error, isSuccess, isLoading }] =
+    usePayPendingTeacherFeesMutation();
+  // Staff Pending Fee API
+  const [
+    payPendingStaffFees,
+    {
+      data: dataStaff,
+      error: errorStaff,
+      isSuccess: isSuccessStaff,
+      isLoading: isLoadingStaff,
+    },
+  ] = usePayPendingStaffFeesMutation();
+
+  const handlePendingFee = async (e) => {
+    e.preventDefault();
+
+    let payPendingFees =
+      verifyUserType === "Teacher"
+        ? payPendingTeacherFees
+        : payPendingStaffFees;
+
+    await payPendingFees({
+      pendingAmount,
+      paymentMode,
+      transactionId,
+      feeId: pendingFeeId,
+    }).unwrap();
+  };
+
+  useEffect(() => {
+    if (isSuccess || isSuccessStaff) {
+      toast.success(
+        data?.message || dataStaff?.message || "Successfully Pay Pending Fee!"
+      );
+      setOpenDilogBoxPayPendingFees(false);
+      setPendingAmount("");
+      setPaymentMode("Cash");
+      setTransactionId("");
+      setPendingFeeId("");
+      setVerifyUserType("");
+    } else if (error || errorStaff) {
+      alert(
+        error?.data?.message ||
+          errorStaff?.data?.message ||
+          "Failed Pay Pending Fee!"
+      );
+    }
+  }, [error, isSuccess, isSuccessStaff]);
+  //   *************👆 End Pending Fee Pay👆 **************
+
   return (
     <Card className="shadow-lg rounded-2xl">
       <CardHeader>
@@ -54,6 +123,7 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Sr. No.</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Contact Number</TableHead>
               <TableHead>Month & Year</TableHead>
@@ -67,7 +137,7 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {salaryDetails?.data?.map((feesDetails) => {
+            {salaryDetails?.data?.map((feesDetails, index) => {
               const {
                 teacherId,
                 staffId,
@@ -100,9 +170,16 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
 
               return (
                 <TableRow key={feesDetails._id} className="hover:bg-gray-200">
-                  <TableCell>{teacherId?.fullName || staffId?.fullName}</TableCell>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    {teacherId?.fullName || staffId?.fullName}
+                  </TableCell>
                   <TableCell className="hover:text-blue-700 text-blue-500 hover:underline ">
-                    <a href={`tel:${teacherId?.phoneNumber || staffId?.phoneNumber}`}>
+                    <a
+                      href={`tel:${
+                        teacherId?.phoneNumber || staffId?.phoneNumber
+                      }`}
+                    >
                       {teacherId?.phoneNumber || staffId?.phoneNumber}
                     </a>
                   </TableCell>
@@ -120,6 +197,33 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
                     {statusIcon} {statusText}
                   </TableCell>
                   <TableCell>
+                    {/* Pay Pending Fees */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={statusText === "Paid" ? true : false}
+                          className="text-blue-600 cursor-pointer mr-2"
+                          onClick={() => {
+                            setVerifyUserType(
+                              feesDetails.teacherId
+                                ? "Teacher"
+                                : feesDetails.staffId
+                                ? "Staff"
+                                : ""
+                            );
+                            setPendingFeeId(feesDetails._id);
+                            setPendingAmount(feesDetails.pendingAmount);
+                            setOpenDilogBoxPayPendingFees(true);
+                          }}
+                        >
+                          <BadgeIndianRupee className=" scale-[140%]" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Pay Pending Salary</TooltipContent>
+                    </Tooltip>
+
                     {/* View Receipt Button with PDF Icon */}
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -169,6 +273,20 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
           onClose={setShowSalaryData}
         />
       </div>
+
+      {/* Pending Fees Dilog */}
+      <PayPendingFees
+        open={openDilogBoxPayPendingFees}
+        onClose={setOpenDilogBoxPayPendingFees}
+        pendingAmount={pendingAmount}
+        setPendingAmount={setPendingAmount}
+        paymentMode={paymentMode}
+        setPaymentMode={setPaymentMode}
+        transactionId={transactionId}
+        setTransactionId={setTransactionId}
+        isLoading={isLoading || isLoadingStaff}
+        handleSubmit={handlePendingFee}
+      />
     </Card>
   );
 };

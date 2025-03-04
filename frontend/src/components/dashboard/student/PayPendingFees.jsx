@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { CreditCard, IndianRupee } from "lucide-react";
 
 export function PayPendingFees({
   open,
@@ -92,15 +93,15 @@ export function PayPendingFees({
               disabled={isLoading}
               onClick={() => onClose(!open)}
               variant="outline"
+              className="cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Pay Now
+              className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            > <IndianRupee size={18} />Pay Now
             </Button>
           </DialogFooter>
         </form>
