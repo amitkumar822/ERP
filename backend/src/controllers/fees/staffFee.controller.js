@@ -23,8 +23,6 @@ export const payStaffFees = asyncHandler(async (req, res) => {
     paymentAmount,
     transactionId,
   } = req.body;
-  console.log(req.body);
-  
 
   if (!mongoose.Types.ObjectId.isValid(staffId)) {
     throw new ApiError(400, "Invalid Staff ID");
@@ -78,7 +76,7 @@ export const payStaffFees = asyncHandler(async (req, res) => {
  */
 export const getStaffFee = asyncHandler(async (_, res) => {
   const allStaffFees = await StaffFee.find()
-    .populate("staffId", "fullName phoneNumber email designation")
+    .populate("staffId", "fullName phoneNumber email positon")
     .sort({ createdAt: -1 })
     .lean();
 
@@ -86,7 +84,5 @@ export const getStaffFee = asyncHandler(async (_, res) => {
     throw new ApiError(404, "No Staff fees found");
   }
 
-  res
-    .status(200)
-    .json(new ApiResponse(200, allStaffFees, "All Staff Fees"));
+  res.status(200).json(new ApiResponse(200, allStaffFees, "All Staff Fees"));
 });

@@ -70,6 +70,7 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
             {salaryDetails?.data?.map((feesDetails) => {
               const {
                 teacherId,
+                staffId,
                 monthYear,
                 basicSalary,
                 netSalary,
@@ -99,10 +100,10 @@ export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
 
               return (
                 <TableRow key={feesDetails._id} className="hover:bg-gray-200">
-                  <TableCell>{teacherId?.fullName}</TableCell>
+                  <TableCell>{teacherId?.fullName || staffId?.fullName}</TableCell>
                   <TableCell className="hover:text-blue-700 text-blue-500 hover:underline ">
-                    <a href={`tel:${teacherId?.phoneNumber}`}>
-                      {teacherId?.phoneNumber}
+                    <a href={`tel:${teacherId?.phoneNumber || staffId?.phoneNumber}`}>
+                      {teacherId?.phoneNumber || staffId?.phoneNumber}
                     </a>
                   </TableCell>
                   <TableCell>{formattedMonth}</TableCell>

@@ -18,12 +18,14 @@ import {
   Loader2,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { TeacherStaffSalaryTable } from "../TeacherStaffSalaryTable";
 
 export const Teacher_Staf_SalaryPaymentForm = ({
   handleSubmit,
   useNameList,
   formData,
   setFormData,
+  userSalaryList,
   isLoading,
   singleUserDetails,
   title,
@@ -252,10 +254,10 @@ export const Teacher_Staf_SalaryPaymentForm = ({
       </Card>
 
       {/* Teacher Salary History List */}
-      {/* <TeacherStaffSalaryTable
-        title="Salary Payment History"
-        salaryDetails={teacherSalaryDetails}
-      /> */}
+      <TeacherStaffSalaryTable
+        title={title}
+        salaryDetails={userSalaryList}
+      />
     </div>
   );
 };

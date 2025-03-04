@@ -86,7 +86,7 @@ const StaffSalaries = () => {
         useNameList={data} // search name list
         formData={formData}
         setFormData={setFormData}
-        userDetailsList={staffSalaryDetails}
+        userSalaryList={staffSalaryDetails}
         isLoading={isLoading}
         singleUserDetails={singleStaffDetails}
         title={"Staff Salary Payment"}

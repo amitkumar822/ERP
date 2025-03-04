@@ -86,7 +86,7 @@ const TeacherSalaries = () => {
         useNameList={data} // search name list
         formData={formData}
         setFormData={setFormData}
-        userDetailsList={teacherSalaryDetails}
+        userSalaryList={teacherSalaryDetails}
         isLoading={isLoading}
         singleUserDetails={singleTeacherDetails}
         title={"Teacher Salary Payment"}
