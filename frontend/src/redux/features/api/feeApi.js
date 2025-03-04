@@ -4,7 +4,7 @@ const baseURL = "http://localhost:4000/api/v1/pay-fees";
 
 export const feeApi = createApi({
     reducerPath: "feeApi",
-    tagTypes: ["Refetch_Get_Student_fees", "Refetch_Get_Teacher_fees"],
+    tagTypes: ["Refetch_Get_Student_fees", "Refetch_Get_Teacher_fees", "Refetch_Get_Staff_fees"],
     baseQuery: fetchBaseQuery({
         baseUrl: baseURL,
         credentials: "include",
@@ -51,7 +51,25 @@ export const feeApi = createApi({
                 method: "GET"
             }),
             providesTags: ["Refetch_Get_Teacher_fees"]
-        })
+        }),
+
+        // ****** Staff fees api ******
+        payStaffFees: builder.mutation({
+            query: ({ teacherId, month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId}) => ({
+                url: `/pay-staff-fees/${teacherId}`,
+                method: "POST",
+                body: { month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId},
+            }),
+            invalidatesTags: ["Refetch_Get_Staff_fees"]
+        }),
+
+        getAllStaffFees: builder.query({
+            query: () => ({
+                url: "/get-staff-fees",
+                method: "GET"
+            }),
+            providesTags: ["Refetch_Get_Staff_fees"]
+        }),
     })
 })
 
@@ -60,6 +78,11 @@ export const {
     useGetAllStudentFeesQuery,
     usePayStudentPendingAmountMutation,
 
+    // Teacher Fees API
     usePayTeacherFeesMutation,
     useGetAllTeacherFeesQuery,
+
+    // Staff Fees API
+    usePayStaffFeesMutation,
+    useGetAllStaffFeesQuery,
  } = feeApi;

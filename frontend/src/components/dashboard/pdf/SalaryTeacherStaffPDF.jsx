@@ -1,7 +1,7 @@
-import React from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-export const TeacherSalaryHistoryPdf = (school, salaryData) => {
+
+export const SalaryTeacherStaffPDF = (school, salaryData) => {
   const doc = new jsPDF();
 
   // School Information

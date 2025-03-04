@@ -34,7 +34,7 @@ import {
   usePayTeacherFeesMutation,
 } from "@/redux/features/api/feeApi";
 import { toast } from "react-toastify";
-import TeacherSalariesHistory from "@/components/dashboard/teacher/TeacherSalariesHistory";
+import { TeacherStaffSalaryTable } from "@/components/dashboard/TeacherStaffSalaryTable";
 
 const TeacherSalaries = () => {
   const { data } = useGetAllTeacherQuery();
@@ -53,8 +53,6 @@ const TeacherSalaries = () => {
     paymentAmount: "",
     transactionId: "",
   });
-  console.log(formData.month);
-  
 
   useEffect(() => {
     if (data && data.data) {
@@ -118,6 +116,8 @@ const TeacherSalaries = () => {
   }, [error, isSuccess]);
   //********��End Pay Teacher Salary��********** */
 
+  //& ************ 👇 Start Teacher Salary Get API 👇 ****************
+  const { data: teacherSalaryDetails } = useGetAllTeacherFeesQuery();
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -330,7 +330,10 @@ const TeacherSalaries = () => {
       </Card>
 
       {/* Teacher Salary History List */}
-      <TeacherSalariesHistory />
+      <TeacherStaffSalaryTable
+        title="Salary Payment History"
+        salaryDetails={teacherSalaryDetails}
+      />
     </div>
   );
 };

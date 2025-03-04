@@ -21,21 +21,22 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import moment from "moment";
-import { TeacherSalaryHistoryPdf } from "../pdf/TeacherSalaryHistoryPdf";
 import { FaFilePdf } from "react-icons/fa";
 import { useState } from "react";
-import { ViewDetails } from "../ViewDetails";
-import { useGetAllTeacherFeesQuery } from "@/redux/features/api/feeApi";
+import {
+  useGetAllStaffFeesQuery,
+  useGetAllTeacherFeesQuery,
+} from "@/redux/features/api/feeApi";
+import { ViewDetails } from "./ViewDetails";
+import { SalaryTeacherStaffPDF } from "./pdf/SalaryTeacherStaffPDF";
 
-export default function TeacherSalariesHistory() {
-  const { data: teacherAllFees } = useGetAllTeacherFeesQuery();
-
+export const TeacherStaffSalaryTable = ({ title, salaryDetails }) => {
   const [salaryData, setSalaryData] = useState(null);
   const [showSalaryData, setShowSalaryData] = useState(false);
 
   //! ******** PDF Download ***********
   const handleReceiptPdfGenerate = (salaryData) => {
-    TeacherSalaryHistoryPdf(
+    SalaryTeacherStaffPDF(
       {
         name: "Oakwood Academy",
         address: "123 Maple Street, Anytown, CA 91234",
@@ -49,8 +50,7 @@ export default function TeacherSalariesHistory() {
     <Card className="shadow-lg rounded-2xl">
       <CardHeader>
         <CardTitle className="text-xl font-semibold flex items-center gap-2">
-          <ClipboardList className="w-6 h-6 text-blue-600" /> Salary Payment
-          History
+          <ClipboardList className="w-6 h-6 text-blue-600" /> {title}
         </CardTitle>
       </CardHeader>
 
@@ -58,7 +58,7 @@ export default function TeacherSalariesHistory() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Teacher Name</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Contact Number</TableHead>
               <TableHead>Month & Year</TableHead>
               <TableHead>Basic Salary</TableHead>
@@ -71,7 +71,7 @@ export default function TeacherSalariesHistory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {teacherAllFees?.data.map((feesDetails) => {
+            {salaryDetails?.data?.map((feesDetails) => {
               const {
                 teacherId,
                 monthYear,
@@ -174,4 +174,4 @@ export default function TeacherSalariesHistory() {
       </div>
     </Card>
   );
-}
+};
