@@ -88,3 +88,42 @@ export const getTeacherFee = asyncHandler(async (_, res) => {
     .status(200)
     .json(new ApiResponse(200, allTeacherFees, "All Teacher Fees"));
 });
+
+/**
+ * @desc Pay Pending Teacher Fees
+ * @route PUT /pay-pending-teacher-fee/:feeId
+ * @access Private
+ */
+export const payPendingTeacherFees = asyncHandler(async (req, res) => {
+  const { feeId } = req.params;
+  const { paymentMode, paymentAmount, transactionId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(feeId)) {
+    throw new ApiError(400, "Invalid Payment ID");
+  }
+
+  const feeDetails = await TeacherFee.findById(feeId);
+
+  if (!feeDetails || feeDetails.length === 0) {
+    throw new ApiError(400, "No Record Found");
+  }
+
+  if (feeDetails.pendingAmount === 0) {
+    throw new ApiError(400, "This fee has already been fully paid");
+  }
+
+  if (feeDetails.pendingAmount < paymentAmount) {
+    throw new ApiError(400, "Payment amount exceeds pending amount");
+  }
+
+  // update pending amount
+  feeDetails.paymentAmount += paymentAmount;
+  feeDetails.paymentMode = paymentMode;
+  feeDetails.transactionId = transactionId;
+
+  await feeDetails.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, feeDetails, "Pending fee payment successful"));
+});
