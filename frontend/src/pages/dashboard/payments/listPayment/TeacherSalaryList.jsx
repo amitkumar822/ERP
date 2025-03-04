@@ -8,7 +8,10 @@ const TeacherSalaryList = () => {
   return (
     <div className="container mx-auto max-w-8xl">
       <Card className="mt-6 p-4">
+        {/* Teacher Salaries History */}
         <TeacherSalariesHistory />
+
+        {/* Pay Teacher Salary Button */}
         <CardTitle className="mt-4 text-center">
           <Link to="/payments/teachers">
             <Button className="cursor-pointer">Pay Teacher Salary</Button>

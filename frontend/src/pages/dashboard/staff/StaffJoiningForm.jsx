@@ -19,6 +19,7 @@ import { StaffList } from "@/components/dashboard/staff/StaffList";
 import { toast } from "react-toastify";
 
 export default function StaffJoiningForm() {
+  //^ ************👇 Start Joining Staff Functionality 👇************* */
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -72,7 +73,7 @@ export default function StaffJoiningForm() {
     }
   }, [permanentAddress, sameAddressChecked]);
 
-  //^ API calls using rtk query 
+  // API calls using rtk query
   const [joiningStaff, { error, isSuccess, isLoading }] =
     useJoiningStaffMutation();
 
@@ -94,7 +95,7 @@ export default function StaffJoiningForm() {
       },
     });
   };
-
+  
   useEffect(() => {
     if (isSuccess) {
       toast.success(error?.data?.message || "Staff Joined Successfully!");
@@ -126,6 +127,8 @@ export default function StaffJoiningForm() {
       alert(error?.data?.message || "Faild to joine Staff");
     }
   }, [error, isSuccess]);
+  //^ ************👆 End Joining Staff Functionality 👆************* */
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
