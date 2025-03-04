@@ -4,6 +4,7 @@ import { attendanceApi } from "../features/api/attendanceApi"
 import { studentApi } from "../features/api/studentApi"
 import { teacherApi } from "../features/api/teacherApi"
 import { feeApi } from "../features/api/feeApi"
+import { staffApi } from "../features/api/staffApi"
 
 
 export const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ export const rootReducer = combineReducers({
     [studentApi.reducerPath]: studentApi.reducer,
     [teacherApi.reducerPath]: teacherApi.reducer,
     [feeApi.reducerPath]: feeApi.reducer,
+    [staffApi.reducerPath]: staffApi.reducer,
 })
 
 // import { persistStore, persistReducer } from "redux-persist";

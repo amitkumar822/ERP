@@ -12,6 +12,7 @@ import StaffSalary from "@/pages/dashboard/payments/StaffSalary";
 import StudentFeeStructure from "@/pages/dashboard/payments/StudentFeeStructure";
 import TeacherSalaries from "@/pages/dashboard/payments/TeacherSalaries";
 import Settings from "@/pages/dashboard/settings/Settings";
+import StaffJoiningForm from "@/pages/dashboard/staff/StaffJoiningForm";
 import AdmisssionForm from "@/pages/dashboard/student/AdmisssionForm";
 import AttendancePage from "@/pages/dashboard/student/AttendancePage";
 import CheckAttendance from "@/pages/dashboard/student/CheckAttendance";
@@ -50,6 +51,7 @@ const router = createBrowserRouter(
       <Route path="academics/syllabus" element={<Syllabus />} />
 
       {/* Other Routes */}
+      <Route path="staff" element={<StaffJoiningForm />} />
       <Route path="transport" element={<Transport />} />
       <Route path="library" element={<Library />} />
 

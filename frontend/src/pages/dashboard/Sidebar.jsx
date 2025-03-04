@@ -25,6 +25,7 @@ import {
   Users2,
   Receipt,
   ListChecks,
+  UserCogIcon,
 } from "lucide-react";
 import { Link, NavLink } from "react-router";
 import ThemeContext from "@/context/Theme/ThemeContext";
@@ -190,6 +191,11 @@ export const sidebarData = [
         link: "/academics/syllabus",
       },
     ],
+  },
+  {
+    title: "Staff Directory",
+    icon: <UserCogIcon className="w-5 h-5" />,
+    link: "/staff",
   },
   {
     title: "Transport",

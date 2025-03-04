@@ -5,6 +5,7 @@ import { attendanceApi } from "../features/api/attendanceApi";
 import { studentApi } from "../features/api/studentApi";
 import { teacherApi } from "../features/api/teacherApi";
 import { feeApi } from "../features/api/feeApi";
+import { staffApi } from "../features/api/staffApi";
 
 export const appStore = configureStore({
   reducer: rootReducer,
@@ -14,7 +15,8 @@ export const appStore = configureStore({
       attendanceApi.middleware,
       studentApi.middleware,
       teacherApi.middleware,
-      feeApi.middleware
+      feeApi.middleware,
+      staffApi.middleware,
     ),
 });
 
