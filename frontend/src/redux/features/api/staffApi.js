@@ -11,10 +11,10 @@ export const staffApi = createApi({
     }),
     endpoints: (builder) => ({
         joiningStaff: builder.mutation({
-            query: ({fullName, email, phone, gender, dateOfBirth, position, joiningDate, salary, address}) => ({
+            query: ({fullName, email, phoneNumber, gender, dateOfBirth, position, joiningDate, salary, address}) => ({
                 url: '/joining-staff',
                 method: 'POST',
-                body: ({fullName, email, phone, gender, dateOfBirth, position, joiningDate, salary, address})
+                body: ({fullName, email, phoneNumber, gender, dateOfBirth, position, joiningDate, salary, address})
             }),
             invalidatesTags: ["Refreshing_staff"]
         }),

@@ -12,7 +12,7 @@ const staffSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    phone: {
+    phoneNumber: {
       type: String,
       required: [true, "Phone number is required"],
       unique: true,

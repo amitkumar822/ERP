@@ -23,6 +23,8 @@ export const payStaffFees = asyncHandler(async (req, res) => {
     paymentAmount,
     transactionId,
   } = req.body;
+  console.log(req.body);
+  
 
   if (!mongoose.Types.ObjectId.isValid(staffId)) {
     throw new ApiError(400, "Invalid Staff ID");

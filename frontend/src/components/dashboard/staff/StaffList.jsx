@@ -73,7 +73,7 @@ export const StaffList = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <Card className="p-4">
-        <h1 className="text-2xl font-bold mb-4">Staff List</h1>
+        <h1 className="text-2xl font-bold mb-4"> Staff List</h1>
         <Table className="w-full border-collapse">
           <TableHeader>
             <TableRow className="bg-gray-100 text-left text-gray-500">
@@ -94,10 +94,10 @@ export const StaffList = () => {
                 <TableCell className="p-3">{member.fullName}</TableCell>
                 <TableCell className="p-3">
                   <a
-                    href={`tel:${member.phone}`}
+                    href={`tel:${member.phoneNumber}`}
                     className="text-blue-600 underline hover:text-blue-800"
                   >
-                    {member.phone}
+                    {member.phoneNumber}
                   </a>
                 </TableCell>
                 <TableCell className="p-3">

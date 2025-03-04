@@ -55,8 +55,8 @@ export const feeApi = createApi({
 
         // ****** Staff fees api ******
         payStaffFees: builder.mutation({
-            query: ({ teacherId, month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId}) => ({
-                url: `/pay-staff-fees/${teacherId}`,
+            query: ({ staffId, month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId}) => ({
+                url: `/pay-staff-fees/${staffId}`,
                 method: "POST",
                 body: { month,basicSalary,bonus,deductions,grossSalary,netSalary,paymentMode,paymentAmount,transactionId},
             }),

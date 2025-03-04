@@ -9,7 +9,6 @@ import {
   Mail,
   User,
   Briefcase,
-  Home,
   DollarSign,
   UserPenIcon,
 } from "lucide-react";
@@ -23,7 +22,7 @@ export default function StaffJoiningForm() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     gender: "",
     dateOfBirth: "",
     position: "",
@@ -83,7 +82,7 @@ export default function StaffJoiningForm() {
     await joiningStaff({
       fullName: formData.fullName,
       email: formData.email,
-      phone: formData.phone,
+      phoneNumber: formData.phoneNumber,
       gender: formData.gender,
       dateOfBirth: formData.dateOfBirth,
       position: formData.position,
@@ -95,7 +94,7 @@ export default function StaffJoiningForm() {
       },
     });
   };
-  
+
   useEffect(() => {
     if (isSuccess) {
       toast.success(error?.data?.message || "Staff Joined Successfully!");
@@ -103,7 +102,7 @@ export default function StaffJoiningForm() {
       setFormData({
         fullName: "",
         email: "",
-        phone: "",
+        phoneNumber: "",
         gender: "",
         dateOfBirth: "",
         position: "",
@@ -128,7 +127,6 @@ export default function StaffJoiningForm() {
     }
   }, [error, isSuccess]);
   //^ ************👆 End Joining Staff Functionality 👆************* */
-
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
@@ -169,15 +167,15 @@ export default function StaffJoiningForm() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="phone">Phone*</Label>
+                <Label htmlFor="phoneNumber">Phone Number*</Label>
                 <div className="flex items-center gap-2 border rounded-md p-2">
                   <Phone size={20} />
                   <Input
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
-                    placeholder="Enter phone number"
+                    placeholder="Enter phoneNumber number"
                     required
                   />
                 </div>
@@ -275,7 +273,9 @@ export default function StaffJoiningForm() {
         </CardContent>
 
         {/* Staff List */}
-        <StaffList />
+        <div>
+          <StaffList />
+        </div>
       </Card>
     </div>
   );

@@ -14,7 +14,7 @@ export const joiningStaff = asyncHandler(async (req, res) => {
   const {
     fullName,
     email,
-    phone,
+    phoneNumber,
     gender,
     dateOfBirth,
     position,
@@ -22,10 +22,12 @@ export const joiningStaff = asyncHandler(async (req, res) => {
     salary,
     address,
   } = req.body;
+  console.log(req.body);
+  
 
   if (
     !fullName ||
-    !phone ||
+    !phoneNumber ||
     !gender ||
     !position ||
     !joiningDate ||
@@ -35,24 +37,24 @@ export const joiningStaff = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
 
-  const [existingPhone, existingEmail] = await Promise.all([
-    Staff.findOne({ phone }),
+  const [existingphoneNumber, existingEmail] = await Promise.all([
+    Staff.findOne({ phoneNumber }),
     Staff.findOne({ email }),
   ]);
 
-  if (existingPhone || existingEmail) {
+  if (existingphoneNumber || existingEmail) {
     throw new ApiError(
       409,
       `Staff ${fullName} already exists with ${
-        existingPhone ? "phone number" : "email"
-      }: ${existingPhone ? phone : email}`
+        existingphoneNumber ? "phoneNumber number" : "email"
+      }: ${existingphoneNumber ? phoneNumber : email}`
     );
   }
 
   const newStaff = new Staff({
     fullName,
     email,
-    phone,
+    phoneNumber,
     gender,
     dateOfBirth,
     position,
