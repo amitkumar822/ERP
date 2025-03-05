@@ -31,6 +31,13 @@ export const addStudent = asyncHandler(async (req, res) => {
     motherNumber,
     permanentAddress,
     currentAddress,
+
+    tuitionFees,
+    admissionFees,
+    otherFees,
+    examFees,
+    transportFees,
+    hostelFees,
   } = req.body;
 
   // Validate required fields in one check
@@ -50,9 +57,10 @@ export const addStudent = asyncHandler(async (req, res) => {
     fatherNumber,
     motherName,
     permanentAddress,
+    tuitionFees,
   ];
   if (requiredFields.includes(undefined)) {
-    throw new ApiError(400, "All fields are required");
+    throw new ApiError(400, "Some fields are required");
   }
 
   // Run two database queries in parallel
@@ -106,6 +114,13 @@ export const addStudent = asyncHandler(async (req, res) => {
     motherOccupation,
     motherNumber,
     address: { permanentAddress, currentAddress },
+
+    tuitionFees,
+    admissionFees,
+    otherFees,
+    examFees,
+    transportFees,
+    hostelFees,
   });
 
   // Save student and update class in parallel

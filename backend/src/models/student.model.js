@@ -194,6 +194,38 @@ const studentSchema = new mongoose.Schema(
         },
       },
     },
+
+    //^ New Section added
+    tuitionFees: {
+      type: Number,
+      required: [true, "Tuition fees is required"],
+      min: [1, "Tuition fees must be a positive number"],
+    },
+    admissionFees: {
+      type: Number,
+      min: [1, "Admission fees must be a positive number"],
+    },
+    otherFees: {
+      type: Number,
+      min: [1, "Other fees must be a positive number"],
+    },
+    examFees: {
+      type: Number,
+      min: [1, "Exam fees must be a positive number"],
+    },
+    transportFees: {
+      type: Number,
+      min: [1, "Transport fees must be a positive number"],
+    },
+    hostelFees: {
+      type: Number,
+      min: [1, "Hostel fees must be a positive number"],
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Resigned", "Retired"],
+      default: "Active",
+    },
   },
   { timestamps: true }
 );

@@ -139,7 +139,7 @@ export default function StudentList() {
                   <TableHead>Father & Mother</TableHead>
                   <TableHead>Gender</TableHead>
                   <TableHead>Father Number</TableHead>
-                  <TableHead>Payment Status</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -188,7 +188,7 @@ export default function StudentList() {
                           : "text-green-500"
                       }
                     >
-                      {student.paymentStatus || "N/A"}
+                      {student.status || "N/A"}
                     </TableCell>
                     <TableCell className="flex gap-2">
                       <Button

@@ -41,6 +41,13 @@ const AdmisssionForm = () => {
     motherMobile: "",
     motherOccupation: "",
     profileImage: "",
+
+    tuitionFees: "",
+    admissionFees: "",
+    otherFees: "",
+    examFees: "",
+    transportFees: "",
+    hostelFees: "",
   });
 
   const [sameAddressChecked, setSameAddressChecked] = useState(false);
@@ -106,6 +113,13 @@ const AdmisssionForm = () => {
 
       permanentAddress: permanentAddress,
       currentAddress: currAddress,
+
+      tuitionFees: studentData.tuitionFees,
+      admissionFees: studentData.admissionFees,
+      otherFees: studentData.otherFees,
+      examFees: studentData.examFees,
+      transportFees: studentData.transportFees,
+      hostelFees: studentData.hostelFees,
     };
 
     startTransition(async () => {
@@ -113,6 +127,49 @@ const AdmisssionForm = () => {
         await API.post("/students/add", formData);
 
         toast.success("Student added successfully!");
+        setStudentData({
+          admissionDate: "",
+          rollNumber: "",
+          fullName: "",
+          studentClass: "",
+          studentSection: "",
+          academicYear: "",
+          religion: "",
+          category: "",
+          studentNumber: "",
+          caste: "",
+          motherTongue: "",
+          studentEmail: "",
+          dob: "",
+          gender: "",
+          bloodGroup: "",
+          fatherName: "",
+          fatherMobile: "",
+          fatherOccupation: "",
+          motherName: "",
+          motherMobile: "",
+          motherOccupation: "",
+          profileImage: "",
+          tuitionFees: "",
+          admissionFees: "",
+          otherFees: "",
+          examFees: "",
+          transportFees: "",
+          hostelFees: "",
+        });
+        setSameAddressChecked(false);
+        setPermanentAddress({
+          permanentAddress: "",
+          city: "",
+          state: "",
+          zipCode: "",
+        });
+        setCurrAddress({
+          currentAddress: "",
+          city: "",
+          state: "",
+          zipCode: "",
+        });
       } catch (error) {
         console.error("Error while student form fill time: \n", error);
         toast.error(
@@ -133,10 +190,10 @@ const AdmisssionForm = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        {/* 🟢 Personal Information */}
+        {/* 🟢 Student Information */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
+            <CardTitle>Student Information</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
@@ -236,7 +293,6 @@ const AdmisssionForm = () => {
                         .split("T")[0]
                     : ""
                 }
-                onFocus={(e) => e.target.showPicker()}
                 onChange={(e) =>
                   setStudentData({
                     ...studentData,
@@ -308,7 +364,6 @@ const AdmisssionForm = () => {
                     ? new Date(studentData.dob).toISOString().split("T")[0]
                     : ""
                 }
-                onFocus={(e) => e.target.showPicker()}
                 onChange={(e) =>
                   setStudentData({ ...studentData, dob: e.target.value })
                 }
@@ -367,8 +422,6 @@ const AdmisssionForm = () => {
                       {blood}
                     </SelectItem>
                   ))}
-                  {/* <SelectItem value="A+">A+</SelectItem>
-                <SelectItem value="B+">B+</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -497,6 +550,102 @@ const AdmisssionForm = () => {
           </CardContent>
         </Card>
 
+        {/* Fee Structure */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Student Fee Structure</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="tuitionFees">Tuition Fees*</Label>
+              <Input
+                id="tuitionFees"
+                placeholder="Enter Tuition Fees"
+                value={studentData.tuitionFees}
+                onChange={(e) =>
+                  setStudentData({
+                    ...studentData,
+                    tuitionFees: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="admissionFees">Admission Fees</Label>
+              <Input
+                id="admissionFees"
+                placeholder="Enter Admission Fees"
+                value={studentData.admissionFees}
+                onChange={(e) =>
+                  setStudentData({
+                    ...studentData,
+                    admissionFees: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="otherFees">Other Fees</Label>
+              <Input
+                id="otherFees"
+                placeholder="Enter Other Fees"
+                value={studentData.otherFees}
+                onChange={(e) =>
+                  setStudentData({ ...studentData, otherFees: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="examFees">Examination Fees</Label>
+              <Input
+                id="examFees"
+                placeholder="Enter Examination Fees"
+                value={studentData.examFees}
+                onChange={(e) =>
+                  setStudentData({
+                    ...studentData,
+                    examFees: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="transportFees">Transportation Fees</Label>
+              <Input
+                id="transportFees"
+                placeholder="Enter Transportation Fees"
+                value={studentData.transportFees}
+                onChange={(e) =>
+                  setStudentData({
+                    ...studentData,
+                    transportFees: e.target.value,
+                  })
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="hostelFees">Hostel Fees</Label>
+              <Input
+                id="hostelFees"
+                placeholder="Enter Hostel Fees"
+                value={studentData.hostelFees}
+                onChange={(e) =>
+                  setStudentData({
+                    ...studentData,
+                    hostelFees: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Address */}
         <AddressCurrentPermanent
           sameAddressChecked={sameAddressChecked}
@@ -507,7 +656,6 @@ const AdmisssionForm = () => {
           setCurrAddress={setCurrAddress}
           isPending={isPending}
         />
-
       </form>
     </div>
   );
