@@ -4,7 +4,6 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { classValidate } from "../helpers/classValidate.js";
 import Class from "../models/class.model.js";
-import { validDays } from "../helpers/validDays.js";
 
 //^ Create a new class used to create a new class in the database
 export const createClass = asyncHandler(async (req, res) => {
