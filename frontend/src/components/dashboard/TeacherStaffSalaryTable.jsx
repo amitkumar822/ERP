@@ -18,8 +18,6 @@ import {
   Clock,
   ClipboardList,
   Eye,
-  CreditCard,
-  LucideBadgeIndianRupee,
   BadgeIndianRupee,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
