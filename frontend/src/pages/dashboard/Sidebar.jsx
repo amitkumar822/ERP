@@ -49,7 +49,7 @@ const Sidebar = () => {
   return (
     <div
       className={`h-screen overflow-auto pb-5 transition-all duration-300 border-r-2 shadow-md shadow-gray-800 dark:bg-gray-900 ${
-        isCollapsed ? "w-20" : "w-64"
+        isCollapsed ? "w-20" : "w-[16.5rem]"
       }`}
     >
       {/* Sidebar Header */}
