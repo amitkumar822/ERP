@@ -175,7 +175,7 @@ const AddressCurrentPermanent = ({
         <Button
           disabled={isPending}
           type="submit"
-          className="md:w-1/4 w-full mt-4 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-lg shadow-lg"
+          className="lg:w-1/4 md:w-1/2 w-full mt-4 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2 rounded-lg shadow-lg"
         >
           {isPending ? (
             <span className="flex items-center gap-2">

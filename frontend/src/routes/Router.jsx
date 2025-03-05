@@ -6,6 +6,7 @@ import Library from "@/pages/dashboard/library/Library";
 import MainDashboard from "@/pages/dashboard/MainDashboard";
 import DriverSalaryPayment from "@/pages/dashboard/payments/DriverSalaryPayment";
 import FeeStructure from "@/pages/dashboard/payments/FeeStructure";
+import StaffSalaryList from "@/pages/dashboard/payments/listPayment/StaffSalaryList";
 import StudentFeesList from "@/pages/dashboard/payments/listPayment/StudentFeesList";
 import TeacherSalaryList from "@/pages/dashboard/payments/listPayment/TeacherSalaryList";
 import StaffSalary from "@/pages/dashboard/payments/StaffSalary";
@@ -18,7 +19,6 @@ import AttendancePage from "@/pages/dashboard/student/AttendancePage";
 import CheckAttendance from "@/pages/dashboard/student/CheckAttendance";
 import StudentList from "@/pages/dashboard/student/StudentsList";
 import JoiningTeacher from "@/pages/dashboard/teacher/JoiningTeacher";
-import AddTeacher from "@/pages/dashboard/teacher/JoiningTeacher";
 import TeachersList from "@/pages/dashboard/teacher/TeachersList";
 import Transport from "@/pages/dashboard/transport/Transport";
 import HelpAndSupport from "@/pages/helpAndSupport/HelpAndSupport";
@@ -65,6 +65,7 @@ const router = createBrowserRouter(
       {/* Payment Recourds */}
       <Route path="payment-history/students" element={<StudentFeesList />} />
       <Route path="payment-history/teachers" element={<TeacherSalaryList />} />
+      <Route path="payment-history/staff" element={<StaffSalaryList />} />
 
       <Route path="settings" element={<Settings />} />
       <Route path="help" element={<HelpAndSupport />} />
