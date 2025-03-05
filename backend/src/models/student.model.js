@@ -26,7 +26,6 @@ const studentSchema = new mongoose.Schema(
     },
     section: {
       type: String,
-      // required: [true, "Section is required"],
       enum: {
         values: ["A", "B", "C", "D"],
         message: "Section must be either 'A','B','C','D'",
@@ -34,7 +33,6 @@ const studentSchema = new mongoose.Schema(
     },
     academicYear: {
       type: String,
-      // required: [true, "Academic Year is required"],
       trim: true,
     },
     caste: {
