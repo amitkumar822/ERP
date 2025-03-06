@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Loader2, UserPlusIcon } from "lucide-react";
+import {  UserPlusIcon } from "lucide-react";
 import API from "../../../api/axiosInstance";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";

@@ -18,6 +18,15 @@ export const classesApi = createApi({
       keepUnusedDataFor: 3600, // Keeps data in memory for 1 hour
     }),
 
+    getClassDetailsOnly: builder.query({
+      query: () => ({
+        url: `/get-class-details-only`,
+        method: "GET",
+      }),
+      // providesTags: ["Refetch_Time_Table_Period"],
+    }),
+
+
     //^ *********👇 Class Time Table Create 👇*********
     createClassTimeTable: builder.mutation({
       query: ({ className, section, academicYear, day, period, periodTime, subject, emailPhone}) => ({
@@ -57,6 +66,9 @@ export const classesApi = createApi({
 
 export const { 
   useGetClassBySectionAcademicYearClassNameQuery,
+  useGetClassDetailsOnlyQuery,
+
+
   useCreateClassTimeTableMutation,
   useGetTimeTablesQuery,
   useEditTimeTablePeriodMutation,

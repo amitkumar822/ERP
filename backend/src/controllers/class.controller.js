@@ -170,3 +170,20 @@ export const getClassesByAcademicYearSection = asyncHandler(
     );
   }
 );
+
+/**
+ * @desc  Get all Only Class Details
+ * @route "GET" /get-class-details-only
+ * @access Private (Admin)
+ */
+export const getAllClassDetailsOnly = asyncHandler(async (_, res) => {
+  const classes = await Class.find().sort({className: 1, academicYear: 1, sections: 1}).lean();
+
+  if (!classes || classes.length === 0) {
+    throw new ApiError(404, "No classes found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, classes, "All classes fetched successfully"));
+});

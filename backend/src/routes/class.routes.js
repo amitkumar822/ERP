@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createClass,
   deleteClass,
+  getAllClassDetailsOnly,
   getAllClasses,
   getClassesByAcademicYearSection,
   updateClass,
@@ -10,12 +11,15 @@ import { createUpdateTimeTable, deleteTimeTablePeriod, editTimeTablePeriod, getA
 
 const router = Router();
 
-// Router defined for class related operations
+//^ Router defined for class related operations
 router.post("/create", createClass);
 router.put("/update/:classId", updateClass);
 router.delete("/delete/:classId", deleteClass);
 router.get("/get-all-class", getAllClasses);
 router.get("/get-class-academic-section/:className/:section/:academicYear", getClassesByAcademicYearSection);
+
+router.get("/get-class-details-only", getAllClassDetailsOnly);
+
 
 //& Class Time Table Router Methods
 router.post("/create-class-timetable", createUpdateTimeTable); 
