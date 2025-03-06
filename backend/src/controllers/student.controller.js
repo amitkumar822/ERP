@@ -5,7 +5,11 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import Class from "../models/class.model.js";
 import Student from "../models/student.model.js";
 
-//^ Add a new student to the database
+/**
+ * @desc  add a new student or joining a new student
+ * @route "POST" /add
+ * @access Private (Admin)
+ */
 export const addStudent = asyncHandler(async (req, res) => {
   const {
     fullName,
@@ -137,7 +141,11 @@ export const addStudent = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, student, "Student admission successful"));
 });
 
-//^ Get all students in a specific class
+/**
+ * @desc  Get all students in parallel
+ * @route "GET" /get-all-students
+ * @access Private (Admin)
+ */
 export const getAllStudents = asyncHandler(async (_, res) => {
   // const { page = 1, limit = 100 } = req.query;
 
@@ -173,7 +181,11 @@ export const getAllStudents = asyncHandler(async (_, res) => {
     );
 });
 
-//^ Get student details by ID
+/**
+ * @desc  Delete a student
+ * @route "DELETE" /delete/:studentId
+ * @access Private (Admin)
+ */
 export const deleteStudentById = asyncHandler(async (req, res) => {
   const { studentId } = req.params;
 
@@ -187,4 +199,61 @@ export const deleteStudentById = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(new ApiResponse(200, [], "Student deleted"));
+});
+
+/**
+ * @desc  Promote a student
+ * @route "POST" /promote-students/:classId
+ * @access Private (Admin)
+ */
+export const promoteStudents = asyncHandler(async (req, res) => {
+  const { classId } = req.params;
+  const { studentsID } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new ApiError(400, "Invalid class ID format.");
+  }
+
+  if (!Array.isArray(studentsID) || studentsID.length === 0) {
+    throw new ApiError(
+      400,
+      "Students ID array is required and cannot be empty."
+    );
+  }
+
+  if (!studentsID.every((id) => mongoose.Types.ObjectId.isValid(id))) {
+    throw new ApiError(400, "One or more student IDs are invalid.");
+  }
+
+  // ✅ Fetch Class Details
+  const findClass = await Class.findById(classId).lean();
+  if (!findClass) {
+    throw new ApiError(404, "Class not found.");
+  }
+
+  // ✅ Bulk Update Students Efficiently (Without Transactions)
+  const { modifiedCount } = await Student.updateMany(
+    { _id: { $in: studentsID } },
+    {
+      $set: {
+        className: findClass.className,
+        classId: findClass._id,
+        section: findClass.sections,
+        academicYear: findClass.academicYear,
+      },
+    }
+  );
+
+  if (modifiedCount === 0) {
+    throw new ApiError(
+      400,
+      "No students were updated. They may already be in the same class."
+    );
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200,  modifiedCount, "Students promoted successfully.")
+    );
 });
