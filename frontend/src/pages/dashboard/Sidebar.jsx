@@ -26,6 +26,8 @@ import {
   Receipt,
   ListChecks,
   UserCogIcon,
+  Megaphone,
+  GraduationCap,
 } from "lucide-react";
 import { Link, NavLink } from "react-router";
 import ThemeContext from "@/context/Theme/ThemeContext";
@@ -167,7 +169,6 @@ export const sidebarData = [
         icon: <User className="w-4 h-4" />,
         link: "/teachers/list",
       },
-      
     ],
   },
   {
@@ -189,6 +190,16 @@ export const sidebarData = [
         title: "Syllabus",
         icon: <FileText className="w-4 h-4" />,
         link: "/academics/syllabus",
+      },
+      {
+        title: "Student Promotion",
+        icon: <GraduationCap className="w-4 h-4" />,
+        link: "/academics/students-promotions",
+      },
+      {
+        title: "Result Publication",
+        icon: <Megaphone className="w-4 h-4" />,
+        link: "/academics/students-results",
       },
     ],
   },
@@ -275,7 +286,7 @@ export const sidebarData = [
         link: "/payment-history/all",
       },
     ],
-  },  
+  },
   {
     title: "Settings",
     icon: <Settings className="w-5 h-5" />,

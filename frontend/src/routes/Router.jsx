@@ -1,4 +1,6 @@
 import ClassManagement from "@/pages/dashboard/academics/ClassManagement";
+import ResultPublishing from "@/pages/dashboard/academics/ResultPublishing";
+import StudentPromotion from "@/pages/dashboard/academics/StudentPromotion";
 import Syllabus from "@/pages/dashboard/academics/Syllabus";
 import TimeTable from "@/pages/dashboard/academics/TimeTable";
 import Dashboard from "@/pages/dashboard/Dashboard";
@@ -49,6 +51,8 @@ const router = createBrowserRouter(
       <Route path="academics/classes" element={<ClassManagement />} />
       <Route path="academics/timetable" element={<TimeTable />} />
       <Route path="academics/syllabus" element={<Syllabus />} />
+      <Route path="academics/students-promotions" element={<StudentPromotion />} />
+      <Route path="academics/students-results" element={<ResultPublishing />} />
 
       {/* Other Routes */}
       <Route path="staff" element={<StaffJoiningForm />} />
