@@ -14,8 +14,25 @@ export const studentApi = createApi({
                 url: `/get-all-students`,
                 method: "GET",
             })
+        }),
+        getStudentSameClassWise: builder.mutation ({
+            query: ({classId}) => ({
+                url: `/get-sameclass-students/${classId}`,
+                method: "POST",
+            })
+        }),
+        promoteStudents: builder.mutation({
+            query: ({newClassId, studentsID}) => ({
+                url: `/promote-students/${newClassId}`,
+                method: "POST",
+                body: {studentsID},
+            })
         })
     }),
 })
 
-export const { useGetStudentListQuery } = studentApi;
+export const { 
+    useGetStudentListQuery,
+    useGetStudentSameClassWiseMutation,
+    usePromoteStudentsMutation,
+} = studentApi;

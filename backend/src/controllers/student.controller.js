@@ -203,14 +203,14 @@ export const deleteStudentById = asyncHandler(async (req, res) => {
 
 /**
  * @desc  Promote a student
- * @route "POST" /promote-students/:classId
+ * @route "POST" /promote-students/:newClassId
  * @access Private (Admin)
  */
 export const promoteStudents = asyncHandler(async (req, res) => {
-  const { classId } = req.params;
+  const { newClassId } = req.params;
   const { studentsID } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(classId)) {
+  if (!mongoose.Types.ObjectId.isValid(newClassId)) {
     throw new ApiError(400, "Invalid class ID format.");
   }
 
@@ -226,7 +226,7 @@ export const promoteStudents = asyncHandler(async (req, res) => {
   }
 
   // ✅ Fetch Class Details
-  const findClass = await Class.findById(classId).lean();
+  const findClass = await Class.findById(newClassId).lean();
   if (!findClass) {
     throw new ApiError(404, "Class not found.");
   }
@@ -254,6 +254,29 @@ export const promoteStudents = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200,  modifiedCount, "Students promoted successfully.")
+      new ApiResponse(200, modifiedCount, "Students promoted successfully.")
     );
+});
+
+/**
+ * @desc  Get students in the same class
+ * @route "POST" /get-same-class-students/:classId
+ * @access Private (Admin)
+ */
+export const getSameClassStudents = asyncHandler(async (req, res) => {
+  const { classId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(classId)) {
+    throw new ApiError(400, "Invalid class ID format.");
+  }
+
+  const students = await Student.find({ classId })
+    .select("_id fullName rollNumber fatherName fatherNumber")
+    .lean();
+  if (!students || students.length === 0) {
+    throw new ApiError(404, "No students found in the specified class.");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, students, "Students fetched successfully."));
 });

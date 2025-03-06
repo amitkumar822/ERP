@@ -177,7 +177,10 @@ export const getClassesByAcademicYearSection = asyncHandler(
  * @access Private (Admin)
  */
 export const getAllClassDetailsOnly = asyncHandler(async (_, res) => {
-  const classes = await Class.find().sort({className: 1, academicYear: 1, sections: 1}).lean();
+  const classes = await Class.find()
+    .select("-studentsId -timeTable")
+    .sort({ className: 1, academicYear: 1, sections: 1 })
+    .lean();
 
   if (!classes || classes.length === 0) {
     throw new ApiError(404, "No classes found");
