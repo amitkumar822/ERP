@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -25,6 +25,7 @@ import {
   usePromoteStudentsMutation,
 } from "@/redux/features/api/studentApi";
 import { toast } from "react-toastify";
+import { LoadingPage } from "@/components/LoadingPage";
 
 export default function StudentPromotion() {
   // ****************👇Start Class & Students Functionality👇******************
@@ -40,20 +41,14 @@ export default function StudentPromotion() {
 
   // search student
   const handleSearchedStudent = async () => {
-    toast.info("Searched Clicked");
     if (fromClassId) {
       await getStudentSameClassWise({ classId: fromClassId });
     }
   };
   // ****************��End Class & Students Functionality��******************
 
+  //~ ***********👇 Start Student Promotion Functionality 👇************
   const [studentIdList, setStudentIdList] = useState([]);
-
-  // const togglePromotion = (id) => {
-  //   setStudentIdList((prev) =>
-  //     prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
-  //   );
-  // };
 
   const togglePromotion = (id) => {
     setStudentIdList(
@@ -66,6 +61,7 @@ export default function StudentPromotion() {
     );
   };
 
+  // API cal
   const [promoteStudents, { isSuccess, isLoading: isPromoteLoading, error }] =
     usePromoteStudentsMutation();
 
@@ -89,7 +85,19 @@ export default function StudentPromotion() {
     });
   };
 
-  console.log(isSuccess, isPromoteLoading, error);
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(error?.data?.message || "Successfully Promoted Student!");
+      setStudentIdList([]);
+      setToClassId("");
+      setFromClassId("");
+      handleSearchedStudent();
+    } else if (error) {
+      alert(error?.data?.message || "Failed to Promote Student!");
+    }
+  }, [error, isSuccess]);
+
+  //~ ***********👆 End Student Promotion Functionality 👆************
 
   return (
     <div className="p-5">
@@ -177,46 +185,101 @@ export default function StudentPromotion() {
       </Card>
 
       {/* Students List */}
-      <Card className="p-6 shadow-lg rounded-xl border border-gray-300 mt-3">
-        <div className="overflow-auto max-h-[30rem]">
-          <Table className="border border-gray-300 w-full">
-            <TableHeader className="sticky top-0 bg-gray-100 z-10">
-              <TableRow className="border-b border-gray-300">
-                <TableHead className="p-2">Roll No</TableHead>
-                <TableHead className="p-2">Name</TableHead>
-                <TableHead className="p-2">Father Name</TableHead>
-                <TableHead className="p-2">Contact Number</TableHead>
-                <TableHead className="p-2">Promote</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {studentList?.data?.map((student) => (
-                <TableRow
-                  key={student._id}
-                  className="border-b border-gray-300"
-                >
-                  <TableCell className="p-2">{student.rollNumber}</TableCell>
-                  <TableCell className="p-2">{student.fullName}</TableCell>
-                  <TableCell className="p-2">{student.fatherName}</TableCell>
-                  <TableCell className="p-2">{student.fatherNumber}</TableCell>
-                  <TableCell className="p-2">
-                    <Switch
-                      checked={studentIdList.includes(student._id)}
-                      onCheckedChange={() => togglePromotion(student._id)}
-                    />
-                  </TableCell>
+      {studentList?.data ? (
+        <Card className="p-6 shadow-lg rounded-xl border border-gray-300 mt-3">
+          <div className="overflow-auto max-h-[30rem]">
+            <Table className="border border-gray-300 w-full">
+              <TableHeader className="sticky top-0 bg-gray-100 z-10">
+                <TableRow className="border-b border-gray-300">
+                  <TableHead className="p-2">Roll No</TableHead>
+                  <TableHead className="p-2">Name</TableHead>
+                  <TableHead className="p-2">Father Name</TableHead>
+                  <TableHead className="p-2">Contact Number</TableHead>
+                  <TableHead className="p-2">Promote</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        <Button
-          className="mt-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 border border-gray-300 hover:border-blue-500 transition-all"
-          onClick={handlePromotionSubmit}
-        >
-          Promote Selected
-        </Button>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {studentList?.data?.map((student) => (
+                  <TableRow
+                    key={student._id}
+                    className="border-b border-gray-300"
+                  >
+                    <TableCell className="p-2">{student.rollNumber}</TableCell>
+                    <TableCell className="p-2">{student.fullName}</TableCell>
+                    <TableCell className="p-2">{student.fatherName}</TableCell>
+                    <TableCell className="p-2">
+                      {student.fatherNumber}
+                    </TableCell>
+                    <TableCell className="p-2">
+                      <Switch
+                        checked={studentIdList.includes(student._id)}
+                        onCheckedChange={() => togglePromotion(student._id)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <Button
+            className="mt-4 cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 border border-gray-300 hover:border-blue-500 transition-all"
+            onClick={handlePromotionSubmit}
+            disabled={studentIdList.length === 0 || isPromoteLoading}
+          >
+            {isPromoteLoading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 size={18} className="animate-spin" />
+                Please Wait...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-1">
+                Promote Selected
+              </span>
+            )}
+          </Button>
+        </Card>
+      ) : (
+        <Card className="p-4 mt-4">
+          {!isLoading ? (
+            <LoadingNotSelectFromClass />
+          ) : (
+            <LoadingPage title="Student Promotion" />
+          )}
+        </Card>
+      )}
     </div>
   );
 }
+
+const LoadingNotSelectFromClass = () => {
+  return (
+    <div className="text-center">
+      <p className="text-sm text-gray-600">
+        <span role="img" aria-label="info">
+          ℹ️
+        </span>{" "}
+        To promote students, please follow these steps:
+      </p>
+      <ol className="list-decimal list-inside text-sm text-gray-600 mt-2">
+        <li>
+          <span role="img" aria-label="search">
+            🔍
+          </span>{" "}
+          Search for students.
+        </li>
+        <li>
+          <span role="img" aria-label="select">
+            👆
+          </span>{" "}
+          Select a class from the search results.
+        </li>
+      </ol>
+      <p className="mt-4 text-red-500">
+        <span role="img" aria-label="warning">
+          ⚠️
+        </span>{" "}
+        No class selected. Please search and select a class.
+      </p>
+    </div>
+  );
+};

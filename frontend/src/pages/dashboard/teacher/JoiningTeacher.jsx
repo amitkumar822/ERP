@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import AddressCurrentPermanent from "@/components/dashboard/AddressCurrentPermanent";
-import { FileJsonIcon, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { useJoiningTeacherMutation } from "@/redux/features/api/teacherApi";
 import { toast } from "react-toastify";
 import { Link } from "react-router";
