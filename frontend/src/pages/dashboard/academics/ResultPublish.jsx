@@ -30,10 +30,15 @@ import {
   UserRoundCheck,
   UserCheckIcon,
   UserCheck,
+  Loader2,
+  ShieldCheck,
 } from "lucide-react";
 import { useGetClassDetailsOnlyQuery } from "@/redux/features/api/classesApi";
-import { useState } from "react";
-import { useGetStudentSameClassWiseMutation } from "@/redux/features/api/studentApi";
+import { useEffect, useState } from "react";
+import {
+  useGetStudentSameClassWiseMutation,
+  usePublishStudentResultMutation,
+} from "@/redux/features/api/studentApi";
 
 const ResultPublish = () => {
   // fetch class details from database
@@ -41,9 +46,10 @@ const ResultPublish = () => {
   // store class id for search students list in the database
   const [classId, setClassId] = useState("");
   // fetch student details from database
-  const [getStudentSameClassWise, { data: studentList, isLoading }] =
+  const [getStudentSameClassWise, { data: studentList }] =
     useGetStudentSameClassWiseMutation();
 
+  // fetch student details from database
   const handleSearchStudentList = async () => {
     if (classId) {
       await getStudentSameClassWise({ classId });
@@ -51,16 +57,50 @@ const ResultPublish = () => {
       toast.error("Please select a class!");
     }
   };
-
+  // store single student details
   const [singleStudentDetails, setSingleStudentDetails] = useState("");
+  console.log(Object.keys(singleStudentDetails).length);
+  
 
   const { handleSubmit, control, register, reset } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Result Data:", data);
-    toast.success("Result Published Successfully!");
-    // reset();
+  // call API for publish student result
+  const [publishStudentResult, { data, isSuccess, error, isLoading }] =
+    usePublishStudentResultMutation();
+
+  // handle form submission to publish student result
+  const onSubmit = async (data) => {
+    toast.info("Click");
+    // convert data Object to array
+    const formattedSubjects = Object.entries(data)
+      .map(([subjectName, marks]) => ({
+        subjectName,
+        marks: Number(marks),
+      }))
+      .filter((subject) => subject.marks > 0);
+    console.log("FORMAT: ", formattedSubjects);
+
+    if (!classId) {
+      toast.error("Please select a class!");
+      return;
+    }
+    await publishStudentResult({
+      classId,
+      studentId: singleStudentDetails._id,
+      subjects: formattedSubjects,
+    });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(
+        error?.data?.message || "Successfully Student Result Publish!"
+      );
+      reset();
+    } else if (error) {
+      alert(error?.data?.message || "Failed to publish student result!");
+    }
+  }, [error, isSuccess]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 md:p-4">
@@ -116,7 +156,11 @@ const ResultPublish = () => {
               </div>
             </Card>
 
-            <Card className="grid grid-cols-1 gap-4 justify-center items-center p-2">
+            <Card
+              className={`grid grid-cols-1 gap-4 justify-center items-center p-2 ${
+                studentList?.data?.length === undefined ? "hidden" : ""
+              }`}
+            >
               <div>
                 <Label htmlFor="class-select">
                   Select a student to publish results.
@@ -150,10 +194,14 @@ const ResultPublish = () => {
         </CardHeader>
 
         <CardContent className="-mt-3">
-          <Card className="md:p-4 p-2 bg-pink-50">
+          <Card
+            className={`md:p-4 p-2 bg-red-200 ${
+              Object.keys(singleStudentDetails)?.length === 0 ? "hidden" : ""
+            }`}
+          >
             <CardTitle className="border-b pb-1">
-              <UserCheck size={20} className="inline-block mr-2" />
-              Auto-Fill Student Details
+              <ShieldCheck size={20} className="inline-block mr-2" />
+              Verify Student Information
             </CardTitle>
             <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-2">
               <div>
@@ -226,8 +274,8 @@ const ResultPublish = () => {
                   <div className="flex items-center gap-2 border rounded-md p-2">
                     <Icon size={20} />
                     <Input
-                      id={name}
-                      {...register(`[${name}]`)}
+                      id={label}
+                      {...register(`[${label}]`)}
                       type="number"
                       placeholder="Enter Marks (0 - 100)"
                       className="border p-2 rounded-md"
@@ -237,12 +285,21 @@ const ResultPublish = () => {
                 </div>
               ))}
               <div className="md:col-span-2 flex justify-center items-center">
-              <Button
-                type="submit"
-                className="md:w-1/3 w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-500 transition-all duration-300 cursor-pointer"
-              >
-                Publish Result
-              </Button>
+                <Button
+                  type="submit"
+                  className="md:w-1/3 w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-blue-500 transition-all duration-300 cursor-pointer"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 size={18} className="animate-spin" />
+                      Please Wait...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-1">
+                      Publish Result
+                    </span>
+                  )}
+                </Button>
               </div>
             </form>
           </Card>
@@ -255,14 +312,14 @@ const ResultPublish = () => {
 export default ResultPublish;
 
 const subjects = [
-  { name: "english",label: "English", icon: BookOpen },
-  { name: "mathematics",label: "Mathematics", icon: Atom },
-  { name: "science",label: "Science", icon: FlaskConical },
-  { name: "socialScience",label: "Social Science", icon: Globe },
-  { name: "hindi",label: "Hindi", icon: BookText },
-  { name: "computerScience",label: "Computer Science", icon: BrainCircuit },
-  { name: "physicalEducation",label: "Physical Education", icon: HeartPulse },
-  { name: "sanskrit",label: "Sanskrit", icon: Scroll },
-  { name: "EVS",label: "EVS", icon: Leaf },
-  { name: "generalKnowledge",label: "General Knowledge", icon: Award },
+  { name: "english", label: "English", icon: BookOpen },
+  { name: "hindi", label: "Hindi", icon: BookText },
+  { name: "mathematics", label: "Mathematics", icon: Atom },
+  { name: "science", label: "Science", icon: FlaskConical },
+  { name: "socialScience", label: "Social Science", icon: Globe },
+  { name: "sanskrit", label: "Sanskrit", icon: Scroll },
+  { name: "computerScience", label: "Computer Science", icon: BrainCircuit },
+  { name: "physicalEducation", label: "Physical Education", icon: HeartPulse },
+  { name: "evs", label: "EVS", icon: Leaf },
+  { name: "generalKnowledge", label: "General Knowledge", icon: Award },
 ];

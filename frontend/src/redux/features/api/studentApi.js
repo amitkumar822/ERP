@@ -27,7 +27,16 @@ export const studentApi = createApi({
                 method: "POST",
                 body: {studentsID},
             })
-        })
+        }),
+
+        //Student Result Publish
+        publishStudentResult: builder.mutation({
+            query: ({studentId, classId, subjects}) => ({
+                url: `/create-student-results/${classId}`,
+                method: "POST",
+                body: {studentId, classId, subjects},
+            })
+        }),
     }),
 })
 
@@ -35,4 +44,7 @@ export const {
     useGetStudentListQuery,
     useGetStudentSameClassWiseMutation,
     usePromoteStudentsMutation,
+
+    //Student Result Publish
+    usePublishStudentResultMutation,
 } = studentApi;
