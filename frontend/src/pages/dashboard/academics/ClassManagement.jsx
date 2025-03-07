@@ -272,7 +272,7 @@ export default function ClassManagement() {
                 <TableHead>Section</TableHead>
                 <TableHead>Academic Year</TableHead>
                 <TableHead>Capacity</TableHead>
-                <TableHead>Teachers & Subjects</TableHead>
+                {/* <TableHead>Teachers & Subjects</TableHead> */}
                 <TableHead>Roll & Students</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -284,7 +284,7 @@ export default function ClassManagement() {
                   <TableCell>{cls.sections}</TableCell>
                   <TableCell>{cls.academicYear}</TableCell>
                   <TableCell>{cls.capacity}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Table>
                       <TableBody>
                         {cls?.teacherSubjects?.map((ts, idx) => (
@@ -295,7 +295,7 @@ export default function ClassManagement() {
                         ))}
                       </TableBody>
                     </Table>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <div className="max-h-40 overflow-auto border rounded-md">
                       <Table>
@@ -329,7 +329,7 @@ export default function ClassManagement() {
                       <Trash2 size={14} />
                     </Button>
 
-                    <Button
+                    {/* <Button
                       size="sm"
                       variant="outline"
                       className="cursor-pointer"
@@ -344,7 +344,7 @@ export default function ClassManagement() {
                       onClick={() => handlePopupOpen("students", index)}
                     >
                       <UserPlus size={14} /> Manage Students
-                    </Button>
+                    </Button> */}
                   </TableCell>
                 </TableRow>
               ))}

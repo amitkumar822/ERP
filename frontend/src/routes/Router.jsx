@@ -1,5 +1,5 @@
 import ClassManagement from "@/pages/dashboard/academics/ClassManagement";
-import ResultPublishing from "@/pages/dashboard/academics/ResultPublishing";
+import ResultPublish from "@/pages/dashboard/academics/ResultPublish";
 import StudentPromotion from "@/pages/dashboard/academics/StudentPromotion";
 import Syllabus from "@/pages/dashboard/academics/Syllabus";
 import TimeTable from "@/pages/dashboard/academics/TimeTable";
@@ -52,7 +52,7 @@ const router = createBrowserRouter(
       <Route path="academics/timetable" element={<TimeTable />} />
       <Route path="academics/syllabus" element={<Syllabus />} />
       <Route path="academics/students-promotions" element={<StudentPromotion />} />
-      <Route path="academics/students-results" element={<ResultPublishing />} />
+      <Route path="academics/students-results" element={<ResultPublish />} />
 
       {/* Other Routes */}
       <Route path="staff" element={<StaffJoiningForm />} />

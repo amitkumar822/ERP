@@ -270,7 +270,7 @@ export const getSameClassStudents = asyncHandler(async (req, res) => {
   }
 
   const students = await Student.find({ classId })
-    .select("_id fullName rollNumber fatherName fatherNumber")
+    .select("_id fullName rollNumber fatherName motherName fatherNumber")
     .lean();
   if (!students || students.length === 0) {
     throw new ApiError(404, "No students found in the specified class.");

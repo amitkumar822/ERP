@@ -207,8 +207,10 @@ export default function StudentPromotion() {
                     <TableCell className="p-2">{student.rollNumber}</TableCell>
                     <TableCell className="p-2">{student.fullName}</TableCell>
                     <TableCell className="p-2">{student.fatherName}</TableCell>
-                    <TableCell className="p-2">
-                      {student.fatherNumber}
+                    <TableCell  className="p-2 hover:text-blue-700 text-blue-500 hover:underline ">
+                      <a href={`tel:${student.fatherNumber}`}>
+                        {student.fatherNumber}
+                      </a>
                     </TableCell>
                     <TableCell className="p-2">
                       <Switch

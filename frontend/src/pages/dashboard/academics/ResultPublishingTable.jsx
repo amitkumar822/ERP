@@ -18,7 +18,7 @@ const initialResults = [
   { id: 3, name: "Priya Verma", roll: "103", subject: "English", marks: 90 },
 ];
 
-export default function ResultPublishing() {
+export default function ResultPublishingTable() {
   const [results, setResults] = useState(initialResults);
 
   const editResult = (id) => {
@@ -34,7 +34,7 @@ export default function ResultPublishing() {
   };
 
   return (
-    <div className="p-6">
+    <div className="md:p-6 p-2">
       <Card className="p-6 shadow-lg rounded-xl border border-gray-300">
         <div className="flex items-center gap-2 mb-4">
           <h2 className="text-2xl font-semibold">Result Publishing</h2>
