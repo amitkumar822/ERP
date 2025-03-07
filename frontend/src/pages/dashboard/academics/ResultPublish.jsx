@@ -63,7 +63,7 @@ const ResultPublish = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 md:px-4 md:-mt-2">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 md:p-4">
       <Card className="w-full max-w-7xl shadow-lg rounded-lg ">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-center flex items-center gap-2">
