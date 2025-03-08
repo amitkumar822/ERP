@@ -12,6 +12,7 @@ import { Eye, Download, Pencil, Trash } from "lucide-react";
 import clsx from "clsx";
 import { useGetAllStudentResultsQuery } from "@/redux/features/api/studentApi";
 import { ViewDetails } from "@/components/dashboard/ViewDetails";
+import MarksheetGenerator from "@/components/dashboard/pdf/GenerateMarksheet";
 
 const sectionColors = {
   A: "bg-blue-100 text-blue-800",
@@ -128,6 +129,10 @@ export default function StudentResultsTable() {
           onClose={setShowSingleResult}
         />
       </div>
+
+      {/* MarkSheet */}
+
+      <MarksheetGenerator students={singleResult}/>
     </div>
   );
 }

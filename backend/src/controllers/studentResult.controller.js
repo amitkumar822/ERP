@@ -68,7 +68,7 @@ export const createStudentResult = asyncHandler(async (req, res) => {
  */
 export const getAllStudentResult = asyncHandler(async (req, res) => {
   const results = await StudentResult.find({}, "studentId classId subjects")
-    .populate("studentId", "fullName rollNumber fatherName motherName")
+    .populate("studentId", "fullName rollNumber fatherName motherName dob")
     .populate("classId", "className sections academicYear")
     .lean();
 

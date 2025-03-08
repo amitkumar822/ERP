@@ -15,14 +15,9 @@ import {
 } from "chart.js";
 import {
   Users,
-  BookOpen,
   DollarSign,
   ClipboardList,
-  Award,
-  Mail,
   UserPlus,
-  UserCheck,
-  UserX,
 } from "lucide-react";
 
 ChartJS.register(
