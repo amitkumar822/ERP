@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
-const baseURL = "http://localhost:4000/api/v1/attendance";
+// const baseURL = "http://localhost:4000/api/v1/attendance";
+const baseURL = "https://erp-api-gamma.vercel.app/api/v1/attendance";
 
 //* Define the API Student attendance endpoints
 export const attendanceApi = createApi({

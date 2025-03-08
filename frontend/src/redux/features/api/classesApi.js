@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const baseURL = "http://localhost:4000/api/v1/class";
+// const baseURL = "http://localhost:4000/api/v1/class";
+const baseURL = "https://erp-api-gamma.vercel.app/api/v1/class";
 
 export const classesApi = createApi({
   reducerPath: "classesApi",
