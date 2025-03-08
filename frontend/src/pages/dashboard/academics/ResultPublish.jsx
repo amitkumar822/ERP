@@ -39,6 +39,7 @@ import {
   useGetStudentSameClassWiseMutation,
   usePublishStudentResultMutation,
 } from "@/redux/features/api/studentApi";
+import StudentResultsTable from "./StudentResultsTable";
 
 const ResultPublish = () => {
   // fetch class details from database
@@ -60,7 +61,6 @@ const ResultPublish = () => {
   // store single student details
   const [singleStudentDetails, setSingleStudentDetails] = useState("");
   console.log(Object.keys(singleStudentDetails).length);
-  
 
   const { handleSubmit, control, register, reset } = useForm();
 
@@ -304,6 +304,11 @@ const ResultPublish = () => {
             </form>
           </Card>
         </CardContent>
+
+        {/* Student Result List */}
+        <div>
+          <StudentResultsTable />
+        </div>
       </Card>
     </div>
   );

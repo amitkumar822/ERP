@@ -4,6 +4,7 @@ const baseURL = "http://localhost:4000/api/v1/students";
 
 export const studentApi = createApi({
     reducerPath: "studentApi",
+    tagTypes: ["Refatch_Student"],
     baseQuery: fetchBaseQuery({
         baseUrl: baseURL,
         credentials: "include"
@@ -26,7 +27,7 @@ export const studentApi = createApi({
                 url: `/promote-students/${newClassId}`,
                 method: "POST",
                 body: {studentsID},
-            })
+            }),
         }),
 
         //Student Result Publish
@@ -35,8 +36,16 @@ export const studentApi = createApi({
                 url: `/create-student-results/${classId}`,
                 method: "POST",
                 body: {studentId, classId, subjects},
-            })
+            }),
+            invalidatesTags: ["Refetch_Student"]
         }),
+        getAllStudentResults: builder.query({
+            query: () => ({
+                url: `/get-all-students-results`,
+                method: "GET",
+            }),
+            providesTags: ["Refetch_Student"]
+        })
     }),
 })
 
@@ -47,4 +56,5 @@ export const {
 
     //Student Result Publish
     usePublishStudentResultMutation,
+    useGetAllStudentResultsQuery,
 } = studentApi;

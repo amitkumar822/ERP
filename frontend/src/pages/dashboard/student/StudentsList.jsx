@@ -61,7 +61,6 @@ export default function StudentList() {
         return null; // Remove groups with no matching students
       })
       .filter(Boolean); // Remove null values (empty class groups)
-    console.log("filtered", filtered);
 
     setFilteredList(filtered);
   }, [searchQuery, allStudentsList]);

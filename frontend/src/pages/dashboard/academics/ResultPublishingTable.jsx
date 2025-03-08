@@ -10,7 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Pencil, Trash, FileDown } from "lucide-react";
+import { Pencil, Trash, FileDown, Download, Eye } from "lucide-react";
+import { useGetAllStudentResultsQuery } from "@/redux/features/api/studentApi";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const initialResults = [
   { id: 1, name: "Amit Kumar", roll: "101", subject: "Math", marks: 85 },
@@ -19,6 +21,8 @@ const initialResults = [
 ];
 
 export default function ResultPublishingTable() {
+  const { data: studentsAllResults } = useGetAllStudentResultsQuery();
+
   const [results, setResults] = useState(initialResults);
 
   const editResult = (id) => {
@@ -39,49 +43,80 @@ export default function ResultPublishingTable() {
         <div className="flex items-center gap-2 mb-4">
           <h2 className="text-2xl font-semibold">Result Publishing</h2>
         </div>
-        <div className="overflow-y-auto max-h-[300px] border border-gray-300 rounded-lg">
-          <Table className="w-full">
-            <TableHeader className="sticky top-0 bg-gray-200 z-20 shadow-md">
-              <TableRow className="border-b border-gray-400">
-                <TableHead className="p-2 font-semibold text-gray-700">
-                  Roll No
-                </TableHead>
-                <TableHead className="p-2 font-semibold text-gray-700">
-                  Name
-                </TableHead>
-                <TableHead className="p-2 font-semibold text-gray-700">
-                  Subject
-                </TableHead>
-                <TableHead className="p-2 font-semibold text-gray-700">
-                  Marks
-                </TableHead>
-                <TableHead className="p-2 font-semibold text-gray-700">
-                  Actions
-                </TableHead>
+        <div className="overflow-x-auto">
+          <Table className="w-full bg-white shadow-lg rounded-lg whitespace-nowrap">
+            <TableHeader>
+              <TableRow className="bg-gray-200">
+                <TableHead>Student Name</TableHead>
+                <TableHead>Roll No</TableHead>
+                <TableHead>Class</TableHead>
+                {studentsAllResults?.data?.length > 0 &&
+                  studentsAllResults?.data[0]?.subjects.map((subject) => (
+                    <TableHead key={subject._id}>
+                      {subject.subjectName}
+                    </TableHead>
+                  ))}
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {results.map((result) => (
-                <TableRow key={result.id} className="border-b border-gray-300">
-                  <TableCell className="p-2">{result.roll}</TableCell>
-                  <TableCell className="p-2">{result.name}</TableCell>
-                  <TableCell className="p-2">{result.subject}</TableCell>
-                  <TableCell className="p-2">{result.marks}</TableCell>
-                  <TableCell className="p-2 flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => editResult(result.id)}
-                    >
-                      <Pencil className="w-4 h-4 text-blue-500" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => deleteResult(result.id)}
-                    >
-                      <Trash className="w-4 h-4 text-red-500" />
-                    </Button>
+              {studentsAllResults?.data?.map((result) => (
+                <TableRow key={result._id} className="border-b">
+                  <TableCell>{result.studentId.fullName}</TableCell>
+                  <TableCell>{result.studentId.rollNumber}</TableCell>
+                  <TableCell>{result.classId.className}</TableCell>
+                  {result.subjects.map((subject) => (
+                    <TableCell key={subject._id}>{subject.marks}</TableCell>
+                  ))}
+                  <TableCell className="flex gap-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          // onClick={() => handleEdit(result._id)}
+                        >
+                          <Pencil className="w-5 h-5 text-blue-500" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Edit</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          // onClick={() => handleView(result._id)}
+                        >
+                          <Eye className="w-5 h-5 text-green-500" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>View</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          // onClick={() => handleDownload(result._id)}
+                        >
+                          <Download className="w-5 h-5 text-indigo-500" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Download PDF</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          // onClick={() => handleDelete(result._id)}
+                        >
+                          <Trash className="w-5 h-5 text-red-500" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete</TooltipContent>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}

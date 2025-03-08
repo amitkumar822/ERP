@@ -8,6 +8,7 @@ import {
 
 export function ViewDetails({ data, title, open, onClose }) {
   if (!data) return null;
+  console.log("View Details: ", data);
 
   // Function to format values
   const formatValue = (key, value) => {
@@ -48,6 +49,51 @@ export function ViewDetails({ data, title, open, onClose }) {
             </p>
           </div>
         );
+      } else if (key === "subjects") {
+        const headers = Object.keys(value[0]).filter(
+          (key) => key !== "subjects" && key !== "_id"
+        );
+        const subjectHeaders =
+          value[0]?.subjects?.map((sub) => sub.subjectName) || [];
+
+        return (
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  {[...headers, ...subjectHeaders].map((key) => (
+                    <th key={key} className="border p-2">
+                      {key}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {value.map((item, index) => (
+                  <tr key={index} className="border">
+                    {headers.map((key) => (
+                      <td key={key} className="border p-2">
+                        {item[key]}
+                      </td>
+                    ))}
+                    {subjectHeaders.map((sub) => (
+                      <td key={sub} className="border p-2">
+                        {item.subjects?.find((s) => s.subjectName === sub)
+                          ?.marks || "N/A"}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      } else if (key === "studentId") {
+        return Object.entries(value).map(([key, val]) => (
+          <p key={key}>
+            <strong className="capitalize">{key}:</strong> {val}
+          </p>
+        ));
       }
       return JSON.stringify(value, null, 2);
     }
