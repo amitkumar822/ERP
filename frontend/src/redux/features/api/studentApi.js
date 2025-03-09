@@ -24,6 +24,11 @@ export const studentApi = createApi({
             query: () => ({
                 url: `/get-all-students`,
                 method: "GET",
+                providesTags: ["Refetch_Student"],
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                }
             })
         }),
         getStudentSameClassWise: builder.mutation ({

@@ -13,7 +13,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://erp-api-tawny.vercel.app/api/v1', // URL of your PHP backend
+        // target: 'http://localhost:4000/api/v1', // URL of your PHP backend
+        // target: 'https://erp-api-tawny.vercel.app/api/v1', // Vercel Backend End Point
+        target: 'https://erp-p0wm.onrender.com/api/v1', // Render backend endpoint URL
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

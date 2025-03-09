@@ -18,10 +18,32 @@ import { toast } from "react-toastify";
 import { useGetStudentListQuery } from "@/redux/features/api/studentApi";
 import { ViewDetails } from "@/components/dashboard/ViewDetails";
 import { MiniLoadingPage } from "@/components/MiniLoadingPage";
+import axios from "axios";
 
 export default function StudentList() {
   // **************👇 Start Fetch All Student Details 👇*********************
   const { data, isLoading } = useGetStudentListQuery();
+
+  // const [studentList, setStudentList] = useState([]);
+  // const data = studentList;
+  // const isLoading = false;
+
+  // const fetchStudentList = async () => {
+  //   try {
+  //     const response = await axios.get("/api/students/get-all-students");
+  //     console.log(response?.data);
+
+  //     setStudentList(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching student list: ", error);
+  //     toast.error("Error fetching student list");
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetchStudentList();
+  // }, []);
+
+  // console.log("StudentList: ", data);
 
   const [allStudentsList, setAllStudentsList] = useState(data?.data || []);
   const [filteredList, setFilteredList] = useState(data?.data || []);

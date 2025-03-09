@@ -51,6 +51,10 @@ export const classesApi = createApi({
         method: "GET",
       }),
       providesTags: ["Refetch_Class"],
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+    }
     }),
 
 

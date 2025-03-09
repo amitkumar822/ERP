@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Menu, X, User, Settings, LogOut, Sun, Moon, Home, Bus } from "lucide-react";
+import { Menu, X, User, Settings, LogOut, Sun, Moon, Home, Bus, School, School2 } from "lucide-react";
 import ThemeContext from "@/context/Theme/ThemeContext";
 
 const Navbar = () => {
@@ -20,11 +20,12 @@ const Navbar = () => {
           transition={{ duration: 0.5 }}
         >
           <Link to="/" className="flex items-center gap-2">
-            <img
+            {/* <img
               src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png"
               alt="Logo"
               className="w-8 h-8"
-            />
+            /> */}
+            <School2 />
             <span className="text-xl font-bold">School ERP</span>
           </Link>
         </motion.div>

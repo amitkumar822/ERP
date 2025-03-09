@@ -49,8 +49,8 @@ export default function ClassManagement() {
   // create new class API
   const [createClass, { isLoading, isSuccess, error }] =
     useCreateClassMutation();
-  
-    // update class API
+
+  // update class API
   const [
     updateClass,
     {
@@ -63,54 +63,26 @@ export default function ClassManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let apiEndpoint = "";
-    let apiMethod = "";
-
     if (editClassId) {
-      await updateClass({form, editClassId});
-      // apiEndpoint = `/class/update/${editClassId}`;
-      // apiMethod = "put";
+      await updateClass({ form, editClassId });
     } else {
       await createClass(form);
-      // apiEndpoint = "/class/create";
-      // apiMethod = "post";
     }
-
-    // startTransitionAddClass(async () => {
-    //   try {
-    //     const { data } = await API[apiMethod](apiEndpoint, form);
-    //     toast.success(data?.message || "Successfully Class Created!");
-    //     fetchAllClasses();
-    //     setForm({
-    //       className: "",
-    //       section: "",
-    //       capacity: "",
-    //       academicYear: "",
-    //     });
-    //     setEditClassId("");
-    //   } catch (error) {
-    //     toast.error(error?.response?.data.message || "faild to created class");
-    //     console.error("Error Class Created Time: \n", error);
-    //   }
-    // });
   };
-  console.log(updateError);
-  
 
   // Fetch All Classes👇
-  // const [updatedClasses, setUpdatedClasses] = useState([]);
-
-  const {data} = useGetAllClassesQuery();
+  const { data } = useGetAllClassesQuery();
   let updatedClasses = data?.data || [];
+
+  // const [updatedClasses, setUpdatedClasses] = useState([]);
 
   // const fetchAllClasses = async () => {
   //   try {
-  //     const { data } = await API.get("/class/get-all-class", {
+  //     const { data } = await axios.get("/api/class/get-all-class", {
   //       headers: {
   //         "Content-Type": "application/json",
   //       },
   //     });
-  //     console.log("All Classes Fetch: \n", data);
   //     setUpdatedClasses(data?.data);
   //   } catch (error) {
   //     console.error("Error Fetch All Classes Time: \n", error);
@@ -121,10 +93,12 @@ export default function ClassManagement() {
   //   fetchAllClasses();
   // }, []);
 
+  // console.log("Get All Classes: ", updatedClasses);
+
   // ******************👆End Class Create and Edit or Update Section👆********************
 
   // ********************👇Start Class Edit and Delete Section👇**********************
-  
+
   const handleEdit = (classId) => {
     const filterClass = updatedClasses.filter((cls) => cls._id === classId);
     setEditClassId(classId);
