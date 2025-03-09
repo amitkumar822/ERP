@@ -30,7 +30,7 @@ import {
   useGetTimeTablesQuery,
 } from "@/redux/features/api/classesApi";
 import { toast } from "react-toastify";
-import { UpdateTimeTablePeriod } from "./updateTimeTablePeriod";
+import UpdateTimeTablePeriod from "./UpdateTimeTablePeriod";
 
 export default function TimeTable() {
   //**************👇 Start Add Time Table 👇************** */

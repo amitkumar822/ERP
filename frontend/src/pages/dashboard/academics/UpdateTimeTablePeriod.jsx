@@ -16,7 +16,7 @@ import { periodsList } from "@/helpers/periodsList";
 import { toast } from "react-toastify";
 import { useEditTimeTablePeriodMutation } from "@/redux/features/api/classesApi";
 
-export const UpdateTimeTablePeriod = ({ open, onClose, periodId }) => {
+const UpdateTimeTablePeriod = ({ open, onClose, periodId }) => {
   const [formEdit, setFormEdit] = useState({
     period: "",
     periodTime: "",
@@ -124,3 +124,5 @@ export const UpdateTimeTablePeriod = ({ open, onClose, periodId }) => {
     </Dialog>
   );
 };
+
+export default UpdateTimeTablePeriod;
