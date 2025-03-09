@@ -6,7 +6,7 @@ const baseURL = `${mainAPI}/class`;
 
 export const classesApi = createApi({
   reducerPath: "classesApi",
-  tagTypes: ["Refetch_Time_Table_Period"],
+  tagTypes: ["Refetch_Time_Table_Period", "Refetch_Class"],
   baseQuery: fetchBaseQuery({
     baseUrl: baseURL,
     credentials: "include",
@@ -26,6 +26,31 @@ export const classesApi = createApi({
         method: "GET",
       }),
       // providesTags: ["Refetch_Time_Table_Period"],
+    }),
+
+    // new class
+    createClass: builder.mutation({
+      query: (form) => ({
+        url: "/create",
+        method: "POST",
+        body: (form),
+      }),
+      invalidatesTags: ["Refetch_Class"],
+    }),
+    updateClass: builder.mutation({
+      query: ({form, editClassId}) => ({
+        url: `/update/${editClassId}`,
+        method: "PUT",
+        body: (form),
+      }),
+      invalidatesTags: ["Refetch_Class"],
+    }),
+    getAllClasses: builder.query({
+      query: () => ({
+        url: "/get-all-class",
+        method: "GET",
+      }),
+      providesTags: ["Refetch_Class"],
     }),
 
 
@@ -70,7 +95,12 @@ export const {
   useGetClassBySectionAcademicYearClassNameQuery,
   useGetClassDetailsOnlyQuery,
 
+  // new 
+  useCreateClassMutation,
+  useUpdateClassMutation,
+  useGetAllClassesQuery,
 
+  // class time table
   useCreateClassTimeTableMutation,
   useGetTimeTablesQuery,
   useEditTimeTablePeriodMutation,

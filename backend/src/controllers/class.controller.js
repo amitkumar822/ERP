@@ -54,6 +54,9 @@ export const createClass = asyncHandler(async (req, res) => {
 export const updateClass = asyncHandler(async (req, res) => {
   const { classId } = req.params;
   const { className, academicYear, section, capacity } = req.body;
+  console.log(classId);
+  console.log(req.body);
+  
 
   if (!mongoose.Types.ObjectId.isValid(classId)) {
     throw new ApiError(400, "Invalid class ID");

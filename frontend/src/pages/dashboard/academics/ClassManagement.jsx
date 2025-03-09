@@ -25,6 +25,11 @@ import { toast } from "react-toastify";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import API from "@/api/axiosInstance";
 import axios from "axios";
+import {
+  useCreateClassMutation,
+  useGetAllClassesQuery,
+  useUpdateClassMutation,
+} from "@/redux/features/api/classesApi";
 
 export default function ClassManagement() {
   // ****************👇Start Class Create and Edit or Update Section👇***********************
@@ -41,63 +46,85 @@ export default function ClassManagement() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  // create new class API
+  const [createClass, { isLoading, isSuccess, error }] =
+    useCreateClassMutation();
+  
+    // update class API
+  const [
+    updateClass,
+    {
+      isLoading: updateIsLoading,
+      isSuccess: updateIsSuccess,
+      isError: updateError,
+    },
+  ] = useUpdateClassMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let apiEndpoint = "";
     let apiMethod = "";
 
     if (editClassId) {
-      apiEndpoint = `/class/update/${editClassId}`;
-      apiMethod = "put";
+      await updateClass({form, editClassId});
+      // apiEndpoint = `/class/update/${editClassId}`;
+      // apiMethod = "put";
     } else {
-      apiEndpoint = "/class/create";
-      apiMethod = "post";
+      await createClass(form);
+      // apiEndpoint = "/class/create";
+      // apiMethod = "post";
     }
 
-    startTransitionAddClass(async () => {
-      try {
-        const { data } = await API[apiMethod](apiEndpoint, form);
-        toast.success(data?.message || "Successfully Class Created!");
-        fetchAllClasses();
-        setForm({
-          className: "",
-          section: "",
-          capacity: "",
-          academicYear: "",
-        });
-        setEditClassId("");
-      } catch (error) {
-        toast.error(error?.response?.data.message || "faild to created class");
-        console.error("Error Class Created Time: \n", error);
-      }
-    });
+    // startTransitionAddClass(async () => {
+    //   try {
+    //     const { data } = await API[apiMethod](apiEndpoint, form);
+    //     toast.success(data?.message || "Successfully Class Created!");
+    //     fetchAllClasses();
+    //     setForm({
+    //       className: "",
+    //       section: "",
+    //       capacity: "",
+    //       academicYear: "",
+    //     });
+    //     setEditClassId("");
+    //   } catch (error) {
+    //     toast.error(error?.response?.data.message || "faild to created class");
+    //     console.error("Error Class Created Time: \n", error);
+    //   }
+    // });
   };
+  console.log(updateError);
+  
 
   // Fetch All Classes👇
-  const [updatedClasses, setUpdatedClasses] = useState([]);
+  // const [updatedClasses, setUpdatedClasses] = useState([]);
 
-  const fetchAllClasses = async () => {
-    try {
-      const { data } = await API.get("/class/get-all-class", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("All Classes Fetch: \n", data);
-      setUpdatedClasses(data?.data);
-    } catch (error) {
-      console.error("Error Fetch All Classes Time: \n", error);
-    }
-  };
+  const {data} = useGetAllClassesQuery();
+  let updatedClasses = data?.data || [];
 
-  useEffect(() => {
-    fetchAllClasses();
-  }, []);
+  // const fetchAllClasses = async () => {
+  //   try {
+  //     const { data } = await API.get("/class/get-all-class", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     console.log("All Classes Fetch: \n", data);
+  //     setUpdatedClasses(data?.data);
+  //   } catch (error) {
+  //     console.error("Error Fetch All Classes Time: \n", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchAllClasses();
+  // }, []);
 
   // ******************👆End Class Create and Edit or Update Section👆********************
 
   // ********************👇Start Class Edit and Delete Section👇**********************
+  
   const handleEdit = (classId) => {
     const filterClass = updatedClasses.filter((cls) => cls._id === classId);
     setEditClassId(classId);
@@ -241,11 +268,11 @@ export default function ClassManagement() {
             </div>
 
             <Button
-              disabled={isPendingAddClass}
+              disabled={updateIsLoading || isLoading}
               type="submit"
               className="w-full flex gap-2 cursor-pointer"
             >
-              {isPendingAddClass ? (
+              {updateIsLoading || isLoading ? (
                 <span className="flex items-center gap-2">
                   <Loader2 size={18} className="animate-spin" />
                   Please Wait...
