@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import {  UserPlusIcon } from "lucide-react";
-import API from "../../../api/axiosInstance";
+import { UserPlusIcon } from "lucide-react";
 import { classNames } from "@/helpers/classNames";
 import { sections } from "@/helpers/sections";
 import { bloodGroups } from "@/helpers/bloodGroup";
 import { toast } from "react-toastify";
 import AddressCurrentPermanent from "@/components/dashboard/AddressCurrentPermanent";
+import { useStudentAdmissionMutation } from "@/redux/features/api/studentApi";
 
 const AdmisssionForm = () => {
   const [studentData, setStudentData] = useState({
@@ -84,12 +84,13 @@ const AdmisssionForm = () => {
     }
   }, [permanentAddress, sameAddressChecked]);
 
-  const [isPending, startTransition] = useTransition();
+  const [studentAdmission, { isLoading, isSuccess, error }] =
+    useStudentAdmissionMutation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
+    await studentAdmission({
       admissionDate: studentData.admissionDate,
       rollNumber: studentData.rollNumber,
       fullName: studentData.fullName,
@@ -120,65 +121,16 @@ const AdmisssionForm = () => {
       examFees: studentData.examFees,
       transportFees: studentData.transportFees,
       hostelFees: studentData.hostelFees,
-    };
-
-    startTransition(async () => {
-      try {
-        await API.post("/students/add", formData);
-
-        toast.success("Student added successfully!");
-        setStudentData({
-          admissionDate: "",
-          rollNumber: "",
-          fullName: "",
-          studentClass: "",
-          studentSection: "",
-          academicYear: "",
-          religion: "",
-          category: "",
-          studentNumber: "",
-          caste: "",
-          motherTongue: "",
-          studentEmail: "",
-          dob: "",
-          gender: "",
-          bloodGroup: "",
-          fatherName: "",
-          fatherMobile: "",
-          fatherOccupation: "",
-          motherName: "",
-          motherMobile: "",
-          motherOccupation: "",
-          profileImage: "",
-          tuitionFees: "",
-          admissionFees: "",
-          otherFees: "",
-          examFees: "",
-          transportFees: "",
-          hostelFees: "",
-        });
-        setSameAddressChecked(false);
-        setPermanentAddress({
-          permanentAddress: "",
-          city: "",
-          state: "",
-          zipCode: "",
-        });
-        setCurrAddress({
-          currentAddress: "",
-          city: "",
-          state: "",
-          zipCode: "",
-        });
-      } catch (error) {
-        console.error("Error while student form fill time: \n", error);
-        toast.error(
-          error?.response?.data.message ||
-            "Failed to add student. Please try again."
-        );
-      }
     });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(error?.data?.message || "Successfully Admission Student!");
+    } else if (error) {
+      alert(error?.data?.message || "Failed to submit");
+    }
+  }, [error, isSuccess]);
 
   return (
     <div className="container mx-auto p-4">
@@ -654,7 +606,7 @@ const AdmisssionForm = () => {
           setPermanentAddress={setPermanentAddress}
           currAddress={currAddress}
           setCurrAddress={setCurrAddress}
-          isPending={isPending}
+          isPending={isLoading}
         />
       </form>
     </div>

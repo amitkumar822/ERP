@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
-// const baseURL = "http://localhost:4000/api/v1/students";
-const baseURL = "https://erp-api-gamma.vercel.app/api/v1/students";
+const baseURL = "http://localhost:4000/api/v1/students";
+// const baseURL = "https://erp-api-gamma.vercel.app/api/v1/students";
 
 export const studentApi = createApi({
     reducerPath: "studentApi",
@@ -11,6 +11,14 @@ export const studentApi = createApi({
         credentials: "include"
     }),
     endpoints: (builder) => ({
+       studentAdmission: builder.mutation({
+        query: ({admissionDate, rollNumber, fullName, className, section, academicYear, religion, category, studentNumber, caste, motherTongue, studentEmail, dob, gender, bloodGroup, fatherName, fatherNumber, fatherOccupation, motherName, motherNumber, permanentAddress, currentAddress, tuitionFees, admissionFees, otherFees, examFees, transportFees, hostelFees}) => ({
+            url: "/add",
+            method: "POST",
+            body: {admissionDate, rollNumber, fullName, className, section, academicYear, religion, category, studentNumber, caste, motherTongue, studentEmail, dob, gender, bloodGroup, fatherName, fatherNumber, fatherOccupation, motherName, motherNumber, permanentAddress, currentAddress, tuitionFees, admissionFees, otherFees, examFees, transportFees, hostelFees},
+        }),
+        invalidatesTags: ["Refetch_Student"]
+       }),
         getStudentList: builder.query({
             query: () => ({
                 url: `/get-all-students`,
@@ -50,7 +58,8 @@ export const studentApi = createApi({
     }),
 })
 
-export const { 
+export const {
+    useStudentAdmissionMutation,
     useGetStudentListQuery,
     useGetStudentSameClassWiseMutation,
     usePromoteStudentsMutation,
