@@ -17,10 +17,11 @@ import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import { toast } from "react-toastify";
 import { useGetStudentListQuery } from "@/redux/features/api/studentApi";
 import { ViewDetails } from "@/components/dashboard/ViewDetails";
+import { MiniLoadingPage } from "@/components/MiniLoadingPage";
 
 export default function StudentList() {
   // **************👇 Start Fetch All Student Details 👇*********************
-  const { data } = useGetStudentListQuery();
+  const { data, isLoading } = useGetStudentListQuery();
 
   const [allStudentsList, setAllStudentsList] = useState(data?.data || []);
   const [filteredList, setFilteredList] = useState(data?.data || []);
@@ -117,113 +118,119 @@ export default function StudentList() {
         </Link>
       </div>
 
-      <Card className="p-4">
-        {filteredList?.map((classGroup, index) => (
-          <div key={index} className="mb-6 border p-4 rounded-lg shadow-lg">
-            {/* Class Header */}
-            <h2 className="text-lg font-bold">
-              {classGroup._id.className} - {classGroup._id.section} (
-              {classGroup._id.academicYear})
-            </h2>
-            <h1 className="text-lg text-green-600 font-semibold">
-              Total Students: ({classGroup?.students?.length})
-            </h1>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Sr No</TableHead>
-                  <TableHead>Img</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Roll No</TableHead>
-                  <TableHead>Father & Mother</TableHead>
-                  <TableHead>Gender</TableHead>
-                  <TableHead>Father Number</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {classGroup.students?.map((student, index) => (
-                  <TableRow key={student._id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      <img
-                        src={
-                          student?.img ||
-                          "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
-                        }
-                        className="w-10 h-10 rounded-full"
-                        alt="Student"
-                      />
-                    </TableCell>
-                    {/* <TableCell>{student.fullName}</TableCell> */}
-                    <TableCell
-                      className={`${
-                        searchQuery &&
-                        student.fullName
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase())
-                          ? "bg-yellow-200"
-                          : ""
-                      } rounded-lg`}
-                    >
-                      {student.fullName}
-                    </TableCell>
-
-                    <TableCell>{student.rollNumber}</TableCell>
-                    <TableCell>
-                      {student.fatherName} <br /> {student.motherName}
-                    </TableCell>
-                    <TableCell>{student.gender}</TableCell>
-                    <TableCell className="hover:text-blue-700 text-blue-500 hover:underline ">
-                      <a href={`tel:${student.fatherNumber}`}>
-                        {student.fatherNumber}
-                      </a>
-                    </TableCell>
-                    <TableCell
-                      className={
-                        student.paymentStatus === "Pending"
-                          ? "text-red-500"
-                          : "text-green-500"
-                      }
-                    >
-                      {student.status || "N/A"}
-                    </TableCell>
-                    <TableCell className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="cursor-pointer"
-                        onClick={() => toggleViewStudentDetailsDialog(student)}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="cursor-pointer"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => {
-                          setDeleteModalOpen(true),
-                            setDeleteStudentId(student?._id);
-                        }}
-                      >
-                        <Trash className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
+      {isLoading ? (
+        <MiniLoadingPage />
+      ) : (
+        <Card className="p-4">
+          {filteredList?.map((classGroup, index) => (
+            <div key={index} className="mb-6 border p-4 rounded-lg shadow-lg">
+              {/* Class Header */}
+              <h2 className="text-lg font-bold">
+                {classGroup._id.className} - {classGroup._id.section} (
+                {classGroup._id.academicYear})
+              </h2>
+              <h1 className="text-lg text-green-600 font-semibold">
+                Total Students: ({classGroup?.students?.length})
+              </h1>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Sr No</TableHead>
+                    <TableHead>Img</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Roll No</TableHead>
+                    <TableHead>Father & Mother</TableHead>
+                    <TableHead>Gender</TableHead>
+                    <TableHead>Father Number</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Action</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        ))}
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {classGroup.students?.map((student, index) => (
+                    <TableRow key={student._id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>
+                        <img
+                          src={
+                            student?.img ||
+                            "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg"
+                          }
+                          className="w-10 h-10 rounded-full"
+                          alt="Student"
+                        />
+                      </TableCell>
+                      {/* <TableCell>{student.fullName}</TableCell> */}
+                      <TableCell
+                        className={`${
+                          searchQuery &&
+                          student.fullName
+                            .toLowerCase()
+                            .includes(searchQuery.toLowerCase())
+                            ? "bg-yellow-200"
+                            : ""
+                        } rounded-lg`}
+                      >
+                        {student.fullName}
+                      </TableCell>
+
+                      <TableCell>{student.rollNumber}</TableCell>
+                      <TableCell>
+                        {student.fatherName} <br /> {student.motherName}
+                      </TableCell>
+                      <TableCell>{student.gender}</TableCell>
+                      <TableCell className="hover:text-blue-700 text-blue-500 hover:underline ">
+                        <a href={`tel:${student.fatherNumber}`}>
+                          {student.fatherNumber}
+                        </a>
+                      </TableCell>
+                      <TableCell
+                        className={
+                          student.paymentStatus === "Pending"
+                            ? "text-red-500"
+                            : "text-green-500"
+                        }
+                      >
+                        {student.status || "N/A"}
+                      </TableCell>
+                      <TableCell className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="cursor-pointer"
+                          onClick={() =>
+                            toggleViewStudentDetailsDialog(student)
+                          }
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="cursor-pointer"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 cursor-pointer"
+                          onClick={() => {
+                            setDeleteModalOpen(true),
+                              setDeleteStudentId(student?._id);
+                          }}
+                        >
+                          <Trash className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ))}
+        </Card>
+      )}
 
       {/* Studetn Details Show Dilog */}
       <div>

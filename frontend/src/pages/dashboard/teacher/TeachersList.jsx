@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -19,9 +18,10 @@ import {
 import { ViewDetails } from "@/components/dashboard/ViewDetails";
 import DeleteClassModal from "@/components/deleteModel/DeleteClassModal";
 import { toast } from "react-toastify";
+import { MiniLoadingPage } from "@/components/MiniLoadingPage";
 
 const TeachersList = () => {
-  const { data, refetch } = useGetAllTeacherQuery();
+  const { data, isLoading, refetch } = useGetAllTeacherQuery();
 
   const [viewTeacherDetailsDialog, setViewTeacherDetailsDialog] =
     useState(false);
@@ -71,7 +71,7 @@ const TeachersList = () => {
       </div>
 
       {/* 📌 Optimized Teachers Table */}
-      <Card>
+      {isLoading ? <MiniLoadingPage /> : <Card>
         <CardHeader>
           <CardTitle>Teachers List</CardTitle>
         </CardHeader>
@@ -168,7 +168,7 @@ const TeachersList = () => {
             </Table>
           </div>
         </CardContent>
-      </Card>
+      </Card>}
 
       {/* Teacher Details Show Dilog */}
       <div>
