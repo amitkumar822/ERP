@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { mainAPI } from "../mainApi";
 
-const baseURL = "https://erp-api-gamma.vercel.app/api/v1/teacher";
-// const baseURL = "http://localhost:4000/api/v1/teacher";
+// const baseURL = "https://erp-api-gamma.vercel.app/api/v1/teacher";
+const baseURL = `${mainAPI}/teacher`;
 
 export const teacherApi = createApi({
     reducerPath: "teacherApi",
